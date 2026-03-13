@@ -1,7 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { type Ref, useRef } from "react";
+import NatureOverlay from "./NatureOverlay";
 import WordReveal from "./WordReveal";
 
 const contactLinks = [
@@ -19,11 +21,27 @@ const contactLinks = [
   },
 ];
 
-export default function Signal() {
+export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Heading drifts up slowly, contact links drift faster — visible depth
+  const headingY = useTransform(scrollYProgress, [0, 1], ["60px", "-60px"]);
+  const linksY = useTransform(scrollYProgress, [0, 1], ["100px", "-100px"]);
+
   return (
     <section
+      ref={(el) => {
+        // Support both external ref and internal ref
+        (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el;
+        if (typeof ref === "function") ref(el);
+        else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = el;
+      }}
       id="contact"
-      className="relative bg-surface-dark text-white"
+      className="relative bg-surface-dark text-white overflow-hidden"
     >
       <div className="max-w-container mx-auto px-6 lg:px-8 py-32 md:py-44">
         {/* Section label */}
@@ -37,13 +55,14 @@ export default function Signal() {
           Contact
         </motion.p>
 
-        {/* Closing statement */}
-        <h2 className="font-heading text-display-xl max-w-3xl">
+        {/* Closing statement — parallax */}
+        <motion.h2 style={{ y: headingY }} className="font-heading text-display-xl max-w-3xl">
           <WordReveal text="Let's build something that grows." />
-        </h2>
+        </motion.h2>
 
         {/* Description */}
         <motion.p
+          style={{ y: headingY }}
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -54,8 +73,8 @@ export default function Signal() {
           consulting in agricultural technology. Reach out directly.
         </motion.p>
 
-        {/* Contact links */}
-        <div className="mt-16 flex flex-col md:flex-row gap-6 md:gap-12">
+        {/* Contact links — different parallax speed */}
+        <motion.div style={{ y: linksY }} className="mt-16 flex flex-col md:flex-row gap-6 md:gap-12">
           {contactLinks.map((link, i) => (
             <motion.a
               key={link.label}
@@ -83,10 +102,11 @@ export default function Signal() {
               />
             </motion.a>
           ))}
-        </div>
+        </motion.div>
 
         {/* Resume download */}
         <motion.div
+          style={{ y: linksY }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -113,6 +133,26 @@ export default function Signal() {
           </p>
         </div>
       </div>
+      {/* Nature overlays on dark section */}
+      <NatureOverlay
+        src="/images/nature/palm.webp"
+        position="top-right"
+        width="300px"
+        bleed="-60px"
+        parallaxStrength={0.5}
+        opacity={0.7}
+        onDark
+      />
+      <NatureOverlay
+        src="/images/nature/vine.webp"
+        position="bottom-left"
+        width="220px"
+        bleed="-40px"
+        parallaxStrength={0.3}
+        opacity={0.7}
+        flipX
+        onDark
+      />
     </section>
   );
 }

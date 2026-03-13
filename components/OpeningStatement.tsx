@@ -1,14 +1,31 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
+import { type Ref, useRef } from "react";
+import NatureOverlay from "./NatureOverlay";
 import WordReveal from "./WordReveal";
 
-export default function OpeningStatement() {
+export default function OpeningStatement({ ref }: { ref?: Ref<HTMLElement> }) {
+  const innerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: innerRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Text moves slowly (foreground), portrait moves faster (creates depth)
+  const textY = useTransform(scrollYProgress, [0, 1], ["0px", "-60px"]);
+  const portraitY = useTransform(scrollYProgress, [0, 1], ["0px", "-120px"]);
+  const lineOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+
   return (
-    <section className="relative min-h-screen flex flex-col justify-end pb-[12vh] md:pb-[15vh] px-6 lg:px-[8vw] pt-20">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-end">
+    <section
+      ref={ref}
+      className="relative min-h-screen flex flex-col justify-start pb-[12vh] md:pb-[15vh] px-6 lg:px-[8vw] pt-24"
+    >
+      <div ref={innerRef} className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
         {/* Text — left side */}
-        <div className="md:col-span-7 order-2 md:order-1">
+        <motion.div style={{ y: textY }} className="md:col-span-7 order-2 md:order-1">
           {/* Name & title label */}
           <motion.p
             initial={{ opacity: 0 }}
@@ -47,42 +64,65 @@ export default function OpeningStatement() {
               Available for AI engineering roles
             </span>
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* Portrait photo — right side */}
+        {/* Portrait photo — right side (moves faster = appears further back) */}
         <motion.div
+          style={{ y: portraitY }}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
           className="md:col-span-5 order-1 md:order-2 flex justify-center md:justify-end"
         >
-          <div className="relative w-64 md:w-72 lg:w-80 aspect-[3/4] rounded-2xl overflow-hidden shadow-glow bg-gradient-to-br from-green-light to-surface-alt">
-            {/* Replace this placeholder with your actual photo */}
-            {/* After adding your photo to public/images/robert-portrait.webp, uncomment the Image below and remove the placeholder div */}
-
-            {/* <Image
-              src="/images/robert-portrait.webp"
-              alt="Robert Jhon Aracena"
-              fill
-              className="object-cover"
-              priority
-            /> */}
-
-            {/* Placeholder — remove once you add the real photo */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-green/10 flex items-center justify-center">
-                <span className="font-heading text-h2 font-bold text-green">RJA</span>
-              </div>
-              <span className="text-xs text-muted/50 font-heading tracking-wider uppercase">
-                Your Photo
-              </span>
+          <div className="relative top-[10px] w-80 md:w-96 lg:w-[440px] aspect-[3/4]">
+            {/* Background shape pattern */}
+            <div className="absolute inset-0 scale-110">
+              <Image
+                src="/images/Profile-Background.webp"
+                alt=""
+                fill
+                className="object-contain"
+                aria-hidden="true"
+              />
+            </div>
+            {/* Profile photo on top */}
+            <div className="relative w-full h-full">
+              <Image
+                src="/images/Profile-Pict.webp"
+                alt="Robert Jhon Aracena"
+                fill
+                className="object-contain object-bottom"
+                priority
+              />
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Scroll line indicator */}
+      {/* Nature overlays — real photos that overlap the hero edges */}
+      {/* Palm fronds hanging from top-right corner */}
+      <NatureOverlay
+        src="/images/nature/palm.webp"
+        position="top-right"
+        width="350px"
+        bleed="-60px"
+        parallaxStrength={0.8}
+        opacity={0.8}
+      />
+      {/* Vine creeping up from bottom-left */}
+      <NatureOverlay
+        src="/images/nature/vine.webp"
+        position="bottom-left"
+        width="240px"
+        bleed="-50px"
+        parallaxStrength={0.4}
+        opacity={0.8}
+        flipX
+      />
+
+      {/* Scroll line indicator — fades as you scroll */}
       <motion.div
+        style={{ opacity: lineOpacity }}
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ duration: 1.2, delay: 2, ease: [0.22, 0.9, 0.3, 1] }}

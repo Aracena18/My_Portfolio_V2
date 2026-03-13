@@ -1,12 +1,20 @@
 "use client";
 
 import { projects } from "@/lib/projects";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useRef } from "react";
 
 export default function CaseStudy03() {
   const project = projects.find((p) => p.slug === "arms")!;
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+  const dashboardY = useTransform(scrollYProgress, [0, 1], ["80px", "-80px"]);
+  const metricsY = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
 
   const metrics = [
     { value: "150+", label: "Farms Active" },
@@ -15,7 +23,7 @@ export default function CaseStudy03() {
   ];
 
   return (
-    <section className="overflow-hidden">
+    <section ref={sectionRef} className="overflow-hidden">
       {/* Top half — dark background */}
       <div className="bg-surface-dark text-white py-20 md:py-28 px-6 lg:px-8">
         <div className="max-w-container mx-auto">
@@ -51,8 +59,8 @@ export default function CaseStudy03() {
               </Link>
             </motion.div>
 
-            {/* Right: metrics */}
-            <div className="flex flex-wrap gap-8 md:gap-12 md:justify-end md:pt-8">
+            {/* Right: metrics (parallax at different speed than left) */}
+            <motion.div style={{ y: metricsY }} className="flex flex-wrap gap-8 md:gap-12 md:justify-end md:pt-8">
               {metrics.map((metric, i) => (
                 <motion.div
                   key={metric.label}
@@ -72,7 +80,7 @@ export default function CaseStudy03() {
                   <p className="text-xs text-white/40 mt-1">{metric.label}</p>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -81,6 +89,7 @@ export default function CaseStudy03() {
       <div className="bg-surface py-16 md:py-20 px-6 lg:px-8">
         <div className="max-w-container mx-auto">
           <motion.div
+            style={{ y: dashboardY }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

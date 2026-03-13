@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { type Ref } from "react";
 
 const skills = [
   "Python",
@@ -25,12 +26,12 @@ const skills = [
   "AWS IoT",
 ];
 
-export default function Capabilities() {
+export default function Capabilities({ ref }: { ref?: Ref<HTMLElement> }) {
   // Duplicate for seamless infinite scroll
   const doubled = [...skills, ...skills];
 
   return (
-    <section className="py-24 md:py-32 overflow-hidden">
+    <section ref={ref} className="py-24 md:py-32 overflow-hidden">
       {/* Marquee ticker */}
       <div className="relative">
         {/* Fade edges */}

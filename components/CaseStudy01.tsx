@@ -13,7 +13,9 @@ export default function CaseStudy01() {
     target: sectionRef,
     offset: ["start end", "end start"],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+  // Strong parallax — image visibly lags behind while text scrolls normally
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["60px", "-60px"]);
 
   return (
     <section
@@ -51,8 +53,8 @@ export default function CaseStudy01() {
           </motion.div>
         </div>
 
-        {/* Text — right column */}
-        <div className="lg:col-span-5 px-6 lg:pl-16 lg:pr-8">
+        {/* Text — right column (moves at different speed than image) */}
+        <motion.div style={{ y: textY }} className="lg:col-span-5 px-6 lg:pl-16 lg:pr-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -100,7 +102,7 @@ export default function CaseStudy01() {
               />
             </Link>
           </motion.div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

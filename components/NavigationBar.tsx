@@ -38,14 +38,14 @@ export default function NavigationBar() {
       <nav
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          isScrolled ? "border-b border-line/60" : "border-b border-transparent"
+          isScrolled ? "border-b border-line/60 bg-surface/80 backdrop-blur-md" : "border-b border-transparent"
         )}
       >
         <div className="max-w-container mx-auto flex items-center justify-between h-14 px-6 lg:px-8">
           {/* Logo */}
           <Link
             href="/"
-            className="font-heading text-sm font-semibold tracking-[0.08em] uppercase text-ink hover:text-green transition-colors duration-200"
+            className="font-heading text-lg font-light tracking-[0.12em] uppercase text-ink hover:text-green transition-colors duration-200"
           >
             RJA
           </Link>
@@ -56,7 +56,7 @@ export default function NavigationBar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-label uppercase tracking-[0.08em] text-muted hover:text-ink transition-colors duration-200"
+                className="text-small uppercase tracking-[0.1em] font-light text-muted hover:text-ink transition-colors duration-200"
               >
                 {link.label}
               </Link>
@@ -64,7 +64,7 @@ export default function NavigationBar() {
             <a
               href="/resume.pdf"
               download
-              className="flex items-center gap-1.5 text-label uppercase tracking-[0.08em] text-green hover:text-green-dark transition-colors duration-200"
+              className="flex items-center gap-1.5 text-small uppercase tracking-[0.1em] font-light text-green hover:text-green-dark transition-colors duration-200"
             >
               <ArrowDownToLine size={13} />
               Resume
@@ -74,7 +74,7 @@ export default function NavigationBar() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="md:hidden text-label uppercase tracking-[0.08em] text-muted hover:text-ink transition-colors duration-200"
+            className="md:hidden text-small uppercase tracking-[0.1em] font-light text-muted hover:text-ink transition-colors duration-200"
             aria-label="Toggle menu"
           >
             {isMobileOpen ? "Close" : "Menu"}
