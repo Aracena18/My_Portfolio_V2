@@ -95,7 +95,7 @@ function PublicationEntry({ pub, index }: { pub: Publication; index: number }) {
 
 export default function Research() {
   return (
-    <section id="research" className="relative py-24 md:py-32 px-6 lg:px-8">
+    <section id="research" className="relative py-24 md:py-32 px-6 lg:px-8 overflow-hidden">
       {/* Fern frond on the left edge */}
       <NatureOverlay
         src="/images/nature/fern.webp"
@@ -106,6 +106,7 @@ export default function Research() {
         opacity={0.8}
         flipX
         rotate={-15}
+        hideOnMobile
       />
       <div className="max-w-container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
         {/* Rotated label — left column */}

@@ -144,6 +144,19 @@ img {
   animation-play-state: paused;
 }
 
+/* Nature overlay — responsive bleed & width switching */
+.nature-overlay {
+  --active-bleed: var(--bleed-desktop);
+  --active-width: var(--width-desktop);
+}
+
+@media (max-width: 767px) {
+  .nature-overlay {
+    --active-bleed: var(--bleed-mobile);
+    --active-width: var(--width-mobile);
+  }
+}
+
 /* Section label style — Swiss typography */
 .section-label {
   font-size: 0.6875rem;

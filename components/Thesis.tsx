@@ -99,6 +99,7 @@ export default function Thesis() {
         parallaxStrength={0.8}
         opacity={0.9}
         rotate={20}
+        hideOnMobile
       />
     </section>
   );

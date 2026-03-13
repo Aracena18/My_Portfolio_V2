@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowDownToLine } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -45,9 +46,18 @@ export default function NavigationBar() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-heading text-lg font-light tracking-[0.12em] uppercase text-ink hover:text-green transition-colors duration-200"
+            aria-label="Robert Jhon Aracena"
+            className="-ml-4 md:-ml-10 inline-flex items-center transition-opacity duration-200 hover:opacity-80"
           >
-            RJA
+            <Image
+              src="/logo.svg"
+              alt="Robert Jhon Aracena logo"
+              width={810}
+              height={627}
+              priority
+              className="h-8 w-auto"
+            />
+            <span className="sr-only">Robert Jhon Aracena</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -74,7 +84,12 @@ export default function NavigationBar() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="md:hidden text-small uppercase tracking-[0.1em] font-light text-muted hover:text-ink transition-colors duration-200"
+            className={cn(
+              "md:hidden text-small uppercase tracking-[0.1em] font-light transition-colors duration-200",
+              isScrolled
+                ? "text-muted hover:text-ink"
+                : "text-white hover:text-surface drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]"
+            )}
             aria-label="Toggle menu"
           >
             {isMobileOpen ? "Close" : "Menu"}

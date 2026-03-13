@@ -25,6 +25,8 @@ interface NatureOverlayProps {
   opacity?: number;
   /** Set true when overlay is on a dark background — inverts blend mode */
   onDark?: boolean;
+  /** Hide this overlay on mobile devices */
+  hideOnMobile?: boolean;
 }
 
 export default function NatureOverlay({
@@ -39,6 +41,7 @@ export default function NatureOverlay({
   rotate = 0,
   opacity = 0.7,
   onDark = false,
+  hideOnMobile = false,
 }: NatureOverlayProps) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -49,13 +52,20 @@ export default function NatureOverlay({
   const travel = parallaxStrength * 80;
   const y = useTransform(scrollYProgress, [0, 1], [`${travel}px`, `-${travel}px`]);
 
+  // Compute mobile-friendly values: less bleed so overlays stay visible,
+  // but keep them substantial enough to be decorative
+  const desktopBleedNum = parseInt(bleed);
+  const mobileBleed = `${Math.round(Math.max(desktopBleedNum * 0.2, -40))}px`;
+  const desktopWidthNum = parseInt(width);
+  const mobileWidth = `${Math.min(Math.max(Math.round(desktopWidthNum * 0.65), 140), 280)}px`;
+
   const positionStyles: Record<string, React.CSSProperties> = {
-    "top-left": { top: bleed, left: bleed },
-    "top-right": { top: bleed, right: bleed },
-    "bottom-left": { bottom: bleed, left: bleed },
-    "bottom-right": { bottom: bleed, right: bleed },
-    left: { top: "50%", left: bleed, transform: "translateY(-50%)" },
-    right: { top: "50%", right: bleed, transform: "translateY(-50%)" },
+    "top-left": { top: "var(--active-bleed)", left: "var(--active-bleed)" },
+    "top-right": { top: "var(--active-bleed)", right: "var(--active-bleed)" },
+    "bottom-left": { bottom: "var(--active-bleed)", left: "var(--active-bleed)" },
+    "bottom-right": { bottom: "var(--active-bleed)", right: "var(--active-bleed)" },
+    left: { top: "50%", left: "var(--active-bleed)", transform: "translateY(-50%)" },
+    right: { top: "50%", right: "var(--active-bleed)", transform: "translateY(-50%)" },
   };
 
   const transformParts = [
@@ -70,16 +80,32 @@ export default function NatureOverlay({
   // screen makes white bg vanish on dark surfaces
   const blendMode = onDark ? "screen" : "multiply";
 
+  // Scale down on mobile, anchored to the overlay's edge
+  const originMap: Record<string, string> = {
+    "top-left": "origin-top-left",
+    "top-right": "origin-top-right",
+    "bottom-left": "origin-bottom-left",
+    "bottom-right": "origin-bottom-right",
+    left: "origin-left",
+    right: "origin-right",
+  };
+
   return (
     <motion.div
       ref={ref}
-      className="absolute pointer-events-none select-none z-10 hidden md:block"
+      className={`nature-overlay absolute pointer-events-none select-none z-10 ${hideOnMobile ? 'hidden md:block' : ''}`}
+      data-pos={position}
       style={{
+        "--bleed-desktop": bleed,
+        "--bleed-mobile": mobileBleed,
+        "--width-desktop": width,
+        "--width-mobile": mobileWidth,
         ...positionStyles[position],
-        width,
-      }}
+        width: "var(--active-width)",
+      } as React.CSSProperties}
       aria-hidden="true"
     >
+      <div className={`scale-[0.75] sm:scale-[0.85] md:scale-100 ${originMap[position]}`}>
       <motion.div style={{ y }}>
         <div
           style={{
@@ -119,6 +145,7 @@ export default function NatureOverlay({
           )}
         </div>
       </motion.div>
+      </div>
     </motion.div>
   );
 }

@@ -21,7 +21,7 @@ export default function OpeningStatement({ ref }: { ref?: Ref<HTMLElement> }) {
   return (
     <section
       ref={ref}
-      className="relative min-h-screen flex flex-col justify-start pb-[12vh] md:pb-[15vh] px-6 lg:px-[8vw] pt-24"
+      className="relative min-h-screen flex flex-col justify-start pb-[12vh] md:pb-[15vh] px-6 lg:px-[8vw] pt-24 overflow-hidden"
     >
       <div ref={innerRef} className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-start">
         {/* Text — left side */}

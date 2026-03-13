@@ -20,7 +20,7 @@ export default function CaseStudy02() {
     <section ref={sectionRef} className="py-20 md:py-32 px-6 lg:px-8">
       <div className="max-w-container mx-auto">
         {/* Cinematic image with overlay */}
-        <div className="relative aspect-[21/9] rounded-2xl overflow-hidden bg-gradient-to-br from-surface-dark via-green-dark/80 to-surface-dark">
+        <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden bg-gradient-to-br from-surface-dark via-green-dark/80 to-surface-dark">
           {/* Abstract pattern suggesting hardware/circuitry */}
           <motion.div style={{ y: bgY }} className="absolute inset-0 scale-[1.2] opacity-10">
             <div className="absolute inset-0" style={{
@@ -45,7 +45,7 @@ export default function CaseStudy02() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 0.9, 0.3, 1] }}
-            className="absolute bottom-6 left-6 md:bottom-10 md:left-10"
+            className="absolute bottom-6 left-6 right-6 md:right-auto md:bottom-10 md:left-10"
           >
             <p className="text-label tracking-[0.08em] uppercase text-white/50 mb-2">
               02
@@ -74,7 +74,7 @@ export default function CaseStudy02() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
-            className="absolute bottom-6 right-6 md:bottom-10 md:right-10 flex gap-8 md:gap-12"
+            className="absolute top-6 right-6 md:top-auto md:bottom-10 md:right-10 flex gap-6 md:gap-12"
           >
             <div className="text-right">
               <p className="font-heading text-h2 md:text-h1 font-bold text-white">
