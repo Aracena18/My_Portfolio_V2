@@ -33,7 +33,13 @@ export default function Capabilities({ ref }: { ref?: Ref<HTMLElement> }) {
   return (
     <section ref={ref} className="py-24 md:py-32 overflow-hidden">
       {/* Marquee ticker */}
-      <div className="relative">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, ease: [0.22, 0.9, 0.3, 1] }}
+        className="relative"
+      >
         {/* Fade edges */}
         <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-surface to-transparent z-10 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-surface to-transparent z-10 pointer-events-none" />
@@ -49,7 +55,7 @@ export default function Capabilities({ ref }: { ref?: Ref<HTMLElement> }) {
             </span>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Narrative paragraph */}
       <div className="max-w-container mx-auto px-6 lg:px-8 mt-16 md:mt-20">

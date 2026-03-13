@@ -59,7 +59,9 @@ export default function OpeningStatement({ ref }: { ref?: Ref<HTMLElement> }) {
             transition={{ duration: 0.6, delay: 1.6 }}
             className="mt-10 flex items-center gap-2"
           >
-            <span className="w-2 h-2 rounded-full bg-green" />
+            <span className="relative w-2 h-2 rounded-full bg-green">
+              <span className="absolute inset-0 rounded-full bg-green animate-ping opacity-75" />
+            </span>
             <span className="text-small text-muted">
               Available for AI engineering roles
             </span>

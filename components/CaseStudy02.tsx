@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
+import Counter from "./Counter";
 
 export default function CaseStudy02() {
   const project = projects.find((p) => p.slug === "esp32-leaf-scanner")!;
@@ -68,27 +69,29 @@ export default function CaseStudy02() {
             </Link>
           </motion.div>
 
-          {/* Bottom-right: metrics */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
-            className="absolute top-6 right-6 md:top-auto md:bottom-10 md:right-10 flex gap-6 md:gap-12"
-          >
-            <div className="text-right">
-              <p className="font-heading text-h2 md:text-h1 font-bold text-white">
-                180ms
-              </p>
+          {/* Top-right (mobile) / Bottom-right (desktop): metrics */}
+          <div className="absolute top-6 right-6 md:top-auto md:bottom-10 md:right-10 flex gap-6 md:gap-12">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
+              className="text-right"
+            >
+              <Counter target={180} suffix="ms" className="font-heading text-h2 md:text-h1 font-bold text-white" />
               <p className="text-xs text-white/50 mt-0.5">Inference Time</p>
-            </div>
-            <div className="text-right">
-              <p className="font-heading text-h2 md:text-h1 font-bold text-white">
-                $15
-              </p>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.55, ease: [0.22, 0.9, 0.3, 1] }}
+              className="text-right"
+            >
+              <Counter prefix="$" target={15} className="font-heading text-h2 md:text-h1 font-bold text-white" />
               <p className="text-xs text-white/50 mt-0.5">Hardware Cost</p>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
+import Counter from "./Counter";
 
 export default function CaseStudy01() {
   const project = projects.find((p) => p.slug === "agrisense")!;
@@ -56,8 +57,8 @@ export default function CaseStudy01() {
         {/* Text — right column (moves at different speed than image) */}
         <motion.div style={{ y: textY }} className="lg:col-span-5 px-6 lg:pl-16 lg:pr-8">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
           >
@@ -80,14 +81,24 @@ export default function CaseStudy01() {
 
             {/* Metrics */}
             <div className="flex gap-8">
-              <div>
-                <p className="font-heading text-h2 font-bold text-green">92%</p>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
+              >
+                <Counter target={92} suffix="%" className="font-heading text-h2 font-bold text-green" />
                 <p className="text-xs text-muted mt-0.5">Accuracy</p>
-              </div>
-              <div>
-                <p className="font-heading text-h2 font-bold text-green">&lt;3s</p>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5, ease: [0.22, 0.9, 0.3, 1] }}
+              >
+                <Counter prefix="<" target={3} suffix="s" className="font-heading text-h2 font-bold text-green" />
                 <p className="text-xs text-muted mt-0.5">Response</p>
-              </div>
+              </motion.div>
             </div>
 
             {/* Link */}

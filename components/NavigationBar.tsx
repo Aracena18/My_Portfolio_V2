@@ -36,9 +36,12 @@ export default function NavigationBar() {
 
   return (
     <>
-      <nav
+      <motion.nav
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+          "fixed top-0 left-0 right-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-500",
           isScrolled ? "border-b border-line/60 bg-surface/80 backdrop-blur-md" : "border-b border-transparent"
         )}
       >
@@ -62,23 +65,35 @@ export default function NavigationBar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
+            {navLinks.map((link, i) => (
+              <motion.div
                 key={link.href}
-                href={link.href}
-                className="text-small uppercase tracking-[0.1em] font-light text-muted hover:text-ink transition-colors duration-200"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.1, duration: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
               >
-                {link.label}
-              </Link>
+                <Link
+                  href={link.href}
+                  className="text-small uppercase tracking-[0.1em] font-light text-muted hover:text-ink transition-colors duration-200"
+                >
+                  {link.label}
+                </Link>
+              </motion.div>
             ))}
-            <a
-              href="/resume.pdf"
-              download
-              className="flex items-center gap-1.5 text-small uppercase tracking-[0.1em] font-light text-green hover:text-green-dark transition-colors duration-200"
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
             >
-              <ArrowDownToLine size={13} />
-              Resume
-            </a>
+              <a
+                href="/resume.pdf"
+                download
+                className="flex items-center gap-1.5 text-small uppercase tracking-[0.1em] font-light text-green hover:text-green-dark transition-colors duration-200"
+              >
+                <ArrowDownToLine size={13} />
+                Resume
+              </a>
+            </motion.div>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -95,7 +110,7 @@ export default function NavigationBar() {
             {isMobileOpen ? "Close" : "Menu"}
           </button>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Mobile Overlay */}
       <AnimatePresence>
@@ -113,7 +128,7 @@ export default function NavigationBar() {
                   key={link.href}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.05, duration: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
+                  transition={{ delay: 0.1 + i * 0.1, duration: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
                 >
                   <Link
                     href={link.href}
@@ -127,7 +142,7 @@ export default function NavigationBar() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.25, duration: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
+                transition={{ delay: 0.4, duration: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
               >
                 <a
                   href="/resume.pdf"

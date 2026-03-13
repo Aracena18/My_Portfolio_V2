@@ -124,14 +124,20 @@ export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
         </motion.div>
 
         {/* Footer */}
-        <div className="mt-32 md:mt-44 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
+          className="mt-32 md:mt-44 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-4"
+        >
           <p className="text-xs text-muted-light/50">
             &copy; {new Date().getFullYear()} Robert Jhon Aracena
           </p>
           <p className="text-xs text-muted-light/50">
             Built with Next.js
           </p>
-        </div>
+        </motion.div>
       </div>
       {/* Nature overlays on dark section */}
       <NatureOverlay

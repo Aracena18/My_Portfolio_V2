@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
+import Counter from "./Counter";
 
 export default function CaseStudy03() {
   const project = projects.find((p) => p.slug === "arms")!;
@@ -17,9 +18,9 @@ export default function CaseStudy03() {
   const metricsY = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
 
   const metrics = [
-    { value: "150+", label: "Farms Active" },
-    { value: "40%", label: "Time Saved" },
-    { value: "84%", label: "Prediction Accuracy" },
+    { target: 150, suffix: "+", label: "Farms Active" },
+    { target: 40, suffix: "%", label: "Time Saved" },
+    { target: 84, suffix: "%", label: "Prediction Accuracy" },
   ];
 
   return (
@@ -74,9 +75,7 @@ export default function CaseStudy03() {
                   }}
                   className="text-center md:text-right"
                 >
-                  <p className="font-heading text-h1 md:text-display font-bold text-green-light">
-                    {metric.value}
-                  </p>
+                  <Counter target={metric.target} suffix={metric.suffix} className="font-heading text-h1 md:text-display font-bold text-green-light" />
                   <p className="text-xs text-white/40 mt-1">{metric.label}</p>
                 </motion.div>
               ))}
@@ -111,9 +110,15 @@ export default function CaseStudy03() {
               Dashboard Screenshot
             </span>
           </motion.div>
-          <p className="mt-4 text-xs text-muted text-center">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
+            className="mt-4 text-xs text-muted text-center"
+          >
             ARMS dashboard — resource tracking and yield prediction
-          </p>
+          </motion.p>
         </div>
       </div>
     </section>

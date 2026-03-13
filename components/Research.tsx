@@ -45,7 +45,7 @@ function PublicationEntry({ pub, index }: { pub: Publication; index: number }) {
       viewport={{ once: true }}
       transition={{
         duration: 0.5,
-        delay: index * 0.08,
+        delay: index * 0.15,
         ease: [0.22, 0.9, 0.3, 1],
       }}
       onMouseEnter={() => setIsHovered(true)}
@@ -111,11 +111,15 @@ export default function Research() {
       <div className="max-w-container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
         {/* Rotated label — left column */}
         <div className="md:col-span-2 flex md:justify-center">
-          <p
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: [0.22, 0.9, 0.3, 1] }}
             className="section-label md:[writing-mode:vertical-rl] md:[transform:rotate(180deg)]"
           >
             Research
-          </p>
+          </motion.p>
         </div>
 
         {/* Publication entries — right column */}

@@ -38,6 +38,10 @@ export default function ParallaxImage({
   // The image translates by ±(speed * 100)px as you scroll through
   const y = useTransform(scrollYProgress, [0, 1], [`${speed * 100}px`, `-${speed * 100}px`]);
 
+  // Cinematic entrance: fade in + slight scale as section enters viewport
+  const containerOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
+  const containerScale = useTransform(scrollYProgress, [0, 0.2], [1.03, 1]);
+
   const overlayClass =
     overlay === "dark"
       ? "bg-gradient-to-b from-surface-dark/60 via-surface-dark/30 to-surface-dark/60"
@@ -46,10 +50,10 @@ export default function ParallaxImage({
         : "";
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
+      style={{ opacity: containerOpacity, scale: containerScale, height }}
       className="relative overflow-hidden"
-      style={{ height }}
     >
       {/* Parallax image layer — oversized to prevent gaps during translate */}
       <motion.div
@@ -96,6 +100,6 @@ export default function ParallaxImage({
           {children}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
