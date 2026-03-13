@@ -1,13 +1,13 @@
 "use client";
 
 import { projects } from "@/lib/projects";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
 import Counter from "./Counter";
 
-const ease = [0.22, 0.9, 0.3, 1] as const;
+const smooth = { stiffness: 80, damping: 25, restDelta: 0.001 };
 
 export default function CaseStudy01() {
   const project = projects.find((p) => p.slug === "agrisense")!;
@@ -16,8 +16,8 @@ export default function CaseStudy01() {
     target: sectionRef,
     offset: ["start end", "end start"],
   });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["-15%", "15%"]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["60px", "-60px"]);
+  const imageY = useSpring(useTransform(scrollYProgress, [0, 1], [40, -40]), smooth);
+  const textY = useSpring(useTransform(scrollYProgress, [0, 1], [25, -25]), smooth);
 
   return (
     <section
@@ -25,12 +25,12 @@ export default function CaseStudy01() {
       className="py-20 md:py-32 overflow-hidden"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-0 items-center">
-        {/* Image — slides in from left */}
+        {/* Image area */}
         <motion.div
-          initial={{ opacity: 0, x: -80 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.9, ease }}
+          transition={{ duration: 0.8, ease: [0.22, 0.9, 0.3, 1] }}
           className="lg:col-span-7 relative aspect-[4/3] lg:aspect-auto lg:h-[70vh] overflow-hidden rounded-2xl lg:rounded-none lg:rounded-r-3xl mx-6 lg:mx-0"
         >
           <motion.div
@@ -61,13 +61,13 @@ export default function CaseStudy01() {
           </motion.div>
         </motion.div>
 
-        {/* Text — slides in from right */}
+        {/* Text */}
         <motion.div style={{ y: textY }} className="lg:col-span-5 px-6 lg:pl-16 lg:pr-8">
           <motion.div
-            initial={{ opacity: 0, x: 60 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.15, ease }}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 0.9, 0.3, 1] }}
           >
             <p className="section-label mb-4">01</p>
 
@@ -82,26 +82,26 @@ export default function CaseStudy01() {
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4, ease }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
               className="my-6 w-16 h-px bg-line origin-left"
             />
 
-            {/* Metrics — staggered with scale */}
+            {/* Metrics */}
             <div className="flex gap-8">
               <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.5, ease }}
+                transition={{ duration: 0.5, delay: 0.5, ease: [0.22, 0.9, 0.3, 1] }}
               >
                 <Counter target={92} suffix="%" className="font-heading text-h2 font-bold text-green" />
                 <p className="text-xs text-muted mt-0.5">Accuracy</p>
               </motion.div>
               <motion.div
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.65, ease }}
+                transition={{ duration: 0.5, delay: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
               >
                 <Counter prefix="<" target={3} suffix="s" className="font-heading text-h2 font-bold text-green" />
                 <p className="text-xs text-muted mt-0.5">Response</p>

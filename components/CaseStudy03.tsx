@@ -1,13 +1,13 @@
 "use client";
 
 import { projects } from "@/lib/projects";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
 import Counter from "./Counter";
 
-const ease = [0.22, 0.9, 0.3, 1] as const;
+const smooth = { stiffness: 80, damping: 25, restDelta: 0.001 };
 
 export default function CaseStudy03() {
   const project = projects.find((p) => p.slug === "arms")!;
@@ -16,8 +16,8 @@ export default function CaseStudy03() {
     target: sectionRef,
     offset: ["start end", "end start"],
   });
-  const dashboardY = useTransform(scrollYProgress, [0, 1], ["80px", "-80px"]);
-  const metricsY = useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
+  const dashboardY = useSpring(useTransform(scrollYProgress, [0, 1], [35, -35]), smooth);
+  const metricsY = useSpring(useTransform(scrollYProgress, [0, 1], [25, -25]), smooth);
 
   const metrics = [
     { target: 150, suffix: "+", label: "Farms Active" },
@@ -31,12 +31,12 @@ export default function CaseStudy03() {
       <div className="bg-surface-dark text-white py-20 md:py-28 px-6 lg:px-8">
         <div className="max-w-container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start">
-            {/* Left: project info — slides in from left */}
+            {/* Left: project info */}
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.8, ease }}
+              transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
             >
               <p className="text-label tracking-[0.08em] uppercase text-muted-light/50 mb-4">
                 03
@@ -62,18 +62,18 @@ export default function CaseStudy03() {
               </Link>
             </motion.div>
 
-            {/* Right: metrics — slide in from right with stagger */}
+            {/* Right: metrics */}
             <motion.div style={{ y: metricsY }} className="flex flex-wrap gap-8 md:gap-12 md:justify-end md:pt-8">
               {metrics.map((metric, i) => (
                 <motion.div
                   key={metric.label}
-                  initial={{ opacity: 0, x: 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{
-                    duration: 0.6,
-                    delay: 0.2 + i * 0.15,
-                    ease,
+                    duration: 0.5,
+                    delay: 0.1 + i * 0.1,
+                    ease: [0.22, 0.9, 0.3, 1],
                   }}
                   className="text-center md:text-right"
                 >
@@ -86,15 +86,15 @@ export default function CaseStudy03() {
         </div>
       </div>
 
-      {/* Bottom half — dashboard scales up on entrance */}
+      {/* Bottom half — dashboard */}
       <div className="bg-surface py-16 md:py-20 px-6 lg:px-8">
         <div className="max-w-container mx-auto">
           <motion.div
             style={{ y: dashboardY }}
-            initial={{ opacity: 0, y: 60, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.9, ease }}
+            transition={{ duration: 0.8, ease: [0.22, 0.9, 0.3, 1] }}
             className="relative aspect-[16/7] rounded-2xl overflow-hidden bg-gradient-to-br from-surface-alt via-card to-surface-alt border border-line/60"
           >
             {/* Abstract dashboard mockup */}
@@ -112,10 +112,10 @@ export default function CaseStudy03() {
             </span>
           </motion.div>
           <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3, ease }}
+            transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-4 text-xs text-muted text-center"
           >
             ARMS dashboard — resource tracking and yield prediction

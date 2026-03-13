@@ -1,7 +1,9 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
+
+const smooth = { stiffness: 80, damping: 25, restDelta: 0.001 };
 
 interface NatureOverlayProps {
   /** Path to the nature image (e.g. "/images/nature/palm.webp") */
@@ -49,8 +51,8 @@ export default function NatureOverlay({
     offset: ["start end", "end start"],
   });
 
-  const travel = parallaxStrength * 80;
-  const y = useTransform(scrollYProgress, [0, 1], [`${travel}px`, `-${travel}px`]);
+  const travel = parallaxStrength * 40;
+  const y = useSpring(useTransform(scrollYProgress, [0, 1], [travel, -travel]), smooth);
 
   // Compute mobile-friendly values: less bleed so overlays stay visible,
   // but keep them substantial enough to be decorative

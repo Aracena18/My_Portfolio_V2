@@ -1,11 +1,11 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { useRef } from "react";
 import Counter from "./Counter";
 import NatureOverlay from "./NatureOverlay";
 
-const ease = [0.22, 0.9, 0.3, 1] as const;
+const smooth = { stiffness: 80, damping: 25, restDelta: 0.001 };
 
 const metrics = [
   {
@@ -36,35 +36,26 @@ export default function Thesis() {
     offset: ["start end", "end start"],
   });
 
-  const statementY = useTransform(scrollYProgress, [0, 1], ["80px", "-80px"]);
-  const metricsY = useTransform(scrollYProgress, [0, 1], ["120px", "-120px"]);
+  const statementY = useSpring(useTransform(scrollYProgress, [0, 1], [30, -30]), smooth);
+  const metricsY = useSpring(useTransform(scrollYProgress, [0, 1], [50, -50]), smooth);
 
   return (
     <section ref={sectionRef} className="relative py-32 md:py-40 px-6 lg:px-8 overflow-hidden">
       <div className="max-w-container mx-auto">
-        {/* Decorative line that draws in before the statement */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease }}
-          className="w-20 h-px bg-green/40 origin-left mb-10"
-        />
-
-        {/* Thesis statement — slides up with larger amplitude */}
+        {/* Thesis statement */}
         <motion.p
           style={{ y: statementY }}
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease }}
+          transition={{ duration: 0.8, ease: [0.22, 0.9, 0.3, 1] }}
           className="font-heading text-h1 md:text-display text-ink max-w-5xl"
         >
           I take AI from the lab to the soil — from model training, through edge
           optimization, to deployment in real agricultural conditions.
         </motion.p>
 
-        {/* Metrics — staggered with scale */}
+        {/* Metrics */}
         <motion.div
           style={{ y: metricsY }}
           className="mt-20 md:mt-28 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16"
@@ -72,13 +63,13 @@ export default function Thesis() {
           {metrics.map((metric, i) => (
             <motion.div
               key={metric.label}
-              initial={{ opacity: 0, y: 50, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{
                 duration: 0.6,
-                delay: 0.15 + i * 0.15,
-                ease,
+                delay: 0.1 + i * 0.1,
+                ease: [0.22, 0.9, 0.3, 1],
               }}
             >
               <Counter
@@ -93,13 +84,7 @@ export default function Thesis() {
               </p>
 
               {i < metrics.length - 1 && (
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.3 + i * 0.15, ease }}
-                  className="mt-8 h-px bg-line md:hidden origin-left"
-                />
+                <div className="mt-8 h-px bg-line md:hidden" />
               )}
             </motion.div>
           ))}

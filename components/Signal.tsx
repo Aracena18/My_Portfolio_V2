@@ -1,12 +1,12 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { type Ref, useRef } from "react";
 import NatureOverlay from "./NatureOverlay";
 import WordReveal from "./WordReveal";
 
-const ease = [0.22, 0.9, 0.3, 1] as const;
+const smooth = { stiffness: 80, damping: 25, restDelta: 0.001 };
 
 const contactLinks = [
   {
@@ -30,8 +30,8 @@ export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
     offset: ["start end", "end start"],
   });
 
-  const headingY = useTransform(scrollYProgress, [0, 1], ["60px", "-60px"]);
-  const linksY = useTransform(scrollYProgress, [0, 1], ["100px", "-100px"]);
+  const headingY = useSpring(useTransform(scrollYProgress, [0, 1], [25, -25]), smooth);
+  const linksY = useSpring(useTransform(scrollYProgress, [0, 1], [40, -40]), smooth);
 
   return (
     <section
@@ -44,12 +44,12 @@ export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
       className="relative bg-surface-dark text-white overflow-hidden"
     >
       <div className="max-w-container mx-auto px-6 lg:px-8 py-32 md:py-44">
-        {/* Section label — slides in from left */}
+        {/* Section label */}
         <motion.p
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease }}
+          transition={{ duration: 0.6 }}
           className="text-label tracking-[0.08em] uppercase text-muted-light mb-8"
         >
           Contact
@@ -60,20 +60,20 @@ export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
           <WordReveal text="Let's build something that grows." />
         </motion.h2>
 
-        {/* Description — slides in from left */}
+        {/* Description */}
         <motion.p
           style={{ y: headingY }}
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.6, ease }}
+          transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
           className="mt-8 max-w-lg text-body-lg text-muted-light/80 leading-relaxed"
         >
           I&apos;m open to AI engineering roles, research collaborations, and
           consulting in agricultural technology. Reach out directly.
         </motion.p>
 
-        {/* Contact links — staggered slide-up with larger amplitude */}
+        {/* Contact links */}
         <motion.div style={{ y: linksY }} className="mt-16 flex flex-col md:flex-row gap-6 md:gap-12">
           {contactLinks.map((link, i) => (
             <motion.a
@@ -85,13 +85,13 @@ export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
                   ? undefined
                   : "noopener noreferrer"
               }
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{
-                duration: 0.6,
-                delay: 0.8 + i * 0.15,
-                ease,
+                duration: 0.5,
+                delay: 0.8 + i * 0.1,
+                ease: [0.22, 0.9, 0.3, 1],
               }}
               className="group inline-flex items-center gap-2 text-body-lg text-white hover:text-green-light transition-colors duration-200"
             >
@@ -107,10 +107,10 @@ export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
         {/* Resume download */}
         <motion.div
           style={{ y: linksY }}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 1.3, ease }}
+          transition={{ duration: 0.5, delay: 1.2 }}
           className="mt-10"
         >
           <a
@@ -123,12 +123,12 @@ export default function Signal({ ref }: { ref?: Ref<HTMLElement> }) {
           </a>
         </motion.div>
 
-        {/* Footer — slides up */}
+        {/* Footer */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2, ease }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           className="mt-32 md:mt-44 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between gap-4"
         >
           <p className="text-xs text-muted-light/50">

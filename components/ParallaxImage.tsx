@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import React, { useRef } from "react";
 
-const ease = [0.22, 0.9, 0.3, 1] as const;
+const smooth = { stiffness: 80, damping: 25, restDelta: 0.001 };
 
 interface ParallaxImageProps {
   src?: string;
@@ -30,11 +30,10 @@ export default function ParallaxImage({
     offset: ["start end", "end start"],
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], [`${speed * 100}px`, `-${speed * 100}px`]);
+  const y = useSpring(useTransform(scrollYProgress, [0, 1], [speed * 60, -(speed * 60)]), smooth);
 
-  // Cinematic entrance: fade in + slight scale as section enters viewport
+  // Gentle fade-in as section enters viewport
   const containerOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
-  const containerScale = useTransform(scrollYProgress, [0, 0.2], [1.03, 1]);
 
   const overlayClass =
     overlay === "dark"
@@ -43,27 +42,10 @@ export default function ParallaxImage({
         ? "bg-gradient-to-b from-surface/50 via-transparent to-surface/50"
         : "";
 
-  // Stagger children if they exist
-  const staggeredChildren = children
-    ? React.Children.map(children, (child) => {
-        if (!React.isValidElement(child)) return child;
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease }}
-          >
-            {child}
-          </motion.div>
-        );
-      })
-    : null;
-
   return (
     <motion.div
       ref={containerRef}
-      style={{ opacity: containerOpacity, scale: containerScale, height }}
+      style={{ opacity: containerOpacity, height }}
       className="relative overflow-hidden"
     >
       {/* Parallax image layer — oversized to prevent gaps during translate */}
@@ -103,10 +85,10 @@ export default function ParallaxImage({
         <div className={`absolute inset-0 ${overlayClass}`} />
       )}
 
-      {/* Optional children — staggered entrance */}
-      {staggeredChildren && (
+      {/* Optional children */}
+      {children && (
         <div className="relative z-10 h-full flex items-center justify-center">
-          {staggeredChildren}
+          {children}
         </div>
       )}
     </motion.div>
