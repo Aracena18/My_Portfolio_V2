@@ -1,7 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+  turbopack: {
+    root: '.',
+  },
+  experimental: {
+    optimizePackageImports: ['lucide-react'],
+  },
+  // Enable static export if needed for hosting
+  // output: 'export',
 };
 
 export default nextConfig;
