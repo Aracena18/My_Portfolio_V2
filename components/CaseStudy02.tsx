@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRef } from "react";
 import Counter from "./Counter";
 
+const ease = [0.22, 0.9, 0.3, 1] as const;
+
 export default function CaseStudy02() {
   const project = projects.find((p) => p.slug === "esp32-leaf-scanner")!;
   const sectionRef = useRef<HTMLElement>(null);
@@ -20,8 +22,14 @@ export default function CaseStudy02() {
   return (
     <section ref={sectionRef} className="py-20 md:py-32 px-6 lg:px-8">
       <div className="max-w-container mx-auto">
-        {/* Cinematic image with overlay */}
-        <div className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden bg-gradient-to-br from-surface-dark via-green-dark/80 to-surface-dark">
+        {/* Cinematic card — scales up on entrance */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.94, y: 40 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.9, ease }}
+          className="relative aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] rounded-2xl overflow-hidden bg-gradient-to-br from-surface-dark via-green-dark/80 to-surface-dark"
+        >
           {/* Abstract pattern suggesting hardware/circuitry */}
           <motion.div style={{ y: bgY }} className="absolute inset-0 scale-[1.2] opacity-10">
             <div className="absolute inset-0" style={{
@@ -39,13 +47,13 @@ export default function CaseStudy02() {
           {/* Dark gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-surface-dark/90 via-surface-dark/30 to-transparent" />
 
-          {/* Bottom-left: project info */}
+          {/* Bottom-left: project info — slides up from bottom */}
           <motion.div
             style={{ y: contentY }}
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40, x: -20 }}
+            whileInView={{ opacity: 1, y: 0, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 0.9, 0.3, 1] }}
+            transition={{ duration: 0.7, delay: 0.3, ease }}
             className="absolute bottom-6 left-6 right-6 md:right-auto md:bottom-10 md:left-10"
           >
             <p className="text-label tracking-[0.08em] uppercase text-white/50 mb-2">
@@ -69,30 +77,30 @@ export default function CaseStudy02() {
             </Link>
           </motion.div>
 
-          {/* Top-right (mobile) / Bottom-right (desktop): metrics */}
+          {/* Metrics — slide in from right with stagger */}
           <div className="absolute top-6 right-6 md:top-auto md:bottom-10 md:right-10 flex gap-6 md:gap-12">
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
+              transition={{ duration: 0.6, delay: 0.5, ease }}
               className="text-right"
             >
               <Counter target={180} suffix="ms" className="font-heading text-h2 md:text-h1 font-bold text-white" />
               <p className="text-xs text-white/50 mt-0.5">Inference Time</p>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.55, ease: [0.22, 0.9, 0.3, 1] }}
+              transition={{ duration: 0.6, delay: 0.65, ease }}
               className="text-right"
             >
               <Counter prefix="$" target={15} className="font-heading text-h2 md:text-h1 font-bold text-white" />
               <p className="text-xs text-white/50 mt-0.5">Hardware Cost</p>
             </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -5,6 +5,8 @@ import { useRef } from "react";
 import Counter from "./Counter";
 import NatureOverlay from "./NatureOverlay";
 
+const ease = [0.22, 0.9, 0.3, 1] as const;
+
 const metrics = [
   {
     target: 92,
@@ -34,27 +36,35 @@ export default function Thesis() {
     offset: ["start end", "end start"],
   });
 
-  // Statement moves slower (far), metrics move faster (near) — visible depth split
   const statementY = useTransform(scrollYProgress, [0, 1], ["80px", "-80px"]);
   const metricsY = useTransform(scrollYProgress, [0, 1], ["120px", "-120px"]);
 
   return (
     <section ref={sectionRef} className="relative py-32 md:py-40 px-6 lg:px-8 overflow-hidden">
       <div className="max-w-container mx-auto">
-        {/* Thesis statement — moves at one speed */}
+        {/* Decorative line that draws in before the statement */}
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1, ease }}
+          className="w-20 h-px bg-green/40 origin-left mb-10"
+        />
+
+        {/* Thesis statement — slides up with larger amplitude */}
         <motion.p
           style={{ y: statementY }}
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
+          transition={{ duration: 0.8, ease }}
           className="font-heading text-h1 md:text-display text-ink max-w-5xl"
         >
           I take AI from the lab to the soil — from model training, through edge
           optimization, to deployment in real agricultural conditions.
         </motion.p>
 
-        {/* Metrics — moves at a different speed (creates visible separation) */}
+        {/* Metrics — staggered with scale */}
         <motion.div
           style={{ y: metricsY }}
           className="mt-20 md:mt-28 grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-16"
@@ -62,13 +72,13 @@ export default function Thesis() {
           {metrics.map((metric, i) => (
             <motion.div
               key={metric.label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 50, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true }}
               transition={{
-                duration: 0.5,
-                delay: i * 0.1,
-                ease: [0.22, 0.9, 0.3, 1],
+                duration: 0.6,
+                delay: 0.15 + i * 0.15,
+                ease,
               }}
             >
               <Counter
@@ -83,7 +93,13 @@ export default function Thesis() {
               </p>
 
               {i < metrics.length - 1 && (
-                <div className="mt-8 h-px bg-line md:hidden" />
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.3 + i * 0.15, ease }}
+                  className="mt-8 h-px bg-line md:hidden origin-left"
+                />
               )}
             </motion.div>
           ))}

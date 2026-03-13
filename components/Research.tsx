@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import NatureOverlay from "./NatureOverlay";
 
+const ease = [0.22, 0.9, 0.3, 1] as const;
+
 interface Publication {
   title: string;
   venue: string;
@@ -40,13 +42,13 @@ function PublicationEntry({ pub, index }: { pub: Publication; index: number }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, x: 50 }}
+      whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true }}
       transition={{
-        duration: 0.5,
-        delay: index * 0.15,
-        ease: [0.22, 0.9, 0.3, 1],
+        duration: 0.6,
+        delay: index * 0.18,
+        ease,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -64,7 +66,7 @@ function PublicationEntry({ pub, index }: { pub: Publication; index: number }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2, ease: [0.22, 0.9, 0.3, 1] }}
+            transition={{ duration: 0.2, ease }}
             className="flex gap-4 mt-3 overflow-hidden"
           >
             {pub.pdfUrl && (
@@ -109,28 +111,34 @@ export default function Research() {
         hideOnMobile
       />
       <div className="max-w-container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12">
-        {/* Rotated label — left column */}
+        {/* Rotated label — slides in from left */}
         <div className="md:col-span-2 flex md:justify-center">
           <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: [0.22, 0.9, 0.3, 1] }}
+            transition={{ duration: 0.6, ease }}
             className="section-label md:[writing-mode:vertical-rl] md:[transform:rotate(180deg)]"
           >
             Research
           </motion.p>
         </div>
 
-        {/* Publication entries — right column */}
+        {/* Publication entries — slide in from right */}
         <div className="md:col-span-10">
           {publications.map((pub, i) => (
             <PublicationEntry key={pub.title} pub={pub} index={i} />
           ))}
 
-          <p className="mt-8 text-xs text-muted/50 italic">
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="mt-8 text-xs text-muted/50 italic"
+          >
             * Placeholder publications — replace with your actual research papers
-          </p>
+          </motion.p>
         </div>
       </div>
     </section>

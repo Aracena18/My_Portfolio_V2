@@ -7,6 +7,8 @@ import Link from "next/link";
 import { useRef } from "react";
 import Counter from "./Counter";
 
+const ease = [0.22, 0.9, 0.3, 1] as const;
+
 export default function CaseStudy03() {
   const project = projects.find((p) => p.slug === "arms")!;
   const sectionRef = useRef<HTMLElement>(null);
@@ -29,12 +31,12 @@ export default function CaseStudy03() {
       <div className="bg-surface-dark text-white py-20 md:py-28 px-6 lg:px-8">
         <div className="max-w-container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-start">
-            {/* Left: project info */}
+            {/* Left: project info — slides in from left */}
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.8, ease }}
             >
               <p className="text-label tracking-[0.08em] uppercase text-muted-light/50 mb-4">
                 03
@@ -60,18 +62,18 @@ export default function CaseStudy03() {
               </Link>
             </motion.div>
 
-            {/* Right: metrics (parallax at different speed than left) */}
+            {/* Right: metrics — slide in from right with stagger */}
             <motion.div style={{ y: metricsY }} className="flex flex-wrap gap-8 md:gap-12 md:justify-end md:pt-8">
               {metrics.map((metric, i) => (
                 <motion.div
                   key={metric.label}
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, x: 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{
-                    duration: 0.5,
-                    delay: 0.2 + i * 0.1,
-                    ease: [0.22, 0.9, 0.3, 1],
+                    duration: 0.6,
+                    delay: 0.2 + i * 0.15,
+                    ease,
                   }}
                   className="text-center md:text-right"
                 >
@@ -84,20 +86,19 @@ export default function CaseStudy03() {
         </div>
       </div>
 
-      {/* Bottom half — light background with dashboard placeholder */}
+      {/* Bottom half — dashboard scales up on entrance */}
       <div className="bg-surface py-16 md:py-20 px-6 lg:px-8">
         <div className="max-w-container mx-auto">
           <motion.div
             style={{ y: dashboardY }}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 0.9, 0.3, 1] }}
+            initial={{ opacity: 0, y: 60, scale: 0.95 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.9, ease }}
             className="relative aspect-[16/7] rounded-2xl overflow-hidden bg-gradient-to-br from-surface-alt via-card to-surface-alt border border-line/60"
           >
             {/* Abstract dashboard mockup */}
             <div className="absolute inset-0 p-6 md:p-10">
-              {/* Simulated dashboard grid */}
               <div className="grid grid-cols-3 gap-3 md:gap-4 h-full opacity-40">
                 <div className="col-span-2 bg-line/30 rounded-lg" />
                 <div className="bg-line/30 rounded-lg" />
@@ -111,10 +112,10 @@ export default function CaseStudy03() {
             </span>
           </motion.div>
           <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
+            transition={{ duration: 0.5, delay: 0.3, ease }}
             className="mt-4 text-xs text-muted text-center"
           >
             ARMS dashboard — resource tracking and yield prediction

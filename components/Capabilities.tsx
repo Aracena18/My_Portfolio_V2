@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { type Ref } from "react";
 
+const ease = [0.22, 0.9, 0.3, 1] as const;
+
 const skills = [
   "Python",
   "TensorFlow",
@@ -27,17 +29,16 @@ const skills = [
 ];
 
 export default function Capabilities({ ref }: { ref?: Ref<HTMLElement> }) {
-  // Duplicate for seamless infinite scroll
   const doubled = [...skills, ...skills];
 
   return (
     <section ref={ref} className="py-24 md:py-32 overflow-hidden">
-      {/* Marquee ticker */}
+      {/* Marquee ticker — slides up on entrance */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.7, ease: [0.22, 0.9, 0.3, 1] }}
+        transition={{ duration: 0.8, ease }}
         className="relative"
       >
         {/* Fade edges */}
@@ -57,13 +58,13 @@ export default function Capabilities({ ref }: { ref?: Ref<HTMLElement> }) {
         </div>
       </motion.div>
 
-      {/* Narrative paragraph */}
+      {/* Narrative paragraph — slides in from left */}
       <div className="max-w-container mx-auto px-6 lg:px-8 mt-16 md:mt-20">
         <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, x: -40 }}
+          whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
+          transition={{ duration: 0.7, ease }}
           className="max-w-xl text-body text-muted leading-relaxed"
         >
           My practice spans the full pipeline: from training neural networks in

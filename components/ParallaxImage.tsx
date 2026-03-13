@@ -1,7 +1,9 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import React, { useRef } from "react";
+
+const ease = [0.22, 0.9, 0.3, 1] as const;
 
 interface ParallaxImageProps {
   src?: string;
@@ -13,13 +15,6 @@ interface ParallaxImageProps {
   children?: React.ReactNode;
 }
 
-/**
- * Parallax window section. The image inside scrolls slower than the page,
- * creating a visible depth effect. Drop a real photo into `src` to replace the placeholder.
- *
- * - `speed` controls how much the image moves relative to scroll (0.3 = subtle, 0.7 = dramatic)
- * - `overlay` adds a gradient for text readability on top
- */
 export default function ParallaxImage({
   src,
   alt = "Nature photography",
@@ -35,7 +30,6 @@ export default function ParallaxImage({
     offset: ["start end", "end start"],
   });
 
-  // The image translates by ±(speed * 100)px as you scroll through
   const y = useTransform(scrollYProgress, [0, 1], [`${speed * 100}px`, `-${speed * 100}px`]);
 
   // Cinematic entrance: fade in + slight scale as section enters viewport
@@ -48,6 +42,23 @@ export default function ParallaxImage({
       : overlay === "light"
         ? "bg-gradient-to-b from-surface/50 via-transparent to-surface/50"
         : "";
+
+  // Stagger children if they exist
+  const staggeredChildren = children
+    ? React.Children.map(children, (child) => {
+        if (!React.isValidElement(child)) return child;
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease }}
+          >
+            {child}
+          </motion.div>
+        );
+      })
+    : null;
 
   return (
     <motion.div
@@ -68,9 +79,7 @@ export default function ParallaxImage({
             className="w-full h-full object-cover"
           />
         ) : (
-          /* Placeholder — shows where to add a real photo */
           <div className="w-full h-full bg-gradient-to-br from-green-light/80 via-surface-alt to-green-light/40 flex flex-col items-center justify-center gap-5">
-            {/* Camera / landscape icon */}
             <div className="w-20 h-20 rounded-full border-2 border-dashed border-green/20 flex items-center justify-center">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" className="text-green/30">
                 <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -94,10 +103,10 @@ export default function ParallaxImage({
         <div className={`absolute inset-0 ${overlayClass}`} />
       )}
 
-      {/* Optional children (text overlaid on the image) */}
-      {children && (
+      {/* Optional children — staggered entrance */}
+      {staggeredChildren && (
         <div className="relative z-10 h-full flex items-center justify-center">
-          {children}
+          {staggeredChildren}
         </div>
       )}
     </motion.div>
