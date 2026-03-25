@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { useGLTF, useTexture } from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useShowcase } from "@/contexts/ShowcaseContext";
-import HologramParticles from "../effects/HologramParticles";
 
 interface AgriSenseModelProps {
   scale?: number;
@@ -14,7 +13,6 @@ interface AgriSenseModelProps {
 export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene: originalScene } = useGLTF("/models/i_phone_14_pro_copy.gltf");
-  const screenTexture = useTexture("/textures/Loading_Screen_Agrisense.jpeg");
   const { state, setModelState } = useShowcase();
 
   // Clone the scene
@@ -22,26 +20,16 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
 
   // Current interpolated values for smooth transitions
   const current = useRef({
-    rotationX: -0.1,  // Match entry animation start
+    rotationX: -0.1,
     rotationY: 0.1,
     rotationZ: 0,
     positionX: 0,
-    positionY: -0.3,    // Match entry animation start
+    positionY: -0.3,
     positionZ: 0,
-    opacity: 0.5,       // Start at 50% opacity for immediate visibility
-    scale: 0.9,         // Match entry animation start
+    opacity: 0.5,
+    scale: 0.9,
     floatTime: 0,
   });
-
-  // Configure screen texture
-  useMemo(() => {
-    screenTexture.flipY = false;
-    screenTexture.colorSpace = THREE.SRGBColorSpace;
-    screenTexture.minFilter = THREE.LinearFilter;
-    screenTexture.magFilter = THREE.LinearFilter;
-    screenTexture.center.set(0.5, 0.5);
-    screenTexture.rotation = Math.PI;
-  }, [screenTexture]);
 
   // Premium dark brushed metal material
   const chassisMaterial = useMemo(
@@ -60,16 +48,15 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
   const screenMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        map: screenTexture,
+        color: new THREE.Color("#f4f6f8"),
         emissive: new THREE.Color("#ffffff"),
-        emissiveMap: screenTexture,
-        emissiveIntensity: 0.5,
+        emissiveIntensity: 0.35,
         metalness: 0.1,
         roughness: 0.2,
         envMapIntensity: 0.5,
         transparent: true,
       }),
-    [screenTexture]
+    []
   );
 
   // Glass material
@@ -111,12 +98,13 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     };
   }, [scene, chassisMaterial, screenMaterial, glassMaterial]);
 
-  // Animation keyframes for AgriSense
-  const getTargetState = (projectProgress: number, isTransitioning: boolean, transitionProgress: number) => {
-    // Entry animation (0-15%) - quick fade in, phone rises into view
+  const getTargetState = (
+    projectProgress: number,
+    isTransitioning: boolean,
+    transitionProgress: number
+  ) => {
     if (projectProgress < 0.15) {
       const entryProgress = projectProgress / 0.15;
-      // Use easeOut for faster initial visibility
       const easedProgress = 1 - Math.pow(1 - entryProgress, 3);
       return {
         rotationX: THREE.MathUtils.lerp(-0.1, 0.1, easedProgress),
@@ -125,12 +113,11 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         positionX: 0,
         positionY: THREE.MathUtils.lerp(-0.3, 0, easedProgress),
         positionZ: 0,
-        opacity: THREE.MathUtils.lerp(0.5, 1, easedProgress), // Start at 50% opacity
+        opacity: THREE.MathUtils.lerp(0.5, 1, easedProgress),
         scale: THREE.MathUtils.lerp(0.9, 1, easedProgress),
       };
     }
 
-    // Active state (15-80%)
     if (projectProgress < 0.8) {
       const activeProgress = (projectProgress - 0.15) / 0.65;
       return {
@@ -145,10 +132,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
       };
     }
 
-    // Exit animation (80-100%) - rotate to show back camera
     const exitProgress = (projectProgress - 0.8) / 0.2;
-
-    // During transition to ESP32, morph behavior
     if (isTransitioning) {
       return {
         rotationX: THREE.MathUtils.lerp(0.1, 0.2, exitProgress),
@@ -174,12 +158,34 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     };
   };
 
-  // Frame loop
   useFrame((_, delta) => {
     if (!groupRef.current) return;
-
     const currentState = state.current;
-    const { activeProject, projectProgress, isTransitioning, transitionProgress, transitionFrom, transitionTo } = currentState;
+    const {
+      activeProject,
+      projectProgress,
+      isTransitioning,
+      transitionProgress,
+      transitionFrom,
+      transitionTo,
+    } = currentState;
+
+    const isActive =
+      activeProject === "agrisense" ||
+      transitionFrom === "agrisense" ||
+      transitionTo === "agrisense";
+
+    if (!isActive) {
+      if (current.current.opacity > 0.01) {
+        current.current.opacity *= 0.9;
+      }
+      scene.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material) {
+          (child.material as THREE.MeshStandardMaterial).opacity = current.current.opacity;
+        }
+      });
+      return;
+    }
 
     const target = getTargetState(
       activeProject === "agrisense" ? projectProgress : 1,
@@ -188,7 +194,6 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     );
     const lerp = 1 - Math.pow(0.001, delta);
 
-    // Smooth interpolation
     current.current.rotationX += (target.rotationX - current.current.rotationX) * lerp;
     current.current.rotationY += (target.rotationY - current.current.rotationY) * lerp;
     current.current.rotationZ += (target.rotationZ - current.current.rotationZ) * lerp;
@@ -222,7 +227,6 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
       }
     });
 
-    // Update context state
     setModelState("agrisense", {
       positionX: groupRef.current.position.x,
       positionY: groupRef.current.position.y,
@@ -236,29 +240,11 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     });
   });
 
-  // Keep particles available since the phone remains visible across sections
-  const showParticles = true;
-
   return (
     <group ref={groupRef}>
       <primitive object={scene} scale={scale} />
-
-      {/* Hologram particles rising from screen */}
-      {showParticles && (
-        <HologramParticles
-          count={25}
-          color="#1B6B35"
-          size={0.03}
-          speed={0.3}
-          spread={0.4}
-          height={1.5}
-          position={[0, 0.3, 0.1]}
-          opacity={current.current.opacity}
-        />
-      )}
     </group>
   );
 }
 
 useGLTF.preload("/models/i_phone_14_pro_copy.gltf");
-useTexture.preload("/textures/Loading_Screen_Agrisense.jpeg");

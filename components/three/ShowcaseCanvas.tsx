@@ -6,12 +6,10 @@ import { Environment, Preload } from "@react-three/drei";
 import CameraController from "./CameraController";
 import LightingSystem from "./LightingSystem";
 
-// Lazy load models to improve initial load time
-import dynamic from "next/dynamic";
-
-const AgriSenseModel = dynamic(() => import("./models/AgriSenseModel"), {
-  ssr: false,
-});
+import AgriSenseModel from "./models/AgriSenseModel";
+import ESP32Model from "./models/ESP32Model";
+import MonitorModel from "./models/MonitorModel";
+import IoTHubModel from "./models/IoTHubModel";
 
 interface ShowcaseCanvasProps {
   className?: string;
@@ -31,18 +29,19 @@ function LoadingFallback() {
 function SceneContent() {
   return (
     <>
-      {/* Camera Controller - handles scroll-driven camera movements */}
+      {/* Scroll-driven camera and lighting */}
       <CameraController />
-
-      {/* Dynamic Lighting System */}
       <LightingSystem />
 
       {/* Studio environment for reflections */}
       <Environment preset="city" />
 
-      {/* Focus mode: render only the phone model */}
+      {/* Mount all models; each controls its visibility from showcase state */}
       <Suspense fallback={<LoadingFallback />}>
         <AgriSenseModel />
+        <ESP32Model />
+        <MonitorModel />
+        <IoTHubModel />
       </Suspense>
 
       {/* Preload all models for smoother transitions */}
