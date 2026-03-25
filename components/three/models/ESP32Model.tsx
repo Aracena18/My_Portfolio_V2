@@ -10,96 +10,188 @@ interface ESP32ModelProps {
   scale?: number;
 }
 
-// Placeholder geometry when model isn't available
+// Enhanced PCB Board with premium materials
 function PlaceholderBoard({ opacity }: { opacity: number }) {
+  const timeRef = useRef(0);
+
+  // Premium FR-4 PCB material (realistic green)
   const boardMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#1a472a"),
-        metalness: 0.1,
-        roughness: 0.8,
+        color: new THREE.Color("#1a4d2e"), // Darker, more realistic PCB green
+        metalness: 0.15,
+        roughness: 0.75,
         transparent: true,
         opacity,
       }),
     [opacity]
   );
 
+  // High-quality chip material (matte black silicon)
   const chipMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#111111"),
-        metalness: 0.9,
-        roughness: 0.3,
+        color: new THREE.Color("#0a0a0a"),
+        metalness: 0.85,
+        roughness: 0.25,
         transparent: true,
         opacity,
       }),
     [opacity]
   );
 
+  // Enhanced camera module with subtle green glow
   const cameraMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
         color: new THREE.Color("#1a1a1a"),
         metalness: 0.95,
-        roughness: 0.2,
-        emissive: new THREE.Color("#003300"),
-        emissiveIntensity: 0.3,
+        roughness: 0.15,
+        emissive: new THREE.Color("#00ff88"),
+        emissiveIntensity: 0.5, // Increased glow
         transparent: true,
         opacity,
       }),
     [opacity]
   );
 
+  // Premium copper trace material
+  const copperMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: new THREE.Color("#b87333"),
+        metalness: 0.9,
+        roughness: 0.25,
+        emissive: new THREE.Color("#ff8844"),
+        emissiveIntensity: 0.3,
+        transparent: true,
+        opacity: opacity * 0.8,
+      }),
+    [opacity]
+  );
+
+  // Animate copper trace glow
+  useFrame((state) => {
+    timeRef.current = state.clock.getElapsedTime();
+    const pulse = 0.3 + Math.sin(timeRef.current * 2) * 0.2;
+    copperMaterial.emissiveIntensity = pulse;
+  });
+
   return (
     <group>
-      {/* PCB Board */}
+      {/* PCB Board with subtle texture */}
       <mesh material={boardMaterial} castShadow receiveShadow>
         <boxGeometry args={[1.2, 0.08, 1.6]} />
       </mesh>
 
-      {/* Main chip */}
+      {/* Main ESP32 chip with pin details */}
       <mesh position={[0, 0.1, 0.2]} material={chipMaterial} castShadow>
         <boxGeometry args={[0.5, 0.12, 0.5]} />
       </mesh>
 
-      {/* Camera module */}
+      {/* Chip label (subtle emboss) */}
+      <mesh position={[0, 0.17, 0.2]}>
+        <planeGeometry args={[0.4, 0.08]} />
+        <meshStandardMaterial
+          color="#ffffff"
+          emissive="#ffffff"
+          emissiveIntensity={0.1}
+          transparent
+          opacity={opacity * 0.3}
+        />
+      </mesh>
+
+      {/* Camera module housing */}
       <mesh position={[0, 0.15, -0.5]} material={cameraMaterial} castShadow>
         <cylinderGeometry args={[0.15, 0.2, 0.2, 16]} />
       </mesh>
 
-      {/* Camera lens */}
+      {/* Camera lens with realistic glass */}
       <mesh position={[0, 0.26, -0.5]}>
         <cylinderGeometry args={[0.08, 0.08, 0.02, 16]} />
-        <meshStandardMaterial color="#000000" metalness={1} roughness={0} />
+        <meshPhysicalMaterial
+          color="#0a0a0a"
+          metalness={0.1}
+          roughness={0.05}
+          envMapIntensity={3}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
+          transparent
+          opacity={opacity}
+        />
       </mesh>
 
-      {/* Small components */}
-      {[
-        [0.4, 0.06, 0.4],
-        [-0.4, 0.06, 0.4],
-        [0.4, 0.06, -0.2],
-        [-0.4, 0.06, -0.2],
-        [0.3, 0.06, 0],
-        [-0.3, 0.06, 0],
-      ].map(([x, y, z], i) => (
-        <mesh key={i} position={[x, y, z]} material={chipMaterial}>
-          <boxGeometry args={[0.1, 0.05, 0.15]} />
-        </mesh>
-      ))}
+      {/* LED indicator on camera */}
+      <mesh position={[0.12, 0.26, -0.5]}>
+        <sphereGeometry args={[0.015, 16, 16]} />
+        <meshStandardMaterial
+          color="#00ff88"
+          emissive="#00ff88"
+          emissiveIntensity={0.8}
+          transparent
+          opacity={opacity}
+        />
+      </mesh>
 
-      {/* Circuit traces (emissive lines) */}
-      {[0.2, -0.2].map((x, i) => (
-        <mesh key={`trace-${i}`} position={[x, 0.045, 0]} rotation={[0, 0, 0]}>
-          <boxGeometry args={[0.02, 0.005, 1.4]} />
+      {/* Small components (resistors, capacitors) with varied colors */}
+      {[
+        { pos: [0.4, 0.06, 0.4], color: "#2a2a2a" },
+        { pos: [-0.4, 0.06, 0.4], color: "#8b4513" }, // Brown capacitor
+        { pos: [0.4, 0.06, -0.2], color: "#2a2a2a" },
+        { pos: [-0.4, 0.06, -0.2], color: "#4169e1" }, // Blue component
+        { pos: [0.3, 0.06, 0], color: "#2a2a2a" },
+        { pos: [-0.3, 0.06, 0], color: "#ffd700" }, // Gold component
+      ].map(({ pos, color }, i) => (
+        <mesh key={i} position={pos as [number, number, number]} castShadow>
+          <boxGeometry args={[0.1, 0.05, 0.15]} />
           <meshStandardMaterial
-            color="#00ff00"
-            emissive="#00ff00"
-            emissiveIntensity={0.5}
+            color={color}
+            metalness={0.7}
+            roughness={0.4}
             transparent
-            opacity={opacity * 0.8}
+            opacity={opacity}
           />
         </mesh>
       ))}
+
+      {/* Enhanced circuit traces (copper pathways) */}
+      {[
+        { x: 0.2, z: 0, length: 1.4 },
+        { x: -0.2, z: 0, length: 1.4 },
+        { x: 0, z: 0.3, length: 0.8, rotation: Math.PI / 2 },
+        { x: 0, z: -0.3, length: 0.6, rotation: Math.PI / 2 },
+      ].map((trace, i) => (
+        <mesh
+          key={`trace-${i}`}
+          position={[trace.x, 0.045, trace.z]}
+          rotation={[0, trace.rotation || 0, 0]}
+        >
+          <boxGeometry args={[0.02, 0.005, trace.length]} />
+          <primitive object={copperMaterial} />
+        </mesh>
+      ))}
+
+      {/* Solder points (tiny metallic dots) */}
+      {Array.from({ length: 12 }).map((_, i) => {
+        const angle = (i / 12) * Math.PI * 2;
+        const radius = 0.45;
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        return (
+          <mesh key={`solder-${i}`} position={[x, 0.045, z]}>
+            <sphereGeometry args={[0.015, 8, 8]} />
+            <meshStandardMaterial
+              color="#c0c0c0"
+              metalness={1}
+              roughness={0.2}
+              emissive="#ffffff"
+              emissiveIntensity={0.1}
+              transparent
+              opacity={opacity}
+            />
+          </mesh>
+        );
+      })}
     </group>
   );
 }

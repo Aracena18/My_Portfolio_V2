@@ -10,7 +10,7 @@ interface IoTHubModelProps {
   scale?: number;
 }
 
-// Sensor node component
+// Enhanced sensor node component with premium materials
 function SensorNode({
   orbitRadius,
   orbitSpeed,
@@ -25,25 +25,29 @@ function SensorNode({
   size?: number;
 }) {
   const ref = useRef<THREE.Group>(null);
+  const ledRef = useRef<THREE.Mesh>(null);
 
+  // Premium sensor body material
   const material = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#2d3436"),
-        metalness: 0.8,
-        roughness: 0.3,
+        color: new THREE.Color("#2a3a4a"),
+        metalness: 0.85,
+        roughness: 0.25,
+        envMapIntensity: 1.3,
         transparent: true,
         opacity,
       }),
     [opacity]
   );
 
+  // Animated LED material
   const ledMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#00ff00"),
-        emissive: new THREE.Color("#00ff00"),
-        emissiveIntensity: 0.8,
+        color: new THREE.Color("#00ff88"),
+        emissive: new THREE.Color("#00ff88"),
+        emissiveIntensity: 1.0,
         transparent: true,
         opacity,
       }),
@@ -61,24 +65,80 @@ function SensorNode({
 
     // Face center
     ref.current.lookAt(0, ref.current.position.y, 0);
+
+    // Animate LED pulsing
+    if (ledRef.current) {
+      const pulse = 0.7 + Math.sin(time * 3 + orbitOffset) * 0.4;
+      (ledRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity = pulse;
+    }
   });
 
   return (
     <group ref={ref}>
-      {/* Main body */}
+      {/* Main sensor body with panels */}
       <mesh material={material} castShadow>
         <boxGeometry args={[size, size * 0.6, size * 0.4]} />
       </mesh>
 
-      {/* Antenna */}
-      <mesh position={[0, size * 0.4, 0]} material={material}>
-        <cylinderGeometry args={[0.01, 0.01, size * 0.5, 8]} />
+      {/* Solar panel detail (top) */}
+      <mesh position={[0, size * 0.31, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[size * 0.8, size * 0.3]} />
+        <meshStandardMaterial
+          color="#1a2a3a"
+          metalness={0.3}
+          roughness={0.6}
+          transparent
+          opacity={opacity * 0.9}
+        />
       </mesh>
 
-      {/* LED indicator */}
-      <mesh position={[size * 0.3, 0, size * 0.21]} material={ledMaterial}>
-        <sphereGeometry args={[0.02, 8, 8]} />
+      {/* Antenna */}
+      <mesh position={[0, size * 0.4, 0]} material={material}>
+        <cylinderGeometry args={[0.012, 0.012, size * 0.5, 8]} />
       </mesh>
+
+      {/* Antenna tip */}
+      <mesh position={[0, size * 0.65, 0]}>
+        <sphereGeometry args={[0.02, 12, 12]} />
+        <meshStandardMaterial
+          color="#00aaff"
+          emissive="#00aaff"
+          emissiveIntensity={0.6}
+          transparent
+          opacity={opacity}
+        />
+      </mesh>
+
+      {/* LED indicator (pulsing) */}
+      <mesh ref={ledRef} position={[size * 0.35, 0, size * 0.21]} material={ledMaterial}>
+        <sphereGeometry args={[0.025, 16, 16]} />
+      </mesh>
+
+      {/* Secondary indicator */}
+      <mesh position={[-size * 0.35, 0, size * 0.21]}>
+        <sphereGeometry args={[0.015, 12, 12]} />
+        <meshStandardMaterial
+          color="#ffaa00"
+          emissive="#ffaa00"
+          emissiveIntensity={0.4}
+          transparent
+          opacity={opacity * 0.7}
+        />
+      </mesh>
+
+      {/* Side vents */}
+      {[-1, 1].map((side) => (
+        <mesh key={side} position={[size * 0.52 * side, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+          <boxGeometry args={[size * 0.3, 0.01, size * 0.2]} />
+          <meshStandardMaterial
+            color="#0a0a0a"
+            metalness={0.5}
+            roughness={0.7}
+            transparent
+            opacity={opacity * 0.6}
+          />
+        </mesh>
+      ))}
     </group>
   );
 }
@@ -122,13 +182,32 @@ function ConnectionLine({
   return <primitive ref={lineRef} object={new THREE.Line(geometry, material)} />;
 }
 
-// Placeholder IoT Hub geometry
+// Premium IoT Hub with animated LED ring
 function PlaceholderHub({ opacity }: { opacity: number }) {
+  const timeRef = useRef(0);
+
+  // Premium matte dark hub body
   const bodyMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
         color: new THREE.Color("#1a1a2e"),
-        metalness: 0.7,
+        metalness: 0.8,
+        roughness: 0.3,
+        envMapIntensity: 1.2,
+        transparent: true,
+        opacity,
+      }),
+    [opacity]
+  );
+
+  // Enhanced green accent material
+  const accentMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: new THREE.Color("#1B6B35"),
+        emissive: new THREE.Color("#1B6B35"),
+        emissiveIntensity: 0.5, // Increased glow
+        metalness: 0.6,
         roughness: 0.4,
         transparent: true,
         opacity,
@@ -136,69 +215,129 @@ function PlaceholderHub({ opacity }: { opacity: number }) {
     [opacity]
   );
 
-  const accentMaterial = useMemo(
-    () =>
-      new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#1B6B35"),
-        emissive: new THREE.Color("#1B6B35"),
-        emissiveIntensity: 0.3,
-        metalness: 0.5,
-        roughness: 0.5,
-        transparent: true,
-        opacity,
-      }),
-    [opacity]
-  );
-
+  // Animated LED ring material
   const ledRingMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
         color: new THREE.Color("#00d2d3"),
         emissive: new THREE.Color("#00d2d3"),
-        emissiveIntensity: 0.8,
+        emissiveIntensity: 1.0, // Will be animated
         transparent: true,
         opacity,
       }),
     [opacity]
   );
 
+  // Animate LED ring pulsing
+  useFrame((state) => {
+    timeRef.current = state.clock.getElapsedTime();
+    const pulse = 0.8 + Math.sin(timeRef.current * 2) * 0.3;
+    ledRingMaterial.emissiveIntensity = pulse;
+  });
+
   return (
     <group>
-      {/* Main body - cylindrical hub */}
+      {/* Main body - premium cylindrical hub */}
       <mesh material={bodyMaterial} castShadow receiveShadow>
         <cylinderGeometry args={[0.4, 0.35, 0.25, 32]} />
       </mesh>
 
-      {/* Top dome */}
+      {/* Top dome with subtle metallic finish */}
       <mesh position={[0, 0.15, 0]} material={bodyMaterial}>
         <sphereGeometry args={[0.35, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
       </mesh>
 
-      {/* LED ring */}
+      {/* Animated LED ring with glow */}
       <mesh position={[0, 0.05, 0]} material={ledRingMaterial}>
-        <torusGeometry args={[0.38, 0.015, 16, 64]} />
+        <torusGeometry args={[0.38, 0.018, 16, 64]} />
       </mesh>
 
-      {/* Accent stripe */}
+      {/* Accent stripe (green) */}
       <mesh position={[0, 0, 0]} material={accentMaterial}>
-        <torusGeometry args={[0.41, 0.02, 16, 64]} />
+        <torusGeometry args={[0.41, 0.025, 16, 64]} />
       </mesh>
 
-      {/* Base */}
-      <mesh position={[0, -0.15, 0]} material={bodyMaterial}>
+      {/* Base with chamfered edge */}
+      <mesh position={[0, -0.15, 0]} material={bodyMaterial} receiveShadow>
         <cylinderGeometry args={[0.45, 0.45, 0.05, 32]} />
       </mesh>
 
-      {/* Status LEDs */}
-      {[0, 1, 2, 3].map((i) => {
-        const angle = (i / 4) * Math.PI * 2;
+      {/* Base ring detail */}
+      <mesh position={[0, -0.125, 0]}>
+        <torusGeometry args={[0.46, 0.01, 16, 64]} />
+        <meshStandardMaterial
+          color="#3a3a4a"
+          metalness={0.9}
+          roughness={0.2}
+          transparent
+          opacity={opacity}
+        />
+      </mesh>
+
+      {/* Status LEDs positioned around the hub */}
+      {[0, 1, 2, 3, 4, 5].map((i) => {
+        const angle = (i / 6) * Math.PI * 2;
+        const ledTime = timeRef.current * 2 + i * Math.PI / 3;
+        const ledIntensity = 0.6 + Math.sin(ledTime) * 0.4;
+
         return (
           <mesh
             key={i}
-            position={[Math.cos(angle) * 0.3, 0.08, Math.sin(angle) * 0.3]}
-            material={ledRingMaterial}
+            position={[Math.cos(angle) * 0.32, 0.08, Math.sin(angle) * 0.32]}
           >
-            <sphereGeometry args={[0.025, 8, 8]} />
+            <sphereGeometry args={[0.03, 16, 16]} />
+            <meshStandardMaterial
+              color="#00d2d3"
+              emissive="#00d2d3"
+              emissiveIntensity={ledIntensity}
+              transparent
+              opacity={opacity}
+            />
+          </mesh>
+        );
+      })}
+
+      {/* Central antenna/sensor */}
+      <mesh position={[0, 0.4, 0]}>
+        <cylinderGeometry args={[0.015, 0.025, 0.25, 16]} />
+        <meshStandardMaterial
+          color="#2a2a2a"
+          metalness={0.9}
+          roughness={0.3}
+          emissive="#00aaff"
+          emissiveIntensity={0.5}
+          transparent
+          opacity={opacity}
+        />
+      </mesh>
+
+      {/* Antenna tip LED */}
+      <mesh position={[0, 0.525, 0]}>
+        <sphereGeometry args={[0.035, 16, 16]} />
+        <meshStandardMaterial
+          color="#00aaff"
+          emissive="#00aaff"
+          emissiveIntensity={0.9}
+          transparent
+          opacity={opacity}
+        />
+      </mesh>
+
+      {/* Vent holes (decorative details) */}
+      {Array.from({ length: 8 }).map((_, i) => {
+        const angle = (i / 8) * Math.PI * 2;
+        const x = Math.cos(angle) * 0.38;
+        const z = Math.sin(angle) * 0.38;
+        return (
+          <mesh key={`vent-${i}`} position={[x, 0, z]} rotation={[0, angle, 0]}>
+            <boxGeometry args={[0.03, 0.15, 0.01]} />
+            <meshStandardMaterial
+              color="#0a0a0a"
+              metalness={0.3}
+              roughness={0.7}
+              transparent
+              opacity={opacity * 0.8}
+            />
           </mesh>
         );
       })}

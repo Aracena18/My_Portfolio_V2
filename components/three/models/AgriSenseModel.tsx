@@ -59,17 +59,17 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     []
   );
 
-  // Emissive screen material with UI texture
+  // Emissive screen material with UI texture - Enhanced for premium glow
   const screenMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
         map: configuredScreenTexture,
         emissive: new THREE.Color("#ffffff"),
         emissiveMap: configuredScreenTexture,
-        emissiveIntensity: 0.4,
-        metalness: 0.1,
-        roughness: 0.2,
-        envMapIntensity: 0.5,
+        emissiveIntensity: 0.8, // Increased for "lit screen" effect
+        metalness: 0.05,
+        roughness: 0.15,
+        envMapIntensity: 1.2, // Enhanced environment reflections
         transparent: true,
       }),
     [configuredScreenTexture]

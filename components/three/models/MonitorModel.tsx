@@ -10,27 +10,30 @@ interface MonitorModelProps {
   scale?: number;
 }
 
-// Placeholder MacBook/Monitor geometry
+// Premium Apple-style Monitor/Studio Display
 function PlaceholderMonitor({ opacity, screenTexture }: { opacity: number; screenTexture?: THREE.Texture }) {
-  const bodyMaterial = useMemo(
+  // Space gray aluminum material (Apple Studio Display aesthetic)
+  const aluminumMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#2d2d2d"),
+        color: new THREE.Color("#8a8d93"),
         metalness: 0.9,
-        roughness: 0.3,
+        roughness: 0.2,
+        envMapIntensity: 1.5,
         transparent: true,
         opacity,
       }),
     [opacity]
   );
 
+  // Enhanced screen material with premium glow
   const screenMaterial = useMemo(() => {
     const mat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color("#111111"),
-      metalness: 0.1,
-      roughness: 0.2,
+      color: new THREE.Color("#0a0a0a"),
+      metalness: 0.05,
+      roughness: 0.1,
       emissive: new THREE.Color("#ffffff"),
-      emissiveIntensity: screenTexture ? 0.3 : 0.1,
+      emissiveIntensity: screenTexture ? 0.7 : 0.2, // Increased glow
       transparent: true,
       opacity,
     });
@@ -41,12 +44,14 @@ function PlaceholderMonitor({ opacity, screenTexture }: { opacity: number; scree
     return mat;
   }, [opacity, screenTexture]);
 
+  // Ultra-thin bezel material (dark aluminum)
   const bezelMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
         color: new THREE.Color("#1a1a1a"),
-        metalness: 0.8,
-        roughness: 0.4,
+        metalness: 0.85,
+        roughness: 0.25,
+        envMapIntensity: 1.2,
         transparent: true,
         opacity,
       }),
@@ -55,42 +60,96 @@ function PlaceholderMonitor({ opacity, screenTexture }: { opacity: number; scree
 
   return (
     <group>
-      {/* Screen bezel/frame */}
+      {/* Ultra-thin bezel frame - Apple-style minimal */}
       <mesh position={[0, 0.8, 0]} material={bezelMaterial} castShadow receiveShadow>
-        <boxGeometry args={[2.4, 1.5, 0.08]} />
+        <boxGeometry args={[2.4, 1.5, 0.03]} />
       </mesh>
 
-      {/* Screen */}
-      <mesh position={[0, 0.8, 0.045]} material={screenMaterial}>
-        <planeGeometry args={[2.2, 1.35]} />
+      {/* Premium display screen */}
+      <mesh position={[0, 0.8, 0.02]} material={screenMaterial}>
+        <planeGeometry args={[2.3, 1.42]} />
       </mesh>
 
-      {/* Stand neck */}
-      <mesh position={[0, 0.1, -0.1]} material={bodyMaterial} castShadow>
-        <boxGeometry args={[0.15, 0.3, 0.1]} />
+      {/* Screen glass overlay for realistic reflection */}
+      <mesh position={[0, 0.8, 0.025]}>
+        <planeGeometry args={[2.3, 1.42]} />
+        <meshPhysicalMaterial
+          transparent
+          opacity={0.1 * opacity}
+          metalness={0}
+          roughness={0.05}
+          envMapIntensity={2}
+          clearcoat={0.8}
+          clearcoatRoughness={0.15}
+          ior={1.5}
+        />
       </mesh>
 
-      {/* Stand base */}
-      <mesh position={[0, -0.05, 0]} material={bodyMaterial} castShadow receiveShadow>
-        <cylinderGeometry args={[0.4, 0.5, 0.05, 32]} />
+      {/* Elegant cylindrical stand (Studio Display style) */}
+      <mesh position={[0, 0.1, -0.05]} rotation={[0.1, 0, 0]} material={aluminumMaterial} castShadow>
+        <cylinderGeometry args={[0.08, 0.12, 0.6, 32]} />
       </mesh>
 
-      {/* Apple logo (simplified) */}
-      <mesh position={[0, 0.8, -0.045]}>
-        <circleGeometry args={[0.08, 32]} />
+      {/* Circular base with chamfered edge */}
+      <mesh position={[0, -0.05, 0]} material={aluminumMaterial} castShadow receiveShadow>
+        <cylinderGeometry args={[0.45, 0.5, 0.03, 64]} />
+      </mesh>
+
+      {/* Base top surface (polished) */}
+      <mesh position={[0, -0.035, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.44, 64]} />
         <meshStandardMaterial
-          color="#3a3a3a"
+          color="#a0a3a8"
+          metalness={0.95}
+          roughness={0.15}
+          envMapIntensity={1.8}
+          transparent
+          opacity={opacity}
+        />
+      </mesh>
+
+      {/* Apple logo (subtle, minimal) */}
+      <mesh position={[0, 0.8, -0.02]}>
+        <circleGeometry args={[0.06, 32]} />
+        <meshStandardMaterial
+          color="#4a4a4a"
           metalness={0.9}
           roughness={0.2}
           transparent
+          opacity={opacity * 0.5}
+        />
+      </mesh>
+
+      {/* Camera notch (top center of bezel) */}
+      <mesh position={[0, 1.5, 0.018]}>
+        <sphereGeometry args={[0.015, 16, 16]} />
+        <meshStandardMaterial
+          color="#0a0a0a"
+          metalness={0.1}
+          roughness={0.1}
+          emissive="#ffffff"
+          emissiveIntensity={0.05}
+          transparent
           opacity={opacity}
+        />
+      </mesh>
+
+      {/* Power indicator LED (bottom of screen) */}
+      <mesh position={[0, 0.1, 0.02]}>
+        <sphereGeometry args={[0.008, 16, 16]} />
+        <meshStandardMaterial
+          color="#00ff00"
+          emissive="#00ff00"
+          emissiveIntensity={0.6}
+          transparent
+          opacity={opacity * 0.7}
         />
       </mesh>
     </group>
   );
 }
 
-// Floating chart element
+// Enhanced floating chart element with glass panel
 function FloatingChart({
   position,
   scale,
@@ -104,6 +163,21 @@ function FloatingChart({
 }) {
   const ref = useRef<THREE.Group>(null);
 
+  // Enhanced chart material with better glow
+  const chartMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: new THREE.Color(color),
+        emissive: new THREE.Color(color),
+        emissiveIntensity: 0.7, // Increased glow
+        metalness: 0.3,
+        roughness: 0.4,
+        transparent: true,
+        opacity: opacity * 0.9,
+      }),
+    [color, opacity]
+  );
+
   useFrame((state) => {
     if (!ref.current) return;
     const time = state.clock.getElapsedTime();
@@ -113,19 +187,41 @@ function FloatingChart({
 
   return (
     <group ref={ref} position={position} scale={scale}>
-      {/* Bar chart */}
+      {/* Glass panel background */}
+      <mesh position={[0, 0.15, -0.05]}>
+        <planeGeometry args={[0.8, 0.6]} />
+        <meshPhysicalMaterial
+          transparent
+          opacity={opacity * 0.15}
+          metalness={0}
+          roughness={0.1}
+          envMapIntensity={1.5}
+          clearcoat={0.5}
+          clearcoatRoughness={0.2}
+        />
+      </mesh>
+
+      {/* Bar chart with rounded appearance */}
       {[0, 1, 2, 3, 4].map((i) => (
         <mesh key={i} position={[(i - 2) * 0.12, (i % 3) * 0.15 + 0.1, 0]}>
           <boxGeometry args={[0.08, 0.1 + (i % 3) * 0.15, 0.02]} />
-          <meshStandardMaterial
-            color={color}
-            emissive={color}
-            emissiveIntensity={0.5}
-            transparent
-            opacity={opacity * 0.8}
-          />
+          <primitive object={chartMaterial} />
         </mesh>
       ))}
+
+      {/* Chart frame/border */}
+      <lineSegments>
+        <edgesGeometry
+          args={[
+            new THREE.PlaneGeometry(0.8, 0.6),
+          ]}
+        />
+        <lineBasicMaterial
+          color={color}
+          transparent
+          opacity={opacity * 0.3}
+        />
+      </lineSegments>
     </group>
   );
 }

@@ -12,7 +12,7 @@ interface CameraKeyframe {
   fov: number;
 }
 
-// Camera positions for each project phase
+// Camera positions for each project phase - Enhanced for cinematic presentation
 const CAMERA_KEYFRAMES: Record<ProjectId, {
   entry: CameraKeyframe;
   active: CameraKeyframe;
@@ -20,76 +20,76 @@ const CAMERA_KEYFRAMES: Record<ProjectId, {
 }> = {
   agrisense: {
     entry: {
-      position: [0, 0, 6],
+      position: [0, -0.5, 6],
       target: [0, 0, 0],
-      fov: 45,
+      fov: 48,
     },
     active: {
-      position: [1.5, 0.5, 4],
+      position: [1.2, 0.3, 4.5],
       target: [0, 0, 0],
       fov: 42,
     },
     exit: {
-      position: [2, 0.5, 3.5],
-      target: [0, 0, 0],
+      position: [1.8, 0.8, 4],
+      target: [0, 0.2, 0],
       fov: 40,
     },
   },
   esp32: {
     entry: {
-      position: [-1, 0.5, 4],
+      position: [-0.8, 0.8, 4.5],
       target: [0, 0, 0],
-      fov: 45,
+      fov: 46,
     },
     active: {
-      position: [0, 0.8, 3.5],
+      position: [0.3, 1.2, 3.5],
       target: [0, 0, 0],
       fov: 50,
     },
     exit: {
-      position: [1.5, 1, 4],
+      position: [1.2, 0.8, 4],
       target: [0, 0, 0],
-      fov: 45,
+      fov: 44,
     },
   },
   arms: {
     entry: {
-      position: [0, 0, 5],
-      target: [0, 0, 0],
-      fov: 45,
+      position: [-0.5, 0.2, 5],
+      target: [0, 0.3, 0],
+      fov: 46,
     },
     active: {
-      position: [0, 0.3, 3],
-      target: [0, 0, 0],
-      fov: 40,
+      position: [0.3, 0.5, 3.5],
+      target: [0, 0.4, 0],
+      fov: 42,
     },
     exit: {
-      position: [-1, 0.5, 4],
-      target: [0, 0, 0],
+      position: [-0.8, 0.8, 4.5],
+      target: [0, 0.2, 0],
       fov: 45,
     },
   },
   realitech: {
     entry: {
-      position: [0, 1, 5],
+      position: [0.5, 0.8, 5],
       target: [0, 0, 0],
-      fov: 50,
+      fov: 48,
     },
     active: {
-      position: [2, 1, 4],
+      position: [1.5, 0.6, 4],
       target: [0, 0, 0],
-      fov: 45,
+      fov: 44,
     },
     exit: {
-      position: [0, 0, 6],
+      position: [0, 0.3, 5.5],
       target: [0, 0, 0],
       fov: 45,
     },
   },
 };
 
-// Smooth interpolation factor
-const LERP_FACTOR = 0.08;
+// Smooth interpolation factor - Slower for more cinematic feel
+const LERP_FACTOR = 0.05;
 
 // Helper to interpolate between keyframes based on progress
 function interpolateKeyframe(
