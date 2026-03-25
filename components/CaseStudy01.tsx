@@ -6,6 +6,12 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRef } from "react";
 import Counter from "./Counter";
+import dynamic from "next/dynamic";
+
+const PhoneScene = dynamic(
+  () => import("@/components/three/PhoneScene"),
+  { ssr: false }
+);
 
 const smooth = { stiffness: 80, damping: 25, restDelta: 0.001 };
 
@@ -25,7 +31,7 @@ export default function CaseStudy01() {
       className="py-20 md:py-32 overflow-hidden"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-0 items-center">
-        {/* Image area */}
+        {/* 3D Phone area */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -35,29 +41,32 @@ export default function CaseStudy01() {
         >
           <motion.div
             style={{ y: imageY }}
-            className="absolute inset-0 bg-gradient-to-br from-green-light via-surface-alt to-green-light/50"
+            className="absolute inset-0 bg-gradient-to-br from-[#0a1f0d] via-[#0f2918] to-[#061208]"
           >
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 opacity-[0.06]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(27,107,53,0.3) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(27,107,53,0.3) 1px, transparent 1px)
+                `,
+                backgroundSize: '40px 40px',
+              }}
+            />
+            {/* Radial glow behind phone */}
             <div className="absolute inset-0 flex items-center justify-center">
-              {/* Abstract pattern suggesting AI/data flow */}
-              <div className="relative w-full h-full opacity-30">
-                {[...Array(6)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute border border-green/20 rounded-full"
-                    style={{
-                      width: `${120 + i * 80}px`,
-                      height: `${120 + i * 80}px`,
-                      top: `${30 + i * 4}%`,
-                      left: `${20 + i * 6}%`,
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  />
-                ))}
-              </div>
-              <span className="absolute text-xs text-muted/40 font-heading tracking-wider uppercase">
-                Project Screenshot
-              </span>
+              <div
+                className="w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full blur-2xl"
+                style={{ background: 'radial-gradient(circle, rgba(27,107,53,0.2) 0%, rgba(27,107,53,0.05) 50%, transparent 100%)' }}
+              />
             </div>
+            {/* 3D Phone Canvas */}
+            <div className="absolute inset-0 z-10">
+              <PhoneScene />
+            </div>
+            {/* Decorative corner accents */}
+            <div className="absolute top-6 left-6 w-8 h-8 border-t border-l border-green/20 z-20" />
+            <div className="absolute bottom-6 right-6 w-8 h-8 border-b border-r border-green/20 z-20" />
           </motion.div>
         </motion.div>
 

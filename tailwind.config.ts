@@ -10,28 +10,28 @@ const config: Config = {
     extend: {
       colors: {
         surface: {
-          DEFAULT: "#F2F5EE",
-          alt: "#E8ECE2",
+          DEFAULT: "#E9EEE7",
+          alt: "#DEE5DB",
           dark: "#0C1A0E",
         },
-        card: "#FAFCF8",
+        card: "#F3F7F0",
         ink: {
           DEFAULT: "#111A14",
           secondary: "#4A5548",
         },
         muted: {
-          DEFAULT: "#6B7B65",
-          light: "#9CA898",
+          DEFAULT: "#65715F",
+          light: "#909C8B",
         },
-        line: "#D4DDD0",
+        line: "#C8D2C3",
         green: {
-          DEFAULT: "#1B6B35",
-          light: "#E4F0E0",
+          DEFAULT: "#165A2D",
+          light: "#D6E2D1",
           dark: "#0F4D23",
         },
         accent: {
           DEFAULT: "#4338CA",
-          light: "#EDE9FE",
+          light: "#E6E2F6",
         },
       },
       maxWidth: {

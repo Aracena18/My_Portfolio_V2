@@ -1,7 +1,7 @@
 "use client";
 
 import Capabilities from "@/components/Capabilities";
-import CaseStudies from "@/components/CaseStudies";
+import ShowcaseSection from "@/components/showcase/ShowcaseSection";
 import NavigationBar from "@/components/NavigationBar";
 import OpeningStatement from "@/components/OpeningStatement";
 import ParallaxImage from "@/components/ParallaxImage";
@@ -58,7 +58,7 @@ export default function Home() {
           </div>
         </ParallaxImage>
 
-        <CaseStudies />
+        <ShowcaseSection />
         <Capabilities />
 
         {/* Parallax photo — wide agricultural field */}

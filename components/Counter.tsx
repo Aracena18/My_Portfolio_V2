@@ -10,15 +10,30 @@ import {
 import { useEffect, useRef } from "react";
 
 interface CounterProps {
-  target: number;
+  target?: number;
+  value?: string; // String value like "92%", "<3s", "150+"
   suffix?: string;
   prefix?: string;
   duration?: number;
   className?: string;
 }
 
+// Parse numeric value from string (e.g., "92%" -> 92, "<3s" -> 3)
+function parseValue(value: string): { num: number; prefix: string; suffix: string } {
+  const match = value.match(/^([<>≈~]?)(\d+(?:\.\d+)?)(.*)$/);
+  if (match) {
+    return {
+      prefix: match[1] || "",
+      num: parseFloat(match[2]),
+      suffix: match[3] || "",
+    };
+  }
+  return { num: 0, prefix: "", suffix: value };
+}
+
 export default function Counter({
   target,
+  value,
   suffix = "",
   prefix = "",
   duration = 1.5,
@@ -29,27 +44,33 @@ export default function Counter({
   const motionValue = useMotionValue(0);
   const rounded = useTransform(motionValue, (latest) => Math.round(latest));
 
+  // Parse the value if provided as string
+  const parsed = value ? parseValue(value) : null;
+  const actualTarget = target ?? parsed?.num ?? 0;
+  const actualPrefix = prefix || parsed?.prefix || "";
+  const actualSuffix = suffix || parsed?.suffix || "";
+
   useEffect(() => {
     if (isInView) {
-      animate(motionValue, target, {
+      animate(motionValue, actualTarget, {
         duration,
         ease: [0.22, 0.9, 0.3, 1],
       });
     }
-  }, [isInView, motionValue, target, duration]);
+  }, [isInView, motionValue, actualTarget, duration]);
 
   useEffect(() => {
     const unsubscribe = rounded.on("change", (v) => {
       if (ref.current) {
-        ref.current.textContent = `${prefix}${v}${suffix}`;
+        ref.current.textContent = `${actualPrefix}${v}${actualSuffix}`;
       }
     });
     return unsubscribe;
-  }, [rounded, prefix, suffix]);
+  }, [rounded, actualPrefix, actualSuffix]);
 
   return (
     <motion.span ref={ref} className={className}>
-      {prefix}0{suffix}
+      {actualPrefix}0{actualSuffix}
     </motion.span>
   );
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Urbanist } from "next/font/google";
 import "./globals.css";
+import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
+import ClientLayout from "@/components/providers/ClientLayout";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -66,7 +68,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="antialiased" suppressHydrationWarning>
-        {children}
+        <ClientLayout>
+          <SmoothScrollProvider>
+            {children}
+          </SmoothScrollProvider>
+        </ClientLayout>
       </body>
     </html>
   );
