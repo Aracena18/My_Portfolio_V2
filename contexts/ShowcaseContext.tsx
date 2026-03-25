@@ -19,11 +19,12 @@ export const PROJECT_ORDER: ProjectId[] = ["agrisense", "esp32", "arms", "realit
 export type LightingPreset = "ambient" | "studio" | "dramatic" | "warm" | "cool";
 
 // Scroll ranges for each project (percentage of total scroll)
+// Hero buffer zone is 0-0.15 where no models are visible
 export const PROJECT_RANGES: Record<ProjectId, { start: number; end: number }> = {
-  agrisense: { start: 0, end: 0.25 },
-  esp32: { start: 0.25, end: 0.5 },
-  arms: { start: 0.5, end: 0.75 },
-  realitech: { start: 0.75, end: 1.0 },
+  agrisense: { start: 0.15, end: 0.32 },
+  esp32: { start: 0.32, end: 0.54 },
+  arms: { start: 0.54, end: 0.76 },
+  realitech: { start: 0.76, end: 0.98 },
 };
 
 // Lighting preset per project
@@ -34,11 +35,11 @@ export const PROJECT_LIGHTING: Record<ProjectId, LightingPreset> = {
   realitech: "warm",
 };
 
-// Transition zones between projects
+// Transition zones between projects (overlap for smooth crossfade)
 export const TRANSITION_ZONES = {
-  agrisenseToEsp32: { start: 0.2, end: 0.3 },
-  esp32ToArms: { start: 0.45, end: 0.55 },
-  armsToRealitech: { start: 0.7, end: 0.8 },
+  agrisenseToEsp32: { start: 0.27, end: 0.37 },
+  esp32ToArms: { start: 0.49, end: 0.59 },
+  armsToRealitech: { start: 0.71, end: 0.81 },
 };
 
 // Camera state
@@ -133,8 +134,9 @@ const createInitialState = (): ShowcaseState => ({
 
   camera: { ...defaultCamera },
 
+  // All models start hidden (hero zone is before any project)
   models: {
-    agrisense: { ...defaultModel, opacity: 1, visible: true },
+    agrisense: { ...defaultModel },
     esp32: { ...defaultModel },
     arms: { ...defaultModel },
     realitech: { ...defaultModel },
@@ -171,6 +173,8 @@ const ShowcaseContext = createContext<ShowcaseContextType | null>(null);
 
 // Determine active project from scroll progress
 function getActiveProjectFromScroll(scrollProgress: number): ProjectId {
+  // Hero zone (before first project) - return agrisense but it won't be visible
+  if (scrollProgress < PROJECT_RANGES.agrisense.start) return "agrisense";
   if (scrollProgress < PROJECT_RANGES.agrisense.end) return "agrisense";
   if (scrollProgress < PROJECT_RANGES.esp32.end) return "esp32";
   if (scrollProgress < PROJECT_RANGES.arms.end) return "arms";

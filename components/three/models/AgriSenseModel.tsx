@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useShowcase } from "@/contexts/ShowcaseContext";
@@ -13,10 +13,25 @@ interface AgriSenseModelProps {
 export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { scene: originalScene } = useGLTF("/models/i_phone_14_pro_copy.gltf");
+  const screenTexture = useTexture("/textures/Loading_Screen_Agrisense.jpeg");
   const { state, setModelState } = useShowcase();
 
   // Clone the scene
   const scene = useMemo(() => originalScene.clone(true), [originalScene]);
+
+  // Configure screen texture
+  const configuredScreenTexture = useMemo(() => {
+    const texture = screenTexture.clone();
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    // Rotate texture 180 degrees to fix orientation
+    texture.center.set(0.5, 0.5);
+    texture.rotation = Math.PI;
+    texture.needsUpdate = true;
+    return texture;
+  }, [screenTexture]);
 
   // Current interpolated values for smooth transitions
   const current = useRef({
@@ -26,8 +41,8 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     positionX: 0,
     positionY: -0.3,
     positionZ: 0,
-    opacity: 0.5,
-    scale: 0.9,
+    opacity: 0,
+    scale: 0,
     floatTime: 0,
   });
 
@@ -44,19 +59,20 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     []
   );
 
-  // Emissive screen material
+  // Emissive screen material with UI texture
   const screenMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: new THREE.Color("#f4f6f8"),
+        map: configuredScreenTexture,
         emissive: new THREE.Color("#ffffff"),
-        emissiveIntensity: 0.35,
+        emissiveMap: configuredScreenTexture,
+        emissiveIntensity: 0.4,
         metalness: 0.1,
         roughness: 0.2,
         envMapIntensity: 0.5,
         transparent: true,
       }),
-    []
+    [configuredScreenTexture]
   );
 
   // Glass material
@@ -95,14 +111,30 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
       chassisMaterial.dispose();
       screenMaterial.dispose();
       glassMaterial.dispose();
+      configuredScreenTexture.dispose();
     };
-  }, [scene, chassisMaterial, screenMaterial, glassMaterial]);
+  }, [scene, chassisMaterial, screenMaterial, glassMaterial, configuredScreenTexture]);
 
   const getTargetState = (
     projectProgress: number,
     isTransitioning: boolean,
     transitionProgress: number
   ) => {
+    // Pre-entry phase (hero zone) - completely hidden
+    if (projectProgress <= 0) {
+      return {
+        rotationX: -0.3,
+        rotationY: 0,
+        rotationZ: 0,
+        positionX: 0,
+        positionY: -2,
+        positionZ: -3,
+        opacity: 0,
+        scale: 0,
+      };
+    }
+
+    // Entry phase (0-15% of project range)
     if (projectProgress < 0.15) {
       const entryProgress = projectProgress / 0.15;
       const easedProgress = 1 - Math.pow(1 - entryProgress, 3);
@@ -248,3 +280,4 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
 }
 
 useGLTF.preload("/models/i_phone_14_pro_copy.gltf");
+useTexture.preload("/textures/Loading_Screen_Agrisense.jpeg");
