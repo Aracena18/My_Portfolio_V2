@@ -21,6 +21,8 @@ interface PhoneAnimationState {
 
 interface PhoneAnimationContextType {
   state: MutableRefObject<PhoneAnimationState>;
+  setState: (updates: Partial<PhoneAnimationState>) => void;
+  resetState: () => void;
 }
 
 const defaultState: PhoneAnimationState = {
@@ -42,7 +44,17 @@ export function PhoneAnimationProvider({ children }: { children: ReactNode }) {
   const stateRef = useRef<PhoneAnimationState>({ ...defaultState });
 
   return (
-    <PhoneAnimationContext.Provider value={{ state: stateRef }}>
+    <PhoneAnimationContext.Provider
+      value={{
+        state: stateRef,
+        setState: (updates) => {
+          Object.assign(stateRef.current, updates);
+        },
+        resetState: () => {
+          stateRef.current = { ...defaultState };
+        },
+      }}
+    >
       {children}
     </PhoneAnimationContext.Provider>
   );

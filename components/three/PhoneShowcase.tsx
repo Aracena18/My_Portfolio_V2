@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { useGLTF, useTexture } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { usePhoneAnimation } from "@/contexts/PhoneAnimationContext";
 
@@ -15,7 +15,6 @@ export default function PhoneShowcase({ scale = 1 }: PhoneShowcaseProps) {
   const { scene: originalScene } = useGLTF("/models/i_phone_14_pro_copy.gltf");
   const screenTexture = useTexture("/textures/Loading_Screen_Agrisense.jpeg");
   const { state: animationState } = usePhoneAnimation();
-  const { camera } = useThree();
 
   // Clone the scene so multiple instances don't conflict
   const scene = useMemo(() => originalScene.clone(true), [originalScene]);
@@ -35,15 +34,17 @@ export default function PhoneShowcase({ scale = 1 }: PhoneShowcaseProps) {
   // Mount protection to prevent immediate fade on page load
   const hasMounted = useRef(false);
 
-  // Configure screen texture
-  useMemo(() => {
-    screenTexture.flipY = false;
-    screenTexture.colorSpace = THREE.SRGBColorSpace;
-    screenTexture.minFilter = THREE.LinearFilter;
-    screenTexture.magFilter = THREE.LinearFilter;
+  const configuredScreenTexture = useMemo(() => {
+    const texture = screenTexture.clone();
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
     // Rotate texture 180 degrees to fix upside-down image
-    screenTexture.center.set(0.5, 0.5);
-    screenTexture.rotation = Math.PI;
+    texture.center.set(0.5, 0.5);
+    texture.rotation = Math.PI;
+    texture.needsUpdate = true;
+    return texture;
   }, [screenTexture]);
 
   // Premium dark brushed metal material for chassis
@@ -63,16 +64,16 @@ export default function PhoneShowcase({ scale = 1 }: PhoneShowcaseProps) {
   const screenMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        map: screenTexture,
+        map: configuredScreenTexture,
         emissive: new THREE.Color("#ffffff"),
-        emissiveMap: screenTexture,
+        emissiveMap: configuredScreenTexture,
         emissiveIntensity: 0.4,
         metalness: 0.1,
         roughness: 0.2,
         envMapIntensity: 0.5,
         transparent: true,
       }),
-    [screenTexture]
+    [configuredScreenTexture]
   );
 
   // Glass material for camera lens and other glass elements
@@ -120,11 +121,12 @@ export default function PhoneShowcase({ scale = 1 }: PhoneShowcaseProps) {
       chassisMaterial.dispose();
       screenMaterial.dispose();
       glassMaterial.dispose();
+      configuredScreenTexture.dispose();
     };
-  }, [scene, chassisMaterial, screenMaterial, glassMaterial]);
+  }, [scene, chassisMaterial, screenMaterial, glassMaterial, configuredScreenTexture]);
 
   // Animate based on scroll state with smooth interpolation
-  useFrame((_, delta) => {
+  useFrame(({ camera }, delta) => {
     if (!groupRef.current) return;
 
     // Protect first frame - force full opacity to prevent flicker on page load

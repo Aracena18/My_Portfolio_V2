@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { useShowcase, type ProjectId } from "@/contexts/ShowcaseContext";
 import * as THREE from "three";
 
@@ -138,7 +138,6 @@ function getTargetCameraState(
 }
 
 export default function CameraController() {
-  const { camera } = useThree();
   const { state, setCameraState } = useShowcase();
 
   // Refs for smooth interpolation
@@ -146,7 +145,7 @@ export default function CameraController() {
   const targetLookAt = useRef(new THREE.Vector3(0, 0, 0));
   const targetFov = useRef(45);
 
-  useFrame(() => {
+  useFrame(({ camera }) => {
     const currentState = state.current;
     const { activeProject, projectProgress, isTransitioning, transitionProgress, transitionFrom, transitionTo } = currentState;
 

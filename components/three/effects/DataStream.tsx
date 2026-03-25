@@ -26,6 +26,11 @@ export default function DataStream({
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
+  const pseudoRandom = (seed: number) => {
+    const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  };
+
   // Create bezier curve path
   const curve = useMemo(() => {
     const start = new THREE.Vector3(...startPoint);
@@ -40,10 +45,12 @@ export default function DataStream({
   const particles = useMemo(() => {
     const data = [];
     for (let i = 0; i < particleCount; i++) {
+      const r1 = pseudoRandom(i * 2 + 1);
+      const r2 = pseudoRandom(i * 2 + 2);
       data.push({
         offset: i / particleCount, // Spread particles along curve
-        speed: 0.8 + Math.random() * 0.4,
-        size: 0.5 + Math.random() * 0.5,
+        speed: 0.8 + r1 * 0.4,
+        size: 0.5 + r2 * 0.5,
       });
     }
     return data;

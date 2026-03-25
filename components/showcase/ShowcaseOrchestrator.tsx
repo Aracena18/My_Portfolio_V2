@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useShowcase, PROJECT_ORDER, PROJECT_RANGES } from "@/contexts/ShowcaseContext";
+import { useShowcase, PROJECT_ORDER } from "@/contexts/ShowcaseContext";
 import { projects } from "@/lib/projects";
 import TextReveal from "../animations/TextReveal";
 import Counter from "../Counter";

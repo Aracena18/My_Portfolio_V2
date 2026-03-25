@@ -13,14 +13,16 @@ function PhoneModel({ scale = 1 }: { scale?: number }) {
   // Clone the scene so multiple instances can coexist
   const scene = useMemo(() => originalScene.clone(true), [originalScene]);
 
-  // Configure screen texture
-  useMemo(() => {
-    screenTexture.flipY = false;
-    screenTexture.colorSpace = THREE.SRGBColorSpace;
-    screenTexture.minFilter = THREE.LinearFilter;
-    screenTexture.magFilter = THREE.LinearFilter;
-    screenTexture.center.set(0.5, 0.5);
-    screenTexture.rotation = Math.PI;
+  const configuredScreenTexture = useMemo(() => {
+    const texture = screenTexture.clone();
+    texture.flipY = false;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.center.set(0.5, 0.5);
+    texture.rotation = Math.PI;
+    texture.needsUpdate = true;
+    return texture;
   }, [screenTexture]);
 
   // Premium dark brushed metal material
@@ -38,16 +40,16 @@ function PhoneModel({ scale = 1 }: { scale?: number }) {
   // Emissive screen material
   const screenMaterial = useMemo(
     () =>
-      new THREE.MeshStandardMaterial({
-        map: screenTexture,
-        emissive: new THREE.Color("#ffffff"),
-        emissiveMap: screenTexture,
-        emissiveIntensity: 0.4,
+        new THREE.MeshStandardMaterial({
+          map: configuredScreenTexture,
+          emissive: new THREE.Color("#ffffff"),
+          emissiveMap: configuredScreenTexture,
+          emissiveIntensity: 0.4,
         metalness: 0.1,
         roughness: 0.2,
         envMapIntensity: 0.5,
       }),
-    [screenTexture]
+    [configuredScreenTexture]
   );
 
   // Glass material
@@ -94,8 +96,9 @@ function PhoneModel({ scale = 1 }: { scale?: number }) {
       chassisMaterial.dispose();
       screenMaterial.dispose();
       glassMaterial.dispose();
+      configuredScreenTexture.dispose();
     };
-  }, [scene, chassisMaterial, screenMaterial, glassMaterial]);
+  }, [scene, chassisMaterial, screenMaterial, glassMaterial, configuredScreenTexture]);
 
   // Slow rotation
   useFrame((_, delta) => {

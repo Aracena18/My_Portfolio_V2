@@ -276,11 +276,12 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
   });
 
   const showCharts = state.current.activeProject === "arms" && state.current.projectProgress > 0.3;
+  const modelOpacity = state.current.models.arms.opacity;
 
   return (
     <group ref={groupRef}>
       <group scale={scale}>
-        <PlaceholderMonitor opacity={current.current.opacity} />
+        <PlaceholderMonitor opacity={modelOpacity} />
       </group>
 
       {/* Floating chart elements */}
@@ -289,13 +290,13 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
           <FloatingChart
             position={[1.5, 1, 0.5]}
             scale={0.8}
-            opacity={current.current.opacity}
+            opacity={modelOpacity}
             color="#1B6B35"
           />
           <FloatingChart
             position={[-1.5, 0.8, 0.3]}
             scale={0.6}
-            opacity={current.current.opacity}
+            opacity={modelOpacity}
             color="#4338CA"
           />
           <DataStream
@@ -303,7 +304,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
             endPoint={[1.5, 1, 0.5]}
             color="#1B6B35"
             particleCount={15}
-            opacity={current.current.opacity * 0.6}
+            opacity={modelOpacity * 0.6}
           />
         </>
       )}

@@ -28,17 +28,29 @@ export default function HologramParticles({
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
+  const pseudoRandom = (seed: number) => {
+    const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+    return value - Math.floor(value);
+  };
+
   // Initialize particle positions and velocities
   const particles = useMemo(() => {
     const data = [];
     for (let i = 0; i < count; i++) {
+      const r1 = pseudoRandom(i * 7 + 1);
+      const r2 = pseudoRandom(i * 7 + 2);
+      const r3 = pseudoRandom(i * 7 + 3);
+      const r4 = pseudoRandom(i * 7 + 4);
+      const r5 = pseudoRandom(i * 7 + 5);
+      const r6 = pseudoRandom(i * 7 + 6);
       data.push({
-        x: (Math.random() - 0.5) * spread,
-        y: Math.random() * height * 0.3, // Start at random heights
-        z: (Math.random() - 0.5) * spread * 0.5,
-        speed: 0.3 + Math.random() * speed,
-        phase: Math.random() * Math.PI * 2,
-        scale: 0.5 + Math.random() * 0.5,
+        x: (r1 - 0.5) * spread,
+        y: r2 * height * 0.3, // Start at pseudo-random heights
+        z: (r3 - 0.5) * spread * 0.5,
+        speed: 0.3 + r4 * speed,
+        phase: r5 * Math.PI * 2,
+        scale: 0.5 + r6 * 0.5,
+        seed: i,
       });
     }
     return data;
@@ -68,8 +80,9 @@ export default function HologramParticles({
       // Reset when reaching top
       if (particle.y > height) {
         particle.y = 0;
-        particle.x = (Math.random() - 0.5) * spread;
-        particle.z = (Math.random() - 0.5) * spread * 0.5;
+        const cycleSeed = particle.seed + Math.floor(time * 10);
+        particle.x = (pseudoRandom(cycleSeed * 2 + 1) - 0.5) * spread;
+        particle.z = (pseudoRandom(cycleSeed * 2 + 2) - 0.5) * spread * 0.5;
       }
 
       // Add wave motion

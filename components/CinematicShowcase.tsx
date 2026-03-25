@@ -14,19 +14,23 @@ export default function CinematicShowcase() {
   const heroRef = useRef<HTMLElement>(null);
   const agrisenseRef = useRef<HTMLElement>(null);
   const techStackRef = useRef<HTMLElement>(null);
-  const { state: animationState } = usePhoneAnimation();
+  const { setState } = usePhoneAnimation();
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     // Set initial state FIRST, before ScrollTrigger setup
     // This prevents the race condition where ScrollTrigger fires before state is initialized
-    animationState.current.opacity = 1;
-    animationState.current.rotationY = 0.3;
-    animationState.current.rotationX = 0.1;
-    animationState.current.rotationZ = 0;
-    animationState.current.positionX = 0;
-    animationState.current.positionY = 0;
+    setState({
+      opacity: 1,
+      rotationY: 0.3,
+      rotationX: 0.1,
+      rotationZ: 0,
+      positionX: 0,
+      positionY: 0,
+      positionZ: 0,
+      cameraZ: 5,
+    });
 
     const ctx = gsap.context(() => {
       // Hero Section: Maintain initial state while in hero
@@ -37,13 +41,15 @@ export default function CinematicShowcase() {
         scrub: 1,
         onUpdate: () => {
           // Keep phone visible and in initial position during hero section
-          animationState.current.rotationY = 0.3;
-          animationState.current.rotationX = 0.1;
-          animationState.current.rotationZ = 0;
-          animationState.current.positionX = 0;
-          animationState.current.positionY = 0;
-          animationState.current.cameraZ = 5;
-          animationState.current.opacity = 1;
+          setState({
+            rotationY: 0.3,
+            rotationX: 0.1,
+            rotationZ: 0,
+            positionX: 0,
+            positionY: 0,
+            cameraZ: 5,
+            opacity: 1,
+          });
         },
       });
 
@@ -56,14 +62,16 @@ export default function CinematicShowcase() {
         onUpdate: (self) => {
           const progress = self.progress;
           // Rotate from front (0.3) to back (Math.PI + 0.3)
-          animationState.current.rotationY = 0.3 + progress * Math.PI;
-          // Subtle tilt adjustment
-          animationState.current.rotationX = 0.1 - progress * 0.15;
-          // Push camera closer
-          animationState.current.cameraZ = 5 - progress * 1.5;
-          // Ensure opacity stays at 1 during this section
-          animationState.current.opacity = 1;
-          animationState.current.positionX = 0;
+          setState({
+            rotationY: 0.3 + progress * Math.PI,
+            // Subtle tilt adjustment
+            rotationX: 0.1 - progress * 0.15,
+            // Push camera closer
+            cameraZ: 5 - progress * 1.5,
+            // Ensure opacity stays at 1 during this section
+            opacity: 1,
+            positionX: 0,
+          });
         },
       });
 
@@ -76,19 +84,21 @@ export default function CinematicShowcase() {
         onUpdate: (self) => {
           const progress = self.progress;
           // Move phone to the left
-          animationState.current.positionX = -progress * 5;
-          // Slight upward drift
-          animationState.current.positionY = progress * 0.5;
-          // Fade out
-          animationState.current.opacity = 1 - progress;
-          // Slight rotation as it exits
-          animationState.current.rotationZ = progress * 0.3;
+          setState({
+            positionX: -progress * 5,
+            // Slight upward drift
+            positionY: progress * 0.5,
+            // Fade out
+            opacity: 1 - progress,
+            // Slight rotation as it exits
+            rotationZ: progress * 0.3,
+          });
         },
       });
     }, containerRef);
 
     return () => ctx.revert();
-  }, [animationState]);
+  }, [setState]);
 
   return (
     <div ref={containerRef} className="relative z-10">

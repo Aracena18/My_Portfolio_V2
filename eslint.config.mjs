@@ -7,9 +7,9 @@ const eslintConfig = defineConfig([
   ...nextTs,
   {
     rules: {
-      "react-hooks/immutability": "warn",
-      "react-hooks/purity": "warn",
-      "react-hooks/refs": "warn",
+      "react-hooks/immutability": "error",
+      "react-hooks/purity": "error",
+      "react-hooks/refs": "error",
     },
   },
   // Override default ignores of eslint-config-next.

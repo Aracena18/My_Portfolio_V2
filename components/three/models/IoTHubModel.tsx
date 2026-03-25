@@ -208,7 +208,9 @@ function PlaceholderHub({ opacity }: { opacity: number }) {
 
 export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const sensorRefs = [useRef<THREE.Group | null>(null), useRef<THREE.Group | null>(null), useRef<THREE.Group | null>(null)];
+  const sensorRefA = useRef<THREE.Group | null>(null);
+  const sensorRefB = useRef<THREE.Group | null>(null);
+  const sensorRefC = useRef<THREE.Group | null>(null);
   const { state, setModelState } = useShowcase();
 
   // Current interpolated values
@@ -226,7 +228,7 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
   });
 
   // Animation keyframes
-  const getTargetState = (projectProgress: number, isTransitioning: boolean, transitionProgress: number) => {
+  const getTargetState = (projectProgress: number) => {
     // Entry - emerge from below with splash effect
     if (projectProgress < 0.2) {
       const entryProgress = projectProgress / 0.2;
@@ -279,7 +281,7 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
     if (!groupRef.current) return;
 
     const currentState = state.current;
-    const { activeProject, projectProgress, isTransitioning, transitionProgress, transitionFrom, transitionTo } = currentState;
+    const { activeProject, projectProgress, transitionFrom, transitionTo } = currentState;
 
     const isActive = activeProject === "realitech" || transitionFrom === "realitech" || transitionTo === "realitech";
 
@@ -290,11 +292,7 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
       return;
     }
 
-    const target = getTargetState(
-      activeProject === "realitech" ? projectProgress : 1,
-      isTransitioning,
-      transitionProgress
-    );
+    const target = getTargetState(activeProject === "realitech" ? projectProgress : 1);
     const lerp = 1 - Math.pow(0.001, delta);
 
     // Smooth interpolation
@@ -340,52 +338,50 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
   });
 
   const showEffects = state.current.activeProject === "realitech" && state.current.projectProgress > 0.15;
-  const orbitRadius = current.current.sensorOrbitRadius;
+  const modelOpacity = state.current.models.realitech.opacity;
+  const realtimeProgress =
+    state.current.activeProject === "realitech" ? state.current.projectProgress : 1;
+  const orbitRadius = getTargetState(realtimeProgress).sensorOrbitRadius;
 
   return (
     <group ref={groupRef}>
       {/* Central hub */}
       <group scale={scale}>
-        <PlaceholderHub opacity={current.current.opacity} />
+        <PlaceholderHub opacity={modelOpacity} />
       </group>
 
       {/* Orbiting sensor nodes */}
       {showEffects && (
         <>
-          <group ref={sensorRefs[0]}>
+          <group ref={sensorRefA}>
             <SensorNode
               orbitRadius={orbitRadius}
               orbitSpeed={0.5}
               orbitOffset={0}
-              opacity={current.current.opacity}
+              opacity={modelOpacity}
             />
           </group>
-          <group ref={sensorRefs[1]}>
+          <group ref={sensorRefB}>
             <SensorNode
               orbitRadius={orbitRadius * 0.85}
               orbitSpeed={0.7}
               orbitOffset={Math.PI * 0.66}
-              opacity={current.current.opacity}
+              opacity={modelOpacity}
             />
           </group>
-          <group ref={sensorRefs[2]}>
+          <group ref={sensorRefC}>
             <SensorNode
               orbitRadius={orbitRadius * 1.1}
               orbitSpeed={0.4}
               orbitOffset={Math.PI * 1.33}
-              opacity={current.current.opacity}
+              opacity={modelOpacity}
             />
           </group>
 
           {/* Connection lines to sensors */}
-          {sensorRefs.map((ref, i) => (
-            <ConnectionLine
-              key={i}
-              targetRef={ref}
-              color="#00d2d3"
-              opacity={current.current.opacity}
-            />
-          ))}
+          <ConnectionLine targetRef={sensorRefA} color="#00d2d3" opacity={modelOpacity} />
+          <ConnectionLine targetRef={sensorRefB} color="#00d2d3" opacity={modelOpacity} />
+          <ConnectionLine targetRef={sensorRefC} color="#00d2d3" opacity={modelOpacity} />
         </>
       )}
 
@@ -395,7 +391,7 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
           count={30}
           spread={2}
           fallSpeed={2}
-          opacity={current.current.opacity * 0.5}
+          opacity={modelOpacity * 0.5}
         />
       )}
     </group>

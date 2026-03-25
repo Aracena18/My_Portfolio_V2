@@ -135,19 +135,14 @@ export function LineReveal({
 export function ScrambleText({
   text,
   className = "",
-  duration = 1,
-  scrambleDuration = 0.03,
   once = true,
 }: {
   text: string;
   className?: string;
-  duration?: number;
-  scrambleDuration?: number;
   once?: boolean;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once, margin: "-50px" });
-  const chars = "!<>-_\\/[]{}—=+*^?#________";
 
   // This is a simplified version - for full scramble effect,
   // you'd use useEffect with intervals

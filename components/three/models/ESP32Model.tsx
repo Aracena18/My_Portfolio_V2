@@ -250,21 +250,22 @@ export default function ESP32Model({ scale = 1 }: ESP32ModelProps) {
   });
 
   const showScanLine = state.current.activeProject === "esp32" && state.current.projectProgress > 0.25;
+  const modelOpacity = state.current.models.esp32.opacity;
 
   return (
     <group ref={groupRef}>
       <group scale={scale}>
-        <PlaceholderBoard opacity={current.current.opacity} />
+        <PlaceholderBoard opacity={modelOpacity} />
       </group>
 
       {/* Scan line effect */}
       {showScanLine && (
         <ScanLine
-          progress={current.current.scanProgress}
+          progress={state.current.projectProgress}
           color="#00ff00"
           width={1.5}
           height={2}
-          opacity={current.current.opacity * 0.7}
+          opacity={modelOpacity * 0.7}
         />
       )}
     </group>
