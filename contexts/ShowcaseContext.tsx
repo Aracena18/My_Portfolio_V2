@@ -11,6 +11,7 @@ import {
 
 // Project identifiers
 export type ProjectId = "agrisense" | "esp32" | "arms" | "realitech";
+export type StageSide = "left" | "right";
 
 // Project order for iteration
 export const PROJECT_ORDER: ProjectId[] = ["agrisense", "esp32", "arms", "realitech"];
@@ -18,14 +19,28 @@ export const PROJECT_ORDER: ProjectId[] = ["agrisense", "esp32", "arms", "realit
 // Lighting presets
 export type LightingPreset = "ambient" | "studio" | "dramatic" | "warm" | "cool";
 
+export interface StageVector {
+  x: number;
+  y: number;
+  z: number;
+}
+
+export interface ProjectStageConfig {
+  side: StageSide;
+  rest: StageVector;
+  entry: StageVector;
+  exit: StageVector;
+  safeScale: { min: number; max: number };
+}
+
 // Scroll ranges for each project (percentage of total scroll)
 // Hero buffer zone is 0-0.15 where no models are visible
 // Each project has distinct ranges with minimal overlap to prevent stacking
 export const PROJECT_RANGES: Record<ProjectId, { start: number; end: number }> = {
-  agrisense: { start: 0.15, end: 0.35 },    // Extended range for proper showcase
-  esp32: { start: 0.35, end: 0.55 },        // Clear separation
-  arms: { start: 0.55, end: 0.75 },         // Clear separation
-  realitech: { start: 0.75, end: 0.95 },    // Clear separation
+  agrisense: { start: 0.16, end: 0.34 },
+  esp32: { start: 0.38, end: 0.56 },
+  arms: { start: 0.60, end: 0.78 },
+  realitech: { start: 0.82, end: 0.97 },
 };
 
 // Lighting preset per project
@@ -36,12 +51,43 @@ export const PROJECT_LIGHTING: Record<ProjectId, LightingPreset> = {
   realitech: "warm",
 };
 
+export const PROJECT_STAGE_CONFIG: Record<ProjectId, ProjectStageConfig> = {
+  agrisense: {
+    side: "left",
+    rest: { x: -1.35, y: -0.02, z: 0.08 },
+    entry: { x: -3.3, y: -1.5, z: -2.8 },
+    exit: { x: -3.8, y: 0.5, z: -2.2 },
+    safeScale: { min: 0, max: 1.04 },
+  },
+  esp32: {
+    side: "right",
+    rest: { x: 1.45, y: -0.04, z: -0.05 },
+    entry: { x: 3.7, y: -1.1, z: -2.4 },
+    exit: { x: 4.2, y: 0.7, z: -2.5 },
+    safeScale: { min: 0, max: 0.95 },
+  },
+  arms: {
+    side: "left",
+    rest: { x: -1.55, y: -0.02, z: -0.15 },
+    entry: { x: -4.1, y: -0.8, z: -3.4 },
+    exit: { x: -4.4, y: 0.9, z: -3.2 },
+    safeScale: { min: 0, max: 0.92 },
+  },
+  realitech: {
+    side: "right",
+    rest: { x: 1.55, y: -0.06, z: -0.12 },
+    entry: { x: 2.1, y: -2.5, z: -2.5 },
+    exit: { x: 4.4, y: 0.65, z: -1.8 },
+    safeScale: { min: 0, max: 0.9 },
+  },
+};
+
 // Transition zones between projects (tight overlap for clean crossfade)
 // Transitions happen at the END of one project and START of the next
 export const TRANSITION_ZONES = {
-  agrisenseToEsp32: { start: 0.32, end: 0.38 },   // Tighter, cleaner transition
-  esp32ToArms: { start: 0.52, end: 0.58 },        // Tighter, cleaner transition
-  armsToRealitech: { start: 0.72, end: 0.78 },    // Tighter, cleaner transition
+  agrisenseToEsp32: { start: 0.34, end: 0.40 },
+  esp32ToArms: { start: 0.56, end: 0.62 },
+  armsToRealitech: { start: 0.78, end: 0.84 },
 };
 
 // Camera state

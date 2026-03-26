@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { useShowcase } from "@/contexts/ShowcaseContext";
+import { PROJECT_STAGE_CONFIG, useShowcase } from "@/contexts/ShowcaseContext";
 import DataStream from "../effects/DataStream";
 
 interface MonitorModelProps {
@@ -229,18 +229,16 @@ function FloatingChart({
 export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { state, setModelState } = useShowcase();
-
-  // Position on LEFT side of viewport (index 2 = even = left side)
-  const baseX = -1.8;
+  const stage = PROJECT_STAGE_CONFIG.arms;
 
   // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
     rotationX: 0.3,
     rotationY: Math.PI,
     rotationZ: 0,
-    positionX: baseX - 2,    // Start off to the left
-    positionY: -1,           // Start below
-    positionZ: -3,           // Start far back
+    positionX: stage.entry.x,
+    positionY: stage.entry.y,
+    positionZ: stage.entry.z,
     opacity: 0,              // Completely transparent
     scale: 0,                // Completely scaled down
     floatTime: 0,
@@ -255,42 +253,40 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
         rotationX: 0.3,
         rotationY: Math.PI,
         rotationZ: 0,
-        positionX: baseX - 2,
-        positionY: -1,
-        positionZ: -3,
+        positionX: stage.entry.x,
+        positionY: stage.entry.y,
+        positionZ: stage.entry.z,
         opacity: 0,
         scale: 0,
       };
     }
 
-    // Entry - push in from left with screen boot flicker
-    if (projectProgress < 0.2) {
-      const entryProgress = projectProgress / 0.2;
+    if (projectProgress < 0.24) {
+      const entryProgress = projectProgress / 0.24;
       const easedProgress = 1 - Math.pow(1 - entryProgress, 3);
       return {
         rotationX: THREE.MathUtils.lerp(0.3, 0, easedProgress),
-        rotationY: THREE.MathUtils.lerp(Math.PI, -0.1, easedProgress),
+        rotationY: THREE.MathUtils.lerp(Math.PI, -0.12, easedProgress),
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(baseX - 2, baseX, easedProgress),
-        positionY: THREE.MathUtils.lerp(-1, 0, easedProgress),
-        positionZ: THREE.MathUtils.lerp(-4, 0, easedProgress),
-        opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
-        scale: THREE.MathUtils.lerp(0, 1, easedProgress),
+        positionX: THREE.MathUtils.lerp(stage.entry.x, stage.rest.x, easedProgress),
+        positionY: THREE.MathUtils.lerp(stage.entry.y, stage.rest.y, easedProgress),
+        positionZ: THREE.MathUtils.lerp(stage.entry.z, stage.rest.z, easedProgress),
+        opacity: THREE.MathUtils.smoothstep(easedProgress, 0.2, 1),
+        scale: THREE.MathUtils.lerp(stage.safeScale.min, stage.safeScale.max, easedProgress),
       };
     }
 
-    // Active state - gentle rotation
     if (projectProgress < 0.8) {
-      const activeProgress = (projectProgress - 0.2) / 0.6;
+      const activeProgress = (projectProgress - 0.24) / 0.56;
       return {
         rotationX: 0,
-        rotationY: THREE.MathUtils.lerp(-0.1, 0.2, activeProgress),
+        rotationY: THREE.MathUtils.lerp(-0.12, 0.16, activeProgress),
         rotationZ: 0,
-        positionX: baseX,
-        positionY: 0,
-        positionZ: 0,
+        positionX: stage.rest.x,
+        positionY: stage.rest.y,
+        positionZ: stage.rest.z,
         opacity: 1,
-        scale: 1,
+        scale: stage.safeScale.max,
       };
     }
 
@@ -300,25 +296,25 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
     if (isTransitioning) {
       return {
         rotationX: THREE.MathUtils.lerp(0, -0.4, exitProgress),
-        rotationY: THREE.MathUtils.lerp(0.2, Math.PI * 0.6, exitProgress),
+        rotationY: THREE.MathUtils.lerp(0.16, Math.PI * 0.6, exitProgress),
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(baseX, baseX - 2, transitionProgress),  // Move left during transition
-        positionY: THREE.MathUtils.lerp(0, 1, exitProgress),
-        positionZ: THREE.MathUtils.lerp(0, -3, transitionProgress),
+        positionX: THREE.MathUtils.lerp(stage.rest.x, stage.exit.x, transitionProgress),
+        positionY: THREE.MathUtils.lerp(stage.rest.y, stage.exit.y, exitProgress),
+        positionZ: THREE.MathUtils.lerp(stage.rest.z, stage.exit.z, transitionProgress),
         opacity: THREE.MathUtils.lerp(1, 0, transitionProgress),
-        scale: THREE.MathUtils.lerp(1, 0, transitionProgress),      // Scale to 0
+        scale: THREE.MathUtils.lerp(stage.safeScale.max, 0, transitionProgress),
       };
     }
 
     return {
       rotationX: 0,
-      rotationY: THREE.MathUtils.lerp(0.2, 0.4, exitProgress),
+      rotationY: THREE.MathUtils.lerp(0.16, 0.4, exitProgress),
       rotationZ: 0,
-      positionX: baseX,
-      positionY: 0,
-      positionZ: 0,
-      opacity: THREE.MathUtils.lerp(1, 0.5, exitProgress),
-      scale: THREE.MathUtils.lerp(1, 0.7, exitProgress),
+      positionX: stage.rest.x,
+      positionY: stage.rest.y,
+      positionZ: stage.rest.z,
+      opacity: THREE.MathUtils.lerp(1, 0.25, exitProgress),
+      scale: THREE.MathUtils.lerp(stage.safeScale.max, 0.58, exitProgress),
     };
   };
 

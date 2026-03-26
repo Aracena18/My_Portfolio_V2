@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { useShowcase } from "@/contexts/ShowcaseContext";
+import { PROJECT_STAGE_CONFIG, useShowcase } from "@/contexts/ShowcaseContext";
 import ScanLine from "../effects/ScanLine";
 
 interface ESP32ModelProps {
@@ -13,6 +13,7 @@ interface ESP32ModelProps {
 // Enhanced PCB Board with premium materials
 function PlaceholderBoard({ opacity }: { opacity: number }) {
   const timeRef = useRef(0);
+  const copperMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
 
   // Premium FR-4 PCB material (realistic green)
   const boardMaterial = useMemo(
@@ -74,7 +75,9 @@ function PlaceholderBoard({ opacity }: { opacity: number }) {
   useFrame((state) => {
     timeRef.current = state.clock.getElapsedTime();
     const pulse = 0.3 + Math.sin(timeRef.current * 2) * 0.2;
-    copperMaterial.emissiveIntensity = pulse;
+    if (copperMaterialRef.current) {
+      copperMaterialRef.current.emissiveIntensity = pulse;
+    }
   });
 
   return (
@@ -165,6 +168,11 @@ function PlaceholderBoard({ opacity }: { opacity: number }) {
           key={`trace-${i}`}
           position={[trace.x, 0.045, trace.z]}
           rotation={[0, trace.rotation || 0, 0]}
+          ref={(node) => {
+            if (i === 0 && node) {
+              copperMaterialRef.current = node.material as THREE.MeshStandardMaterial;
+            }
+          }}
         >
           <boxGeometry args={[0.02, 0.005, trace.length]} />
           <primitive object={copperMaterial} />
@@ -199,18 +207,16 @@ function PlaceholderBoard({ opacity }: { opacity: number }) {
 export default function ESP32Model({ scale = 1 }: ESP32ModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { state, setModelState } = useShowcase();
-
-  // Position on RIGHT side of viewport (index 1 = odd = right side)
-  const baseX = 1.8;
+  const stage = PROJECT_STAGE_CONFIG.esp32;
 
   // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
     rotationX: 0.5,
     rotationY: -Math.PI / 2,
     rotationZ: 0,
-    positionX: baseX + 2,    // Start off to the right
-    positionY: -1,           // Start below
-    positionZ: -2,           // Start far back
+    positionX: stage.entry.x,
+    positionY: stage.entry.y,
+    positionZ: stage.entry.z,
     opacity: 0,              // Completely transparent
     scale: 0,                // Completely scaled down
     floatTime: 0,
@@ -225,70 +231,67 @@ export default function ESP32Model({ scale = 1 }: ESP32ModelProps) {
         rotationX: 0.5,
         rotationY: -Math.PI / 2,
         rotationZ: 0,
-        positionX: baseX + 2,
-        positionY: -1,
-        positionZ: -2,
+        positionX: stage.entry.x,
+        positionY: stage.entry.y,
+        positionZ: stage.entry.z,
         opacity: 0,
         scale: 0,
       };
     }
 
-    // Entry animation (0-20%) - slide in from right with scan effect
-    if (projectProgress < 0.2) {
-      const entryProgress = projectProgress / 0.2;
-      const easedProgress = 1 - Math.pow(1 - entryProgress, 2);
+    if (projectProgress < 0.22) {
+      const entryProgress = projectProgress / 0.22;
+      const easedProgress = 1 - Math.pow(1 - entryProgress, 2.5);
       return {
-        rotationX: THREE.MathUtils.lerp(0.5, 0.2, easedProgress),
-        rotationY: THREE.MathUtils.lerp(-Math.PI / 2, 0, easedProgress),
+        rotationX: THREE.MathUtils.lerp(0.45, 0.18, easedProgress),
+        rotationY: THREE.MathUtils.lerp(-Math.PI / 2, -0.1, easedProgress),
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(baseX + 2, baseX, easedProgress),
-        positionY: THREE.MathUtils.lerp(-1, 0, easedProgress),
-        positionZ: THREE.MathUtils.lerp(-1, 0, easedProgress),
-        opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
-        scale: THREE.MathUtils.lerp(0, 1, easedProgress),
+        positionX: THREE.MathUtils.lerp(stage.entry.x, stage.rest.x, easedProgress),
+        positionY: THREE.MathUtils.lerp(stage.entry.y, stage.rest.y, easedProgress),
+        positionZ: THREE.MathUtils.lerp(stage.entry.z, stage.rest.z, easedProgress),
+        opacity: THREE.MathUtils.smoothstep(easedProgress, 0.15, 1),
+        scale: THREE.MathUtils.lerp(stage.safeScale.min, stage.safeScale.max, easedProgress),
       };
     }
 
-    // Active state (20-80%) - slow rotation to show components
-    if (projectProgress < 0.8) {
-      const activeProgress = (projectProgress - 0.2) / 0.6;
+    if (projectProgress < 0.78) {
+      const activeProgress = (projectProgress - 0.22) / 0.56;
       return {
-        rotationX: THREE.MathUtils.lerp(0.2, 0.3, Math.sin(activeProgress * Math.PI)),
-        rotationY: THREE.MathUtils.lerp(0, Math.PI * 0.5, activeProgress),
-        rotationZ: 0,
-        positionX: baseX,
-        positionY: 0,
-        positionZ: 0,
+        rotationX: THREE.MathUtils.lerp(0.18, 0.28, Math.sin(activeProgress * Math.PI)),
+        rotationY: THREE.MathUtils.lerp(-0.1, Math.PI * 0.38, activeProgress),
+        rotationZ: THREE.MathUtils.lerp(0, 0.04, activeProgress),
+        positionX: stage.rest.x,
+        positionY: stage.rest.y,
+        positionZ: stage.rest.z,
         opacity: 1,
-        scale: 1,
+        scale: stage.safeScale.max,
       };
     }
 
-    // Exit animation (80-100%) - slide out to right
-    const exitProgress = (projectProgress - 0.8) / 0.2;
+    const exitProgress = (projectProgress - 0.78) / 0.22;
 
     if (isTransitioning) {
       return {
-        rotationX: THREE.MathUtils.lerp(0.3, 0, exitProgress),
-        rotationY: THREE.MathUtils.lerp(Math.PI * 0.5, Math.PI, exitProgress),
+        rotationX: THREE.MathUtils.lerp(0.28, 0.02, exitProgress),
+        rotationY: THREE.MathUtils.lerp(Math.PI * 0.38, Math.PI * 0.9, exitProgress),
         rotationZ: THREE.MathUtils.lerp(0, 0.3, exitProgress),
-        positionX: THREE.MathUtils.lerp(baseX, baseX + 2, transitionProgress),  // Move right during transition
-        positionY: THREE.MathUtils.lerp(0, 0.8, exitProgress),
-        positionZ: THREE.MathUtils.lerp(0, -2, transitionProgress),
+        positionX: THREE.MathUtils.lerp(stage.rest.x, stage.exit.x, transitionProgress),
+        positionY: THREE.MathUtils.lerp(stage.rest.y, stage.exit.y, exitProgress),
+        positionZ: THREE.MathUtils.lerp(stage.rest.z, stage.exit.z, transitionProgress),
         opacity: THREE.MathUtils.lerp(1, 0, transitionProgress),
-        scale: THREE.MathUtils.lerp(1, 0, transitionProgress),      // Scale to 0
+        scale: THREE.MathUtils.lerp(stage.safeScale.max, 0, transitionProgress),
       };
     }
 
     return {
-      rotationX: THREE.MathUtils.lerp(0.3, 0, exitProgress),
-      rotationY: THREE.MathUtils.lerp(Math.PI * 0.5, Math.PI, exitProgress),
+      rotationX: THREE.MathUtils.lerp(0.28, 0.02, exitProgress),
+      rotationY: THREE.MathUtils.lerp(Math.PI * 0.38, Math.PI * 0.9, exitProgress),
       rotationZ: 0,
-      positionX: baseX,
-      positionY: 0,
-      positionZ: 0,
-      opacity: THREE.MathUtils.lerp(1, 0.5, exitProgress),
-      scale: THREE.MathUtils.lerp(1, 0.7, exitProgress),
+      positionX: stage.rest.x,
+      positionY: stage.rest.y,
+      positionZ: stage.rest.z,
+      opacity: THREE.MathUtils.lerp(1, 0.25, exitProgress),
+      scale: THREE.MathUtils.lerp(stage.safeScale.max, 0.55, exitProgress),
     };
   };
 

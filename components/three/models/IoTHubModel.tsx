@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { useShowcase } from "@/contexts/ShowcaseContext";
+import { PROJECT_STAGE_CONFIG, useShowcase } from "@/contexts/ShowcaseContext";
 import WaterDroplets from "../effects/WaterDroplets";
 
 interface IoTHubModelProps {
@@ -185,6 +185,7 @@ function ConnectionLine({
 // Premium IoT Hub with animated LED ring
 function PlaceholderHub({ opacity }: { opacity: number }) {
   const timeRef = useRef(0);
+  const ledRingMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
 
   // Premium matte dark hub body
   const bodyMaterial = useMemo(
@@ -232,7 +233,9 @@ function PlaceholderHub({ opacity }: { opacity: number }) {
   useFrame((state) => {
     timeRef.current = state.clock.getElapsedTime();
     const pulse = 0.8 + Math.sin(timeRef.current * 2) * 0.3;
-    ledRingMaterial.emissiveIntensity = pulse;
+    if (ledRingMaterialRef.current) {
+      ledRingMaterialRef.current.emissiveIntensity = pulse;
+    }
   });
 
   return (
@@ -248,7 +251,15 @@ function PlaceholderHub({ opacity }: { opacity: number }) {
       </mesh>
 
       {/* Animated LED ring with glow */}
-      <mesh position={[0, 0.05, 0]} material={ledRingMaterial}>
+      <mesh
+        position={[0, 0.05, 0]}
+        material={ledRingMaterial}
+        ref={(node) => {
+          if (node) {
+            ledRingMaterialRef.current = node.material as THREE.MeshStandardMaterial;
+          }
+        }}
+      >
         <torusGeometry args={[0.38, 0.018, 16, 64]} />
       </mesh>
 
@@ -277,8 +288,6 @@ function PlaceholderHub({ opacity }: { opacity: number }) {
       {/* Status LEDs positioned around the hub */}
       {[0, 1, 2, 3, 4, 5].map((i) => {
         const angle = (i / 6) * Math.PI * 2;
-        const ledTime = timeRef.current * 2 + i * Math.PI / 3;
-        const ledIntensity = 0.6 + Math.sin(ledTime) * 0.4;
 
         return (
           <mesh
@@ -289,7 +298,7 @@ function PlaceholderHub({ opacity }: { opacity: number }) {
             <meshStandardMaterial
               color="#00d2d3"
               emissive="#00d2d3"
-              emissiveIntensity={ledIntensity}
+              emissiveIntensity={0.75}
               transparent
               opacity={opacity}
             />
@@ -351,18 +360,16 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
   const sensorRefB = useRef<THREE.Group | null>(null);
   const sensorRefC = useRef<THREE.Group | null>(null);
   const { state, setModelState } = useShowcase();
-
-  // Position on RIGHT side of viewport (index 3 = odd = right side)
-  const baseX = 1.8;
+  const stage = PROJECT_STAGE_CONFIG.realitech;
 
   // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
-    positionX: baseX,
-    positionY: -3,           // Start far below (emerge from below)
-    positionZ: -2,           // Start far back
+    positionX: stage.entry.x,
+    positionY: stage.entry.y,
+    positionZ: stage.entry.z,
     opacity: 0,              // Completely transparent
     scale: 0,                // Completely scaled down
     floatTime: 0,
@@ -377,9 +384,9 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
         rotationX: 0,
         rotationY: 0,
         rotationZ: 0,
-        positionX: baseX,
-        positionY: -3,
-        positionZ: -2,
+        positionX: stage.entry.x,
+        positionY: stage.entry.y,
+        positionZ: stage.entry.z,
         opacity: 0,
         scale: 0,
         sensorOrbitRadius: 0,
@@ -394,12 +401,12 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
         rotationX: 0,
         rotationY: THREE.MathUtils.lerp(0, Math.PI / 4, easedProgress),
         rotationZ: 0,
-        positionX: baseX,
-        positionY: THREE.MathUtils.lerp(-2, 0, easedProgress),
-        positionZ: THREE.MathUtils.lerp(-1, 0, easedProgress),
-        opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
-        scale: THREE.MathUtils.lerp(0, 1, easedProgress),
-        sensorOrbitRadius: THREE.MathUtils.lerp(0, 1.0, easedProgress),  // Slightly smaller orbit
+        positionX: THREE.MathUtils.lerp(stage.entry.x, stage.rest.x, easedProgress),
+        positionY: THREE.MathUtils.lerp(stage.entry.y, stage.rest.y, easedProgress),
+        positionZ: THREE.MathUtils.lerp(stage.entry.z, stage.rest.z, easedProgress),
+        opacity: THREE.MathUtils.smoothstep(easedProgress, 0.2, 1),
+        scale: THREE.MathUtils.lerp(stage.safeScale.min, stage.safeScale.max, easedProgress),
+        sensorOrbitRadius: THREE.MathUtils.lerp(0, 0.92, easedProgress),
       };
     }
 
@@ -410,12 +417,12 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
         rotationX: 0,
         rotationY: THREE.MathUtils.lerp(Math.PI / 4, Math.PI * 2 + Math.PI / 4, activeProgress),
         rotationZ: 0,
-        positionX: baseX,
-        positionY: 0,
-        positionZ: 0,
+        positionX: stage.rest.x,
+        positionY: stage.rest.y,
+        positionZ: stage.rest.z,
         opacity: 1,
-        scale: 1,
-        sensorOrbitRadius: 1.0,  // Slightly smaller orbit
+        scale: stage.safeScale.max,
+        sensorOrbitRadius: 0.92,
       };
     }
 
@@ -425,12 +432,12 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
       rotationX: 0,
       rotationY: THREE.MathUtils.lerp(Math.PI * 2.25, Math.PI * 2.5, exitProgress),
       rotationZ: 0,
-      positionX: THREE.MathUtils.lerp(baseX, baseX + 2, exitProgress),  // Move right during exit
-      positionY: THREE.MathUtils.lerp(0, 0.5, exitProgress),
-      positionZ: THREE.MathUtils.lerp(0, -1, exitProgress),
+      positionX: THREE.MathUtils.lerp(stage.rest.x, stage.exit.x, exitProgress),
+      positionY: THREE.MathUtils.lerp(stage.rest.y, stage.exit.y, exitProgress),
+      positionZ: THREE.MathUtils.lerp(stage.rest.z, stage.exit.z, exitProgress),
       opacity: THREE.MathUtils.lerp(1, 0, exitProgress),
-      scale: THREE.MathUtils.lerp(1, 0, exitProgress),      // Scale to 0
-      sensorOrbitRadius: THREE.MathUtils.lerp(1.0, 0, exitProgress),
+      scale: THREE.MathUtils.lerp(stage.safeScale.max, 0, exitProgress),
+      sensorOrbitRadius: THREE.MathUtils.lerp(0.92, 0, exitProgress),
     };
   };
 

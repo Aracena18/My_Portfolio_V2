@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 import { ShowcaseProvider } from "@/contexts/ShowcaseContext";
 import ShowcaseOrchestrator from "./ShowcaseOrchestrator";
 import { CanvasErrorBoundary } from "../three/CanvasErrorBoundary";
@@ -25,41 +26,59 @@ interface ShowcaseSectionProps {
 
 export default function ShowcaseSection({ className = "" }: ShowcaseSectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const deactivateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isCanvasActive, setIsCanvasActive] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Ensure we're on the client side before activating any 3D content
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const [canvasOpacity, setCanvasOpacity] = useState(0);
 
   useEffect(() => {
-    // Don't set up observer until mounted on client
-    if (!isMounted) return;
+    const updateCanvasState = () => {
+      const section = sectionRef.current;
+      if (!section) return;
 
-    const section = sectionRef.current;
-    if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const fadeDistance = viewportHeight * 0.18;
+      const isNearViewport = rect.top < viewportHeight + fadeDistance && rect.bottom > -fadeDistance;
 
-    // IntersectionObserver to detect when section is approaching or visible
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        // Activate canvas when section is visible or about to be visible
-        setIsCanvasActive(entry.isIntersecting);
-      },
-      {
-        // Start preloading slightly before the section enters viewport
-        rootMargin: "200px 0px 0px 0px",
-        threshold: 0,
+      if (!isNearViewport) {
+        setCanvasOpacity(0);
+        if (deactivateTimerRef.current) {
+          clearTimeout(deactivateTimerRef.current);
+        }
+        deactivateTimerRef.current = setTimeout(() => {
+          setIsCanvasActive(false);
+        }, 320);
+        return;
       }
-    );
 
-    observer.observe(section);
+      if (deactivateTimerRef.current) {
+        clearTimeout(deactivateTimerRef.current);
+        deactivateTimerRef.current = null;
+      }
+
+      setIsCanvasActive(true);
+
+      const enterProgress = THREE.MathUtils.clamp(
+        (viewportHeight - rect.top) / fadeDistance,
+        0,
+        1
+      );
+      const exitProgress = THREE.MathUtils.clamp(rect.bottom / fadeDistance, 0, 1);
+      setCanvasOpacity(Math.min(enterProgress, exitProgress));
+    };
+
+    updateCanvasState();
+    window.addEventListener("scroll", updateCanvasState, { passive: true });
+    window.addEventListener("resize", updateCanvasState);
 
     return () => {
-      observer.disconnect();
+      if (deactivateTimerRef.current) {
+        clearTimeout(deactivateTimerRef.current);
+      }
+      window.removeEventListener("scroll", updateCanvasState);
+      window.removeEventListener("resize", updateCanvasState);
     };
-  }, [isMounted]);
+  }, []);
 
   return (
     <ShowcaseProvider>
@@ -70,10 +89,13 @@ export default function ShowcaseSection({ className = "" }: ShowcaseSectionProps
         style={{ minHeight: "500vh" }} // Enough scroll height for all projects
       >
         {/* Fixed 3D Canvas Background - Only render when section is visible and client-side mounted */}
-        {isMounted && isCanvasActive && (
+        {isCanvasActive && (
           <CanvasErrorBoundary>
-            <div className="fixed inset-0 z-0 pointer-events-none">
-              <ShowcaseCanvas />
+            <div
+              className="fixed inset-0 z-0 pointer-events-none transition-opacity duration-300"
+              style={{ opacity: canvasOpacity }}
+            >
+              <ShowcaseCanvas sceneOpacity={canvasOpacity} />
             </div>
           </CanvasErrorBoundary>
         )}

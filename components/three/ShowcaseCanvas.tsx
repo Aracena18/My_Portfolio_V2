@@ -16,6 +16,7 @@ const IoTHubModel = lazy(() => import("./models/IoTHubModel"));
 
 interface ShowcaseCanvasProps {
   className?: string;
+  sceneOpacity?: number;
 }
 
 // Loading fallback component
@@ -29,9 +30,9 @@ function LoadingFallback() {
 }
 
 // Scene content - separated for cleaner code
-function SceneContent() {
+function SceneContent({ sceneOpacity = 1 }: { sceneOpacity?: number }) {
   return (
-    <>
+    <group>
       {/* Scroll-driven camera and lighting */}
       <CameraController />
       <LightingSystem />
@@ -68,12 +69,16 @@ function SceneContent() {
 
       {/* Preload all models for smoother transitions */}
       <Preload all />
-    </>
+      <mesh visible={false}>
+        <boxGeometry args={[0, 0, 0]} />
+        <meshBasicMaterial transparent opacity={sceneOpacity} />
+      </mesh>
+    </group>
   );
 }
 
 // Inner canvas component - only rendered client-side
-function ShowcaseCanvasInner({ className = "" }: ShowcaseCanvasProps) {
+function ShowcaseCanvasInner({ className = "", sceneOpacity = 1 }: ShowcaseCanvasProps) {
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
@@ -92,14 +97,16 @@ function ShowcaseCanvasInner({ className = "" }: ShowcaseCanvasProps) {
           gl.setClearColor(0x000000, 0);
         }}
       >
-        <SceneContent />
+        <group scale={[1, 1, 1]} visible={sceneOpacity > 0.001}>
+          <SceneContent sceneOpacity={sceneOpacity} />
+        </group>
       </Canvas>
     </div>
   );
 }
 
 // Main export - handles client-side mounting
-export default function ShowcaseCanvas({ className = "" }: ShowcaseCanvasProps) {
+export default function ShowcaseCanvas({ className = "", sceneOpacity = 1 }: ShowcaseCanvasProps) {
   const [canRender, setCanRender] = useState(false);
 
   useEffect(() => {
@@ -116,5 +123,5 @@ export default function ShowcaseCanvas({ className = "" }: ShowcaseCanvasProps) 
     );
   }
 
-  return <ShowcaseCanvasInner className={className} />;
+  return <ShowcaseCanvasInner className={className} sceneOpacity={sceneOpacity} />;
 }
