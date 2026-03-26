@@ -230,16 +230,19 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { state, setModelState } = useShowcase();
 
+  // Position on LEFT side of viewport (index 2 = even = left side)
+  const baseX = -1.8;
+
   // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
     rotationX: 0.3,
     rotationY: Math.PI,
     rotationZ: 0,
-    positionX: -3,       // Start off to the left
-    positionY: -1,       // Start below
-    positionZ: -3,       // Start far back
-    opacity: 0,          // Completely transparent
-    scale: 0,            // Completely scaled down
+    positionX: baseX - 2,    // Start off to the left
+    positionY: -1,           // Start below
+    positionZ: -3,           // Start far back
+    opacity: 0,              // Completely transparent
+    scale: 0,                // Completely scaled down
     floatTime: 0,
     chartOffset: 0,
   });
@@ -252,7 +255,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
         rotationX: 0.3,
         rotationY: Math.PI,
         rotationZ: 0,
-        positionX: -3,
+        positionX: baseX - 2,
         positionY: -1,
         positionZ: -3,
         opacity: 0,
@@ -260,7 +263,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
       };
     }
 
-    // Entry - push in from depth with screen boot flicker
+    // Entry - push in from left with screen boot flicker
     if (projectProgress < 0.2) {
       const entryProgress = projectProgress / 0.2;
       const easedProgress = 1 - Math.pow(1 - entryProgress, 3);
@@ -268,7 +271,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
         rotationX: THREE.MathUtils.lerp(0.3, 0, easedProgress),
         rotationY: THREE.MathUtils.lerp(Math.PI, -0.1, easedProgress),
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(-2, 0, easedProgress),
+        positionX: THREE.MathUtils.lerp(baseX - 2, baseX, easedProgress),
         positionY: THREE.MathUtils.lerp(-1, 0, easedProgress),
         positionZ: THREE.MathUtils.lerp(-4, 0, easedProgress),
         opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
@@ -283,7 +286,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
         rotationX: 0,
         rotationY: THREE.MathUtils.lerp(-0.1, 0.2, activeProgress),
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: 0,
         positionZ: 0,
         opacity: 1,
@@ -291,7 +294,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
       };
     }
 
-    // Exit - slide out and rotate away
+    // Exit - slide out to left
     const exitProgress = (projectProgress - 0.8) / 0.2;
 
     if (isTransitioning) {
@@ -299,7 +302,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
         rotationX: THREE.MathUtils.lerp(0, -0.4, exitProgress),
         rotationY: THREE.MathUtils.lerp(0.2, Math.PI * 0.6, exitProgress),
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(0, 2, transitionProgress),  // Move right during transition
+        positionX: THREE.MathUtils.lerp(baseX, baseX - 2, transitionProgress),  // Move left during transition
         positionY: THREE.MathUtils.lerp(0, 1, exitProgress),
         positionZ: THREE.MathUtils.lerp(0, -3, transitionProgress),
         opacity: THREE.MathUtils.lerp(1, 0, transitionProgress),
@@ -311,7 +314,7 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
       rotationX: 0,
       rotationY: THREE.MathUtils.lerp(0.2, 0.4, exitProgress),
       rotationZ: 0,
-      positionX: 0,
+      positionX: baseX,
       positionY: 0,
       positionZ: 0,
       opacity: THREE.MathUtils.lerp(1, 0.5, exitProgress),
@@ -400,24 +403,24 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
         <PlaceholderMonitor opacity={modelOpacity} />
       </group>
 
-      {/* Floating chart elements */}
+      {/* Floating chart elements - positioned relative to monitor on left side */}
       {showCharts && (
         <>
           <FloatingChart
-            position={[1.5, 1, 0.5]}
+            position={[0.5, 1, 0.5]}
             scale={0.8}
             opacity={modelOpacity}
             color="#1B6B35"
           />
           <FloatingChart
-            position={[-1.5, 0.8, 0.3]}
+            position={[-0.5, 0.8, 0.3]}
             scale={0.6}
             opacity={modelOpacity}
             color="#4338CA"
           />
           <DataStream
-            startPoint={[0.8, 0.5, 0.2]}
-            endPoint={[1.5, 1, 0.5]}
+            startPoint={[0.3, 0.5, 0.2]}
+            endPoint={[0.5, 1, 0.5]}
             color="#1B6B35"
             particleCount={15}
             opacity={modelOpacity * 0.6}

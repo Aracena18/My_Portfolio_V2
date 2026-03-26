@@ -352,16 +352,19 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
   const sensorRefC = useRef<THREE.Group | null>(null);
   const { state, setModelState } = useShowcase();
 
+  // Position on RIGHT side of viewport (index 3 = odd = right side)
+  const baseX = 1.8;
+
   // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
-    positionX: 0,
-    positionY: -3,       // Start far below (emerge from below)
-    positionZ: -2,       // Start far back
-    opacity: 0,          // Completely transparent
-    scale: 0,            // Completely scaled down
+    positionX: baseX,
+    positionY: -3,           // Start far below (emerge from below)
+    positionZ: -2,           // Start far back
+    opacity: 0,              // Completely transparent
+    scale: 0,                // Completely scaled down
     floatTime: 0,
     sensorOrbitRadius: 0,
   });
@@ -374,7 +377,7 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
         rotationX: 0,
         rotationY: 0,
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: -3,
         positionZ: -2,
         opacity: 0,
@@ -391,12 +394,12 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
         rotationX: 0,
         rotationY: THREE.MathUtils.lerp(0, Math.PI / 4, easedProgress),
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: THREE.MathUtils.lerp(-2, 0, easedProgress),
         positionZ: THREE.MathUtils.lerp(-1, 0, easedProgress),
         opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
         scale: THREE.MathUtils.lerp(0, 1, easedProgress),
-        sensorOrbitRadius: THREE.MathUtils.lerp(0, 1.2, easedProgress),
+        sensorOrbitRadius: THREE.MathUtils.lerp(0, 1.0, easedProgress),  // Slightly smaller orbit
       };
     }
 
@@ -407,12 +410,12 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
         rotationX: 0,
         rotationY: THREE.MathUtils.lerp(Math.PI / 4, Math.PI * 2 + Math.PI / 4, activeProgress),
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: 0,
         positionZ: 0,
         opacity: 1,
         scale: 1,
-        sensorOrbitRadius: 1.2,
+        sensorOrbitRadius: 1.0,  // Slightly smaller orbit
       };
     }
 
@@ -422,12 +425,12 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
       rotationX: 0,
       rotationY: THREE.MathUtils.lerp(Math.PI * 2.25, Math.PI * 2.5, exitProgress),
       rotationZ: 0,
-      positionX: 0,
+      positionX: THREE.MathUtils.lerp(baseX, baseX + 2, exitProgress),  // Move right during exit
       positionY: THREE.MathUtils.lerp(0, 0.5, exitProgress),
       positionZ: THREE.MathUtils.lerp(0, -1, exitProgress),
       opacity: THREE.MathUtils.lerp(1, 0, exitProgress),
       scale: THREE.MathUtils.lerp(1, 0, exitProgress),      // Scale to 0
-      sensorOrbitRadius: THREE.MathUtils.lerp(1.2, 0, exitProgress),
+      sensorOrbitRadius: THREE.MathUtils.lerp(1.0, 0, exitProgress),
     };
   };
 

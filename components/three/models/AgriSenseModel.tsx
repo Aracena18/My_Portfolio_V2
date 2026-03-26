@@ -36,11 +36,14 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
 
   // Current interpolated values for smooth transitions
   // START COMPLETELY HIDDEN to prevent visibility on home screen
+  // Position on LEFT side of viewport (index 0 = even = left side)
+  const baseX = -1.8;
+
   const current = useRef({
     rotationX: -0.3,
     rotationY: 0,
     rotationZ: 0,
-    positionX: 0,
+    positionX: baseX - 1,
     positionY: -2,       // Start far below
     positionZ: -3,       // Start far back
     opacity: 0,          // Completely transparent
@@ -128,7 +131,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         rotationX: -0.3,
         rotationY: 0,
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX - 1,
         positionY: -2,
         positionZ: -3,
         opacity: 0,
@@ -137,7 +140,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
       };
     }
 
-    // Entry phase (0-15% of project range) - dramatic reveal
+    // Entry phase (0-15% of project range) - dramatic reveal from left
     if (projectProgress < 0.15) {
       const entryProgress = projectProgress / 0.15;
       const easedProgress = 1 - Math.pow(1 - entryProgress, 3); // Ease out cubic
@@ -145,7 +148,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         rotationX: THREE.MathUtils.lerp(-0.2, 0.1, easedProgress),
         rotationY: THREE.MathUtils.lerp(-0.5, 0.3, easedProgress),
         rotationZ: THREE.MathUtils.lerp(-0.1, 0, easedProgress),
-        positionX: 0,
+        positionX: THREE.MathUtils.lerp(baseX - 1, baseX, easedProgress),
         positionY: THREE.MathUtils.lerp(-1.5, 0, easedProgress),
         positionZ: THREE.MathUtils.lerp(-1, 0, easedProgress),
         opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
@@ -161,7 +164,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         rotationX: 0.1,
         rotationY: THREE.MathUtils.lerp(0.3, 0.6, showcaseProgress),
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: 0,
         positionZ: 0,
         opacity: 1,
@@ -177,7 +180,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         rotationX: THREE.MathUtils.lerp(0.1, Math.PI / 2 - 0.1, layingProgress),
         rotationY: THREE.MathUtils.lerp(0.6, 0.3, layingProgress),
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: THREE.MathUtils.lerp(0, -0.3, layingProgress), // Lower slightly
         positionZ: 0,
         opacity: 1,
@@ -193,7 +196,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         rotationX: Math.PI / 2 - 0.1, // Near horizontal (screen facing up)
         rotationY: THREE.MathUtils.lerp(0.3, 0.7, hologramProgress), // Slow rotation
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: -0.3, // Lowered position
         positionZ: 0,
         opacity: 1,
@@ -210,7 +213,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         rotationX: THREE.MathUtils.lerp(Math.PI / 2 - 0.1, 0.15, easedStandUp),
         rotationY: THREE.MathUtils.lerp(0.7, 0.5, easedStandUp),
         rotationZ: 0,
-        positionX: 0,
+        positionX: baseX,
         positionY: THREE.MathUtils.lerp(-0.3, 0, easedStandUp),
         positionZ: 0,
         opacity: 1,
@@ -226,7 +229,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         rotationX: THREE.MathUtils.lerp(0.15, 0.3, exitProgress),
         rotationY: THREE.MathUtils.lerp(0.5, Math.PI / 2, exitProgress),
         rotationZ: THREE.MathUtils.lerp(0, 0.2, exitProgress),
-        positionX: THREE.MathUtils.lerp(0, -2, transitionProgress),
+        positionX: THREE.MathUtils.lerp(baseX, baseX - 2, transitionProgress),
         positionY: THREE.MathUtils.lerp(0, 0.5, exitProgress),
         positionZ: THREE.MathUtils.lerp(0, -2, transitionProgress),
         opacity: THREE.MathUtils.lerp(1, 0, transitionProgress),
@@ -239,7 +242,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
       rotationX: THREE.MathUtils.lerp(0.15, 0.3, exitProgress),
       rotationY: THREE.MathUtils.lerp(0.5, Math.PI / 2, exitProgress),
       rotationZ: 0,
-      positionX: 0,
+      positionX: baseX,
       positionY: 0,
       positionZ: 0,
       opacity: THREE.MathUtils.lerp(1, 0.5, exitProgress),
