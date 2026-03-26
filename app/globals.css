@@ -3,20 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --bg: #E9EEE7;
-  --bg-alt: #DEE5DB;
-  --surface-dark: #0C1A0E;
-  --card: #F3F7F0;
-  --text: #111A14;
-  --text-secondary: #4A5548;
-  --muted: #65715F;
-  --muted-light: #909C8B;
-  --border: #C8D2C3;
-  --green: #165A2D;
-  --green-light: #D6E2D1;
-  --green-dark: #0F4D23;
-  --accent: #4338CA;
-  --accent-light: #E6E2F6;
+  --bg: #eff2ea;
+  --bg-alt: #e1e7dd;
+  --surface-dark: #2c3e35;
+  --card: #f4f1ea;
+  --text: #152019;
+  --text-secondary: #4d5c52;
+  --muted: #6b786f;
+  --muted-light: #96a399;
+  --border: #f4f1ea;
+  --green: #4e8a43;
+  --green-light: #dbecc8;
+  --green-dark: #264e2c;
+  --accent: #f0c857;
+  --accent-light: #fff1be;
+  --terracotta: #d78459;
+  --soil: #50392f;
+  --frame: #f4f1ea;
+  --cutout: #2c3e35;
+  --cutout-soft: #355145;
+  --hero-ink: #ecede6;
+  --hero-line: rgba(244, 241, 234, 0.34);
   --radius: 14px;
   --container: 1200px;
 }
@@ -47,7 +54,9 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent 28%),
+    linear-gradient(180deg, #eef1ea 0%, #e3e9de 100%);
   color: var(--text);
   font-family: var(--font-jakarta), system-ui, -apple-system, sans-serif;
   font-size: 16px;
@@ -64,7 +73,7 @@ body::after {
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.035;
+  opacity: 0.018;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   background-size: 200px 200px;
@@ -164,4 +173,129 @@ img {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.hero-frame {
+  position: relative;
+  background: var(--frame);
+  border-radius: clamp(2rem, 4vw, 3.5rem);
+  padding: clamp(0.9rem, 1.4vw, 1.25rem);
+  box-shadow:
+    0 30px 80px rgba(23, 36, 29, 0.09),
+    0 8px 24px rgba(23, 36, 29, 0.05);
+}
+
+.hero-grid {
+  display: grid;
+  gap: clamp(0.8rem, 1.3vw, 1.1rem);
+}
+
+.hero-cutout {
+  position: relative;
+  background: linear-gradient(180deg, var(--cutout-soft) 0%, var(--cutout) 100%);
+  color: var(--hero-ink);
+  border-radius: clamp(1.5rem, 3vw, 2.75rem);
+  overflow: hidden;
+}
+
+.hero-pill {
+  border-radius: 999px;
+}
+
+.hero-display {
+  font-family: var(--font-orbitron), var(--font-urbanist), system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -0.06em;
+}
+
+.hero-annotation-line {
+  height: 1px;
+  background: var(--hero-line);
+}
+
+.hero-annotation-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 999px;
+  background: var(--frame);
+  box-shadow: 0 0 0 4px rgba(244, 241, 234, 0.15);
+}
+
+.eco-shell {
+  position: relative;
+  border: 12px solid var(--border);
+  border-radius: 3rem;
+  background:
+    radial-gradient(circle at top right, rgba(240, 200, 87, 0.12), transparent 20%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.08), transparent 40%),
+    linear-gradient(180deg, #254635 0%, #1c382b 100%);
+  box-shadow:
+    0 30px 80px rgba(28, 56, 43, 0.18),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.eco-shell::before {
+  content: "";
+  position: absolute;
+  inset: 16px;
+  border-radius: 2.4rem;
+  border: 1px solid rgba(247, 240, 223, 0.18);
+  pointer-events: none;
+}
+
+.eco-chip {
+  border: 8px solid var(--border);
+  border-radius: 999px;
+  background: rgba(247, 240, 223, 0.96);
+  box-shadow: 0 18px 40px rgba(24, 36, 28, 0.16);
+}
+
+.eco-island {
+  border: 10px solid var(--border);
+  border-radius: 2rem;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.04)),
+    rgba(38, 78, 44, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 18px 44px rgba(24, 36, 28, 0.2);
+}
+
+.eco-cutout {
+  position: absolute;
+  border-radius: 999px;
+  background: var(--border);
+  box-shadow: 0 12px 30px rgba(24, 36, 28, 0.12);
+}
+
+.eco-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 70px 70px;
+}
+
+.eco-orbit {
+  position: absolute;
+  inset: auto auto 12% 38%;
+  width: min(36vw, 19rem);
+  height: min(36vw, 19rem);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.eco-orbit::before,
+.eco-orbit::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: inherit;
+  border: 1px solid rgba(240, 200, 87, 0.18);
+}
+
+.eco-orbit::after {
+  inset: 26%;
+  border-color: rgba(219, 236, 200, 0.24);
 }

@@ -21,9 +21,9 @@ const PROJECT_CONTENT: Record<string, {
   stats: { label: string; value: string }[];
 }> = {
   agrisense: {
-    tagline: "Precision Agriculture Meets AI",
-    description: "Real-time crop diagnostics in your pocket. Our LLM-powered system delivers 92% accurate disease diagnosis in under 3 seconds, completely offline.",
-    transitionText: "From software to silicon...",
+    tagline: "AI product design grounded in real-world constraints",
+    description: "A retrieval-augmented assistant that combines applied research, inference design, and a user-facing product layer into a clear diagnostic workflow.",
+    transitionText: "From software products to edge devices...",
     stats: [
       { label: "Accuracy", value: "92%" },
       { label: "Response", value: "<3s" },
@@ -31,9 +31,9 @@ const PROJECT_CONTENT: Record<string, {
     ],
   },
   "esp32-leaf-scanner": {
-    tagline: "The Eye That Sees What We Cannot",
-    description: "Edge-deployed computer vision running on a $15 device. Real-time leaf disease detection at 180ms inference, no cloud required.",
-    transitionText: "From edge to enterprise...",
+    tagline: "Computer vision compressed into deployable hardware",
+    description: "An edge ML build focused on performance, cost, and legibility. The work covers model optimization, embedded constraints, and a system people can operate in the field.",
+    transitionText: "From embedded systems to operational dashboards...",
     stats: [
       { label: "Inference", value: "180ms" },
       { label: "Cost", value: "$15" },
@@ -41,9 +41,9 @@ const PROJECT_CONTENT: Record<string, {
     ],
   },
   arms: {
-    tagline: "Command Center for Modern Farms",
-    description: "Full-stack resource management serving 150+ farms. ML-powered yield predictions with 84% accuracy, saving 40% planning time.",
-    transitionText: "From data to action...",
+    tagline: "Full-stack product thinking with measurable utility",
+    description: "A platform build that blends interface architecture, application logic, and decision-support tooling into a system with practical day-to-day value.",
+    transitionText: "From systems thinking to shipped experiences...",
     stats: [
       { label: "Farms", value: "150+" },
       { label: "Time Saved", value: "40%" },
@@ -51,9 +51,9 @@ const PROJECT_CONTENT: Record<string, {
     ],
   },
   realitech: {
-    tagline: "The Living System",
-    description: "IoT-based precision irrigation achieving 35% water savings. Smart sensors and ML scheduling for optimal crop hydration.",
-    transitionText: "Let's build the future of agriculture.",
+    tagline: "Connected infrastructure with a product mindset",
+    description: "A hardware-software system that shows how sensing, automation, and UX can come together as one coherent service layer.",
+    transitionText: "Let’s build the next serious product.",
     stats: [
       { label: "Water Saved", value: "35%" },
       { label: "Uptime", value: "99.2%" },
@@ -104,16 +104,17 @@ export default function ShowcaseOrchestrator() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
         >
-          <p className="text-sm uppercase tracking-[0.3em] text-white/40 mb-6">
+          <p className="mb-6 text-sm uppercase tracking-[0.3em] text-white/40">
             Selected Work
           </p>
-          <h1 className="text-[clamp(2.5rem,8vw,6rem)] font-light text-white leading-[0.95] tracking-tight mb-8">
-            Engineering
-            <span className="block text-white/30">Intelligence</span>
+          <h1 className="mb-8 text-[clamp(2.5rem,8vw,6rem)] font-light leading-[0.95] tracking-tight text-white">
+            Projects that connect
+            <span className="block text-white/30">design, code, and AI.</span>
           </h1>
-          <p className="text-lg md:text-xl text-white/50 font-light max-w-xl mx-auto leading-relaxed">
-            From mobile apps to IoT systems, building the future of agriculture
-            with AI and edge computing.
+          <p className="mx-auto max-w-xl text-lg font-light leading-relaxed text-white/50 md:text-xl">
+            A portfolio of systems work spanning intelligent interfaces,
+            full-stack applications, embedded experiments, and product-focused
+            technical execution.
           </p>
         </motion.div>
 
@@ -166,14 +167,14 @@ export default function ShowcaseOrchestrator() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true, margin: "-100px" }}
         >
-          <p className="text-2xl md:text-3xl text-white/70 font-light mb-8">
-            Ready to build something amazing?
+          <p className="mb-8 text-2xl font-light text-white/70 md:text-3xl">
+            Need someone who can think through both product and implementation?
           </p>
           <a
             href="#contact"
             className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-all duration-300"
           >
-            <span>Get in touch</span>
+            <span>Let&apos;s talk</span>
             <svg
               className="w-4 h-4"
               fill="none"

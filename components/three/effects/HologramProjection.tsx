@@ -142,12 +142,12 @@ function CarouselCard({
     const time = state.clock.getElapsedTime();
     const normalized = count === 0 ? 0 : index / count;
     const rotation = rotationProgress * Math.PI * 2 + normalized * Math.PI * 2;
-    const radius = mode === "carousel" ? 0.36 : 0.18;
+    const radius = mode === "carousel" ? 0.26 : 0.16;
     const x = mode === "carousel" ? Math.cos(rotation) * radius : (index - (count - 1) / 2) * 0.22;
-    const z = mode === "carousel" ? Math.sin(rotation) * radius * 0.26 : index * -0.03;
-    const yBase = beamHeight * (0.36 + normalized * 0.2);
+    const z = mode === "carousel" ? Math.sin(rotation) * radius * 0.18 : index * -0.03;
+    const yBase = beamHeight * (0.55 + normalized * 0.16);
 
-    ref.current.position.set(x, yBase + Math.sin(time * 1.4 + index) * 0.025, z);
+    ref.current.position.set(x, yBase + Math.sin(time * 1.4 + index) * 0.018, z);
     ref.current.rotation.y = mode === "carousel" ? -rotation + Math.PI / 2 : 0;
   });
 
@@ -228,31 +228,33 @@ export default function HologramProjection({
   return (
     <group ref={groupRef} position={position}>
       <group position={screenAnchor}>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-          <circleGeometry args={[0.32, 48]} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.035, 0]}>
+          <circleGeometry args={[0.2, 48]} />
           <meshBasicMaterial
             color={beamColor}
             transparent
-            opacity={opacity * 0.24}
+            opacity={opacity * 0.18}
             blending={THREE.AdditiveBlending}
             depthWrite={false}
           />
         </mesh>
 
-        <mesh position={[0, beamHeight * 0.42, 0]}>
-          <cylinderGeometry args={[0.06, 0.28, beamHeight, 40, 1, true]} />
+        <mesh position={[0, beamHeight * 0.5, 0]}>
+          <cylinderGeometry args={[0.045, 0.18, beamHeight, 40, 1, true]} />
           <meshBasicMaterial
             color={beamColor}
             transparent
-            opacity={opacity * 0.1}
+            opacity={opacity * 0.08}
             blending={THREE.AdditiveBlending}
             side={THREE.DoubleSide}
             depthWrite={false}
           />
         </mesh>
 
-        <BeamRing radius={0.34} color={color} opacity={opacity} speed={0.45} />
-        <BeamRing radius={0.24} color={color} opacity={opacity * 0.8} speed={0.72} />
+        <group position={[0, 0.035, 0]}>
+          <BeamRing radius={0.2} color={color} opacity={opacity} speed={0.45} />
+          <BeamRing radius={0.14} color={color} opacity={opacity * 0.8} speed={0.72} />
+        </group>
 
         <HologramDust count={24} color={color} opacity={opacity} height={beamHeight} />
 

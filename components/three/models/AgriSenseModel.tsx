@@ -387,7 +387,7 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
 
     if (screenOverlayRef.current) {
       const material = screenOverlayRef.current.material as THREE.MeshPhysicalMaterial;
-      material.opacity = current.current.opacity * 0.14;
+      material.opacity = current.current.opacity * 0.06;
       screenOverlayRef.current.visible = current.current.opacity > 0.01;
     }
 
@@ -407,18 +407,18 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
   return (
     <group ref={groupRef}>
       <primitive object={scene} scale={scale} />
-      <mesh ref={screenOverlayRef} position={[0, 0, 0.028]} renderOrder={10}>
-        <planeGeometry args={[0.92, 1.98]} />
+      <mesh ref={screenOverlayRef} position={[0, 0, 0.022]} renderOrder={10}>
+        <planeGeometry args={[0.72, 1.5]} />
         <meshPhysicalMaterial
-          color="#d6f4ff"
+          color="#e8f7ff"
           transparent
           opacity={0}
           metalness={0}
-          roughness={0.05}
-          transmission={0.22}
+          roughness={0.08}
+          transmission={0.14}
           clearcoat={1}
-          clearcoatRoughness={0.08}
-          envMapIntensity={2.5}
+          clearcoatRoughness={0.1}
+          envMapIntensity={1.4}
           depthWrite={false}
         />
       </mesh>
@@ -428,9 +428,9 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         <HologramProjection
           opacity={hologramState.opacity}
           color="#7addff"
-          position={[0, 0.06, 0]}
+          position={[0, 0.16, 0.02]}
           screenAnchor={[0, 0, 0]}
-          beamHeight={1.05}
+          beamHeight={0.8}
           cards={hologramCards}
           mode="carousel"
           rotationProgress={0}

@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Urbanist } from "next/font/google";
+import { Inter, Orbitron, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
 import ClientLayout from "@/components/providers/ClientLayout";
 
-const plusJakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   variable: "--font-jakarta",
   subsets: ["latin"],
   display: "swap",
 });
 
-const urbanist = Urbanist({
+const spaceGrotesk = Space_Grotesk({
   variable: "--font-urbanist",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const orbitron = Orbitron({
+  variable: "--font-orbitron",
   subsets: ["latin"],
   display: "swap",
 });
@@ -64,7 +70,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${urbanist.variable}`}
+      className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased" suppressHydrationWarning>

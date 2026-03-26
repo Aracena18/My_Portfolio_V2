@@ -29,6 +29,8 @@ const config: Config = {
           light: "#D6E2D1",
           dark: "#0F4D23",
         },
+        frame: "#F4F1EA",
+        cutout: "#2C3E35",
         accent: {
           DEFAULT: "#4338CA",
           light: "#E6E2F6",
@@ -75,6 +77,7 @@ const config: Config = {
       fontFamily: {
         heading: ["var(--font-urbanist)", "system-ui", "sans-serif"],
         body: ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        hero: ["var(--font-orbitron)", "var(--font-urbanist)", "system-ui", "sans-serif"],
       },
       transitionTimingFunction: {
         spring: "cubic-bezier(.22,.9,.3,1)",
