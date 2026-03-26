@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useGLTF, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useShowcase } from "@/contexts/ShowcaseContext";
+import HologramProjection from "../effects/HologramProjection";
 
 interface AgriSenseModelProps {
   scale?: number;
@@ -34,15 +35,16 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
   }, [screenTexture]);
 
   // Current interpolated values for smooth transitions
+  // START COMPLETELY HIDDEN to prevent visibility on home screen
   const current = useRef({
-    rotationX: -0.1,
-    rotationY: 0.1,
+    rotationX: -0.3,
+    rotationY: 0,
     rotationZ: 0,
     positionX: 0,
-    positionY: -0.3,
-    positionZ: 0,
-    opacity: 0,
-    scale: 0,
+    positionY: -2,       // Start far below
+    positionZ: -3,       // Start far back
+    opacity: 0,          // Completely transparent
+    scale: 0,            // Completely scaled down
     floatTime: 0,
   });
 
@@ -131,64 +133,124 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
         positionZ: -3,
         opacity: 0,
         scale: 0,
+        hologramActive: false,
       };
     }
 
-    // Entry phase (0-15% of project range)
+    // Entry phase (0-15% of project range) - dramatic reveal
     if (projectProgress < 0.15) {
       const entryProgress = projectProgress / 0.15;
-      const easedProgress = 1 - Math.pow(1 - entryProgress, 3);
+      const easedProgress = 1 - Math.pow(1 - entryProgress, 3); // Ease out cubic
       return {
-        rotationX: THREE.MathUtils.lerp(-0.1, 0.1, easedProgress),
-        rotationY: THREE.MathUtils.lerp(0.1, 0.3, easedProgress),
-        rotationZ: 0,
+        rotationX: THREE.MathUtils.lerp(-0.2, 0.1, easedProgress),
+        rotationY: THREE.MathUtils.lerp(-0.5, 0.3, easedProgress),
+        rotationZ: THREE.MathUtils.lerp(-0.1, 0, easedProgress),
         positionX: 0,
-        positionY: THREE.MathUtils.lerp(-0.3, 0, easedProgress),
-        positionZ: 0,
-        opacity: THREE.MathUtils.lerp(0.5, 1, easedProgress),
-        scale: THREE.MathUtils.lerp(0.9, 1, easedProgress),
+        positionY: THREE.MathUtils.lerp(-1.5, 0, easedProgress),
+        positionZ: THREE.MathUtils.lerp(-1, 0, easedProgress),
+        opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
+        scale: THREE.MathUtils.lerp(0, 1, easedProgress),
+        hologramActive: false,
       };
     }
 
-    if (projectProgress < 0.8) {
-      const activeProgress = (projectProgress - 0.15) / 0.65;
+    // Showcase phase (15-30%) - rotate to show off the phone
+    if (projectProgress < 0.30) {
+      const showcaseProgress = (projectProgress - 0.15) / 0.15;
       return {
         rotationX: 0.1,
-        rotationY: THREE.MathUtils.lerp(0.3, 0.5, activeProgress),
+        rotationY: THREE.MathUtils.lerp(0.3, 0.6, showcaseProgress),
         rotationZ: 0,
         positionX: 0,
         positionY: 0,
         positionZ: 0,
         opacity: 1,
         scale: 1,
+        hologramActive: false,
       };
     }
 
-    const exitProgress = (projectProgress - 0.8) / 0.2;
+    // Lie flat phase (30-35%) - transition to lying flat
+    if (projectProgress < 0.35) {
+      const layingProgress = (projectProgress - 0.30) / 0.05;
+      return {
+        rotationX: THREE.MathUtils.lerp(0.1, Math.PI / 2 - 0.1, layingProgress),
+        rotationY: THREE.MathUtils.lerp(0.6, 0.3, layingProgress),
+        rotationZ: 0,
+        positionX: 0,
+        positionY: THREE.MathUtils.lerp(0, -0.3, layingProgress), // Lower slightly
+        positionZ: 0,
+        opacity: 1,
+        scale: 1,
+        hologramActive: layingProgress > 0.5, // Start hologram as it lies flat
+      };
+    }
+
+    // HOLOGRAM SHOWCASE (35-60%) - Phone flat, hologram projecting!
+    if (projectProgress < 0.60) {
+      const hologramProgress = (projectProgress - 0.35) / 0.25;
+      return {
+        rotationX: Math.PI / 2 - 0.1, // Near horizontal (screen facing up)
+        rotationY: THREE.MathUtils.lerp(0.3, 0.7, hologramProgress), // Slow rotation
+        rotationZ: 0,
+        positionX: 0,
+        positionY: -0.3, // Lowered position
+        positionZ: 0,
+        opacity: 1,
+        scale: 1,
+        hologramActive: true, // HOLOGRAM ACTIVE!
+      };
+    }
+
+    // Stand back up (60-75%)
+    if (projectProgress < 0.75) {
+      const standUpProgress = (projectProgress - 0.60) / 0.15;
+      const easedStandUp = 1 - Math.pow(1 - standUpProgress, 2);
+      return {
+        rotationX: THREE.MathUtils.lerp(Math.PI / 2 - 0.1, 0.15, easedStandUp),
+        rotationY: THREE.MathUtils.lerp(0.7, 0.5, easedStandUp),
+        rotationZ: 0,
+        positionX: 0,
+        positionY: THREE.MathUtils.lerp(-0.3, 0, easedStandUp),
+        positionZ: 0,
+        opacity: 1,
+        scale: 1,
+        hologramActive: standUpProgress < 0.4, // Hologram fades as phone stands up
+      };
+    }
+
+    // Exit phase (75-100%)
+    const exitProgress = (projectProgress - 0.75) / 0.25;
     if (isTransitioning) {
       return {
-        rotationX: THREE.MathUtils.lerp(0.1, 0.2, exitProgress),
-        rotationY: THREE.MathUtils.lerp(0.5, Math.PI, exitProgress),
-        rotationZ: THREE.MathUtils.lerp(0, 0.1, exitProgress),
-        positionX: THREE.MathUtils.lerp(0, -1, transitionProgress),
+        rotationX: THREE.MathUtils.lerp(0.15, 0.3, exitProgress),
+        rotationY: THREE.MathUtils.lerp(0.5, Math.PI / 2, exitProgress),
+        rotationZ: THREE.MathUtils.lerp(0, 0.2, exitProgress),
+        positionX: THREE.MathUtils.lerp(0, -2, transitionProgress),
         positionY: THREE.MathUtils.lerp(0, 0.5, exitProgress),
-        positionZ: THREE.MathUtils.lerp(0, -1, transitionProgress),
+        positionZ: THREE.MathUtils.lerp(0, -2, transitionProgress),
         opacity: THREE.MathUtils.lerp(1, 0, transitionProgress),
-        scale: THREE.MathUtils.lerp(1, 0.3, transitionProgress),
+        scale: THREE.MathUtils.lerp(1, 0.2, transitionProgress),
+        hologramActive: false,
       };
     }
 
     return {
-      rotationX: THREE.MathUtils.lerp(0.1, 0.2, exitProgress),
-      rotationY: THREE.MathUtils.lerp(0.5, Math.PI, exitProgress),
+      rotationX: THREE.MathUtils.lerp(0.15, 0.3, exitProgress),
+      rotationY: THREE.MathUtils.lerp(0.5, Math.PI / 2, exitProgress),
       rotationZ: 0,
       positionX: 0,
       positionY: 0,
       positionZ: 0,
-      opacity: 1,
-      scale: 1,
+      opacity: THREE.MathUtils.lerp(1, 0.5, exitProgress),
+      scale: THREE.MathUtils.lerp(1, 0.8, exitProgress),
+      hologramActive: false,
     };
   };
+
+  // Track hologram state for smooth transitions - using state for render decisions
+  const hologramOpacityRef = useRef(0);
+  const [hologramState, setHologramState] = useState({ visible: false, opacity: 0 });
 
   useFrame((_, delta) => {
     if (!groupRef.current) return;
@@ -207,9 +269,19 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
       transitionFrom === "agrisense" ||
       transitionTo === "agrisense";
 
+    // Completely fade out when not active
     if (!isActive) {
       if (current.current.opacity > 0.01) {
-        current.current.opacity *= 0.9;
+        current.current.opacity *= 0.85; // Faster fade out
+        current.current.scale *= 0.9;
+      } else {
+        // Ensure completely hidden
+        current.current.opacity = 0;
+        current.current.scale = 0;
+      }
+      hologramOpacityRef.current *= 0.9;
+      if (hologramState.visible && hologramOpacityRef.current < 0.01) {
+        setHologramState({ visible: false, opacity: 0 });
       }
       scene.traverse((child) => {
         if (child instanceof THREE.Mesh && child.material) {
@@ -234,6 +306,17 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
     current.current.positionZ += (target.positionZ - current.current.positionZ) * lerp;
     current.current.opacity += (target.opacity - current.current.opacity) * lerp;
     current.current.scale += (target.scale - current.current.scale) * lerp;
+
+    // Smooth hologram opacity transition
+    const targetHologramOpacity = target.hologramActive ? 1 : 0;
+    hologramOpacityRef.current += (targetHologramOpacity - hologramOpacityRef.current) * 0.05;
+
+    // Update hologram state only when crossing visibility threshold to avoid excessive re-renders
+    const shouldShowHologram = hologramOpacityRef.current > 0.01;
+    if (shouldShowHologram !== hologramState.visible ||
+        (shouldShowHologram && Math.abs(hologramOpacityRef.current - hologramState.opacity) > 0.05)) {
+      setHologramState({ visible: shouldShowHologram, opacity: hologramOpacityRef.current });
+    }
 
     // Apply transforms
     groupRef.current.rotation.set(
@@ -275,6 +358,15 @@ export default function AgriSenseModel({ scale = 1 }: AgriSenseModelProps) {
   return (
     <group ref={groupRef}>
       <primitive object={scene} scale={scale} />
+
+      {/* Hologram projection when phone lies flat - projects from screen */}
+      {hologramState.visible && (
+        <HologramProjection
+          opacity={hologramState.opacity}
+          color="#1B6B35"
+          position={[0, 0.5, 0]}  // Position above the phone screen
+        />
+      )}
     </group>
   );
 }

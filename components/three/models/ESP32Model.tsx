@@ -200,34 +200,49 @@ export default function ESP32Model({ scale = 1 }: ESP32ModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { state, setModelState } = useShowcase();
 
-  // Current interpolated values
+  // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
-    rotationX: 0,
-    rotationY: 0,
+    rotationX: 0.5,
+    rotationY: -Math.PI / 2,
     rotationZ: 0,
-    positionX: 2,
-    positionY: 0,
-    positionZ: 0,
-    opacity: 0,
-    scale: 0.5,
+    positionX: 3,        // Start off to the right
+    positionY: -1,       // Start below
+    positionZ: -2,       // Start far back
+    opacity: 0,          // Completely transparent
+    scale: 0,            // Completely scaled down
     floatTime: 0,
     scanProgress: 0,
   });
 
   // Animation keyframes for ESP32
   const getTargetState = (projectProgress: number, isTransitioning: boolean, transitionProgress: number) => {
-    // Entry animation (0-20%)
+    // Pre-entry - completely hidden
+    if (projectProgress <= 0) {
+      return {
+        rotationX: 0.5,
+        rotationY: -Math.PI / 2,
+        rotationZ: 0,
+        positionX: 3,
+        positionY: -1,
+        positionZ: -2,
+        opacity: 0,
+        scale: 0,
+      };
+    }
+
+    // Entry animation (0-20%) - slide in from right with scan effect
     if (projectProgress < 0.2) {
       const entryProgress = projectProgress / 0.2;
+      const easedProgress = 1 - Math.pow(1 - entryProgress, 2);
       return {
-        rotationX: THREE.MathUtils.lerp(0.5, 0, entryProgress),
-        rotationY: THREE.MathUtils.lerp(-Math.PI / 2, 0, entryProgress),
+        rotationX: THREE.MathUtils.lerp(0.5, 0.2, easedProgress),
+        rotationY: THREE.MathUtils.lerp(-Math.PI / 2, 0, easedProgress),
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(2, 0, entryProgress),
-        positionY: THREE.MathUtils.lerp(-0.5, 0, entryProgress),
-        positionZ: 0,
-        opacity: THREE.MathUtils.lerp(0, 1, entryProgress),
-        scale: THREE.MathUtils.lerp(0.3, 1, entryProgress),
+        positionX: THREE.MathUtils.lerp(3, 0, easedProgress),
+        positionY: THREE.MathUtils.lerp(-1, 0, easedProgress),
+        positionZ: THREE.MathUtils.lerp(-1, 0, easedProgress),
+        opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
+        scale: THREE.MathUtils.lerp(0, 1, easedProgress),
       };
     }
 
@@ -235,7 +250,7 @@ export default function ESP32Model({ scale = 1 }: ESP32ModelProps) {
     if (projectProgress < 0.8) {
       const activeProgress = (projectProgress - 0.2) / 0.6;
       return {
-        rotationX: THREE.MathUtils.lerp(0, 0.3, Math.sin(activeProgress * Math.PI)),
+        rotationX: THREE.MathUtils.lerp(0.2, 0.3, Math.sin(activeProgress * Math.PI)),
         rotationY: THREE.MathUtils.lerp(0, Math.PI * 0.5, activeProgress),
         rotationZ: 0,
         positionX: 0,
@@ -246,31 +261,31 @@ export default function ESP32Model({ scale = 1 }: ESP32ModelProps) {
       };
     }
 
-    // Exit animation (80-100%)
+    // Exit animation (80-100%) - slide out to left
     const exitProgress = (projectProgress - 0.8) / 0.2;
 
     if (isTransitioning) {
       return {
         rotationX: THREE.MathUtils.lerp(0.3, 0, exitProgress),
         rotationY: THREE.MathUtils.lerp(Math.PI * 0.5, Math.PI, exitProgress),
-        rotationZ: THREE.MathUtils.lerp(0, 0.2, exitProgress),
-        positionX: THREE.MathUtils.lerp(0, -2, transitionProgress),
-        positionY: THREE.MathUtils.lerp(0, 1, exitProgress),
-        positionZ: THREE.MathUtils.lerp(0, -1, transitionProgress),
+        rotationZ: THREE.MathUtils.lerp(0, 0.3, exitProgress),
+        positionX: THREE.MathUtils.lerp(0, -3, transitionProgress),  // Move left during transition
+        positionY: THREE.MathUtils.lerp(0, 0.8, exitProgress),
+        positionZ: THREE.MathUtils.lerp(0, -2, transitionProgress),
         opacity: THREE.MathUtils.lerp(1, 0, transitionProgress),
-        scale: THREE.MathUtils.lerp(1, 0.5, transitionProgress),
+        scale: THREE.MathUtils.lerp(1, 0, transitionProgress),      // Scale to 0
       };
     }
 
     return {
-      rotationX: 0.3,
-      rotationY: Math.PI * 0.5,
+      rotationX: THREE.MathUtils.lerp(0.3, 0, exitProgress),
+      rotationY: THREE.MathUtils.lerp(Math.PI * 0.5, Math.PI, exitProgress),
       rotationZ: 0,
       positionX: 0,
       positionY: 0,
       positionZ: 0,
-      opacity: 1,
-      scale: 1,
+      opacity: THREE.MathUtils.lerp(1, 0.5, exitProgress),
+      scale: THREE.MathUtils.lerp(1, 0.7, exitProgress),
     };
   };
 
@@ -283,9 +298,14 @@ export default function ESP32Model({ scale = 1 }: ESP32ModelProps) {
 
     const isActive = activeProject === "esp32" || transitionFrom === "esp32" || transitionTo === "esp32";
 
+    // Completely fade out when not active
     if (!isActive) {
-      if (current.current.opacity > 0.01) {
-        current.current.opacity *= 0.9;
+      if (current.current.opacity > 0.01 || current.current.scale > 0.01) {
+        current.current.opacity *= 0.85;
+        current.current.scale *= 0.9;
+      } else {
+        current.current.opacity = 0;
+        current.current.scale = 0;
       }
       return;
     }

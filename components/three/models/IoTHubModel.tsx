@@ -352,35 +352,51 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
   const sensorRefC = useRef<THREE.Group | null>(null);
   const { state, setModelState } = useShowcase();
 
-  // Current interpolated values
+  // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
     rotationX: 0,
     rotationY: 0,
     rotationZ: 0,
     positionX: 0,
-    positionY: -2,
-    positionZ: 0,
-    opacity: 0,
-    scale: 0.5,
+    positionY: -3,       // Start far below (emerge from below)
+    positionZ: -2,       // Start far back
+    opacity: 0,          // Completely transparent
+    scale: 0,            // Completely scaled down
     floatTime: 0,
     sensorOrbitRadius: 0,
   });
 
   // Animation keyframes
   const getTargetState = (projectProgress: number) => {
-    // Entry - emerge from below with splash effect
-    if (projectProgress < 0.2) {
-      const entryProgress = projectProgress / 0.2;
+    // Pre-entry - completely hidden
+    if (projectProgress <= 0) {
       return {
         rotationX: 0,
-        rotationY: THREE.MathUtils.lerp(0, Math.PI / 4, entryProgress),
+        rotationY: 0,
         rotationZ: 0,
         positionX: 0,
-        positionY: THREE.MathUtils.lerp(-1.5, 0, entryProgress),
-        positionZ: 0,
-        opacity: THREE.MathUtils.lerp(0, 1, entryProgress),
-        scale: THREE.MathUtils.lerp(0.3, 1, entryProgress),
-        sensorOrbitRadius: THREE.MathUtils.lerp(0, 1.2, entryProgress),
+        positionY: -3,
+        positionZ: -2,
+        opacity: 0,
+        scale: 0,
+        sensorOrbitRadius: 0,
+      };
+    }
+
+    // Entry - emerge from below with expanding sensors
+    if (projectProgress < 0.2) {
+      const entryProgress = projectProgress / 0.2;
+      const easedProgress = 1 - Math.pow(1 - entryProgress, 3);
+      return {
+        rotationX: 0,
+        rotationY: THREE.MathUtils.lerp(0, Math.PI / 4, easedProgress),
+        rotationZ: 0,
+        positionX: 0,
+        positionY: THREE.MathUtils.lerp(-2, 0, easedProgress),
+        positionZ: THREE.MathUtils.lerp(-1, 0, easedProgress),
+        opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
+        scale: THREE.MathUtils.lerp(0, 1, easedProgress),
+        sensorOrbitRadius: THREE.MathUtils.lerp(0, 1.2, easedProgress),
       };
     }
 
@@ -400,18 +416,18 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
       };
     }
 
-    // Exit - consolidate to center
+    // Exit - consolidate and fade
     const exitProgress = (projectProgress - 0.85) / 0.15;
     return {
       rotationX: 0,
-      rotationY: Math.PI * 2.5,
+      rotationY: THREE.MathUtils.lerp(Math.PI * 2.25, Math.PI * 2.5, exitProgress),
       rotationZ: 0,
       positionX: 0,
       positionY: THREE.MathUtils.lerp(0, 0.5, exitProgress),
-      positionZ: 0,
-      opacity: THREE.MathUtils.lerp(1, 0.8, exitProgress),
-      scale: THREE.MathUtils.lerp(1, 0.7, exitProgress),
-      sensorOrbitRadius: THREE.MathUtils.lerp(1.2, 0.3, exitProgress),
+      positionZ: THREE.MathUtils.lerp(0, -1, exitProgress),
+      opacity: THREE.MathUtils.lerp(1, 0, exitProgress),
+      scale: THREE.MathUtils.lerp(1, 0, exitProgress),      // Scale to 0
+      sensorOrbitRadius: THREE.MathUtils.lerp(1.2, 0, exitProgress),
     };
   };
 
@@ -424,9 +440,16 @@ export default function IoTHubModel({ scale = 1 }: IoTHubModelProps) {
 
     const isActive = activeProject === "realitech" || transitionFrom === "realitech" || transitionTo === "realitech";
 
+    // Completely fade out when not active
     if (!isActive) {
-      if (current.current.opacity > 0.01) {
-        current.current.opacity *= 0.9;
+      if (current.current.opacity > 0.01 || current.current.scale > 0.01) {
+        current.current.opacity *= 0.85;
+        current.current.scale *= 0.9;
+        current.current.sensorOrbitRadius *= 0.9;
+      } else {
+        current.current.opacity = 0;
+        current.current.scale = 0;
+        current.current.sensorOrbitRadius = 0;
       }
       return;
     }

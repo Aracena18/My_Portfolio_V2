@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, Preload } from "@react-three/drei";
 import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
@@ -8,10 +8,11 @@ import { BlendFunction } from "postprocessing";
 import CameraController from "./CameraController";
 import LightingSystem from "./LightingSystem";
 
-import AgriSenseModel from "./models/AgriSenseModel";
-import ESP32Model from "./models/ESP32Model";
-import MonitorModel from "./models/MonitorModel";
-import IoTHubModel from "./models/IoTHubModel";
+// Lazy load models to prevent SSR issues
+const AgriSenseModel = lazy(() => import("./models/AgriSenseModel"));
+const ESP32Model = lazy(() => import("./models/ESP32Model"));
+const MonitorModel = lazy(() => import("./models/MonitorModel"));
+const IoTHubModel = lazy(() => import("./models/IoTHubModel"));
 
 interface ShowcaseCanvasProps {
   className?: string;
@@ -71,27 +72,25 @@ function SceneContent() {
   );
 }
 
-export default function ShowcaseCanvas({ className = "" }: ShowcaseCanvasProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
+// Inner canvas component - only rendered client-side
+function ShowcaseCanvasInner({ className = "" }: ShowcaseCanvasProps) {
   return (
     <div className={`w-full h-full ${className}`}>
       <Canvas
-        ref={canvasRef}
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{
           antialias: true,
           alpha: true,
           powerPreference: "high-performance",
-          preserveDrawingBuffer: true,
         }}
         shadows="soft"
         dpr={[1, 2]}
         style={{ background: "transparent" }}
-        // Performance optimizations
         performance={{ min: 0.5 }}
-        // Disable automatic frame loop when not visible
         frameloop="always"
+        onCreated={({ gl }) => {
+          gl.setClearColor(0x000000, 0);
+        }}
       >
         <SceneContent />
       </Canvas>
@@ -99,7 +98,23 @@ export default function ShowcaseCanvas({ className = "" }: ShowcaseCanvasProps) 
   );
 }
 
-// Wrapper for dynamic import with SSR disabled
-export function ShowcaseCanvasWrapper(props: ShowcaseCanvasProps) {
-  return <ShowcaseCanvas {...props} />;
+// Main export - handles client-side mounting
+export default function ShowcaseCanvas({ className = "" }: ShowcaseCanvasProps) {
+  const [canRender, setCanRender] = useState(false);
+
+  useEffect(() => {
+    // This is intentional for SSR handling - we need to set state after mount
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCanRender(true);
+  }, []);
+
+  if (!canRender) {
+    return (
+      <div className={`w-full h-full ${className} flex items-center justify-center`}>
+        <div className="text-white/20 animate-pulse">Initializing 3D Scene...</div>
+      </div>
+    );
+  }
+
+  return <ShowcaseCanvasInner className={className} />;
 }

@@ -230,43 +230,58 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { state, setModelState } = useShowcase();
 
-  // Current interpolated values
+  // Current interpolated values - START COMPLETELY HIDDEN
   const current = useRef({
-    rotationX: 0,
-    rotationY: -Math.PI / 2,
+    rotationX: 0.3,
+    rotationY: Math.PI,
     rotationZ: 0,
-    positionX: -3,
-    positionY: 0,
-    positionZ: 0,
-    opacity: 0,
-    scale: 0.5,
+    positionX: -3,       // Start off to the left
+    positionY: -1,       // Start below
+    positionZ: -3,       // Start far back
+    opacity: 0,          // Completely transparent
+    scale: 0,            // Completely scaled down
     floatTime: 0,
     chartOffset: 0,
   });
 
   // Animation keyframes
   const getTargetState = (projectProgress: number, isTransitioning: boolean, transitionProgress: number) => {
-    // Entry - dramatic reveal from behind
-    if (projectProgress < 0.2) {
-      const entryProgress = projectProgress / 0.2;
+    // Pre-entry - completely hidden
+    if (projectProgress <= 0) {
       return {
-        rotationX: THREE.MathUtils.lerp(0.2, 0, entryProgress),
-        rotationY: THREE.MathUtils.lerp(-Math.PI, -0.2, entryProgress),
+        rotationX: 0.3,
+        rotationY: Math.PI,
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(3, 0, entryProgress),
-        positionY: THREE.MathUtils.lerp(-0.5, 0, entryProgress),
-        positionZ: THREE.MathUtils.lerp(-2, 0, entryProgress),
-        opacity: THREE.MathUtils.lerp(0, 1, entryProgress),
-        scale: THREE.MathUtils.lerp(0.7, 1, entryProgress),
+        positionX: -3,
+        positionY: -1,
+        positionZ: -3,
+        opacity: 0,
+        scale: 0,
       };
     }
 
-    // Active state
+    // Entry - push in from depth with screen boot flicker
+    if (projectProgress < 0.2) {
+      const entryProgress = projectProgress / 0.2;
+      const easedProgress = 1 - Math.pow(1 - entryProgress, 3);
+      return {
+        rotationX: THREE.MathUtils.lerp(0.3, 0, easedProgress),
+        rotationY: THREE.MathUtils.lerp(Math.PI, -0.1, easedProgress),
+        rotationZ: 0,
+        positionX: THREE.MathUtils.lerp(-2, 0, easedProgress),
+        positionY: THREE.MathUtils.lerp(-1, 0, easedProgress),
+        positionZ: THREE.MathUtils.lerp(-4, 0, easedProgress),
+        opacity: THREE.MathUtils.lerp(0, 1, easedProgress),
+        scale: THREE.MathUtils.lerp(0, 1, easedProgress),
+      };
+    }
+
+    // Active state - gentle rotation
     if (projectProgress < 0.8) {
       const activeProgress = (projectProgress - 0.2) / 0.6;
       return {
         rotationX: 0,
-        rotationY: THREE.MathUtils.lerp(-0.2, 0.2, activeProgress),
+        rotationY: THREE.MathUtils.lerp(-0.1, 0.2, activeProgress),
         rotationZ: 0,
         positionX: 0,
         positionY: 0,
@@ -276,31 +291,31 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
       };
     }
 
-    // Exit
+    // Exit - slide out and rotate away
     const exitProgress = (projectProgress - 0.8) / 0.2;
 
     if (isTransitioning) {
       return {
-        rotationX: THREE.MathUtils.lerp(0, -0.3, exitProgress),
-        rotationY: THREE.MathUtils.lerp(0.2, Math.PI / 2, exitProgress),
+        rotationX: THREE.MathUtils.lerp(0, -0.4, exitProgress),
+        rotationY: THREE.MathUtils.lerp(0.2, Math.PI * 0.6, exitProgress),
         rotationZ: 0,
-        positionX: THREE.MathUtils.lerp(0, -2, transitionProgress),
+        positionX: THREE.MathUtils.lerp(0, 2, transitionProgress),  // Move right during transition
         positionY: THREE.MathUtils.lerp(0, 1, exitProgress),
-        positionZ: THREE.MathUtils.lerp(0, -1, transitionProgress),
+        positionZ: THREE.MathUtils.lerp(0, -3, transitionProgress),
         opacity: THREE.MathUtils.lerp(1, 0, transitionProgress),
-        scale: THREE.MathUtils.lerp(1, 0.6, transitionProgress),
+        scale: THREE.MathUtils.lerp(1, 0, transitionProgress),      // Scale to 0
       };
     }
 
     return {
       rotationX: 0,
-      rotationY: 0.2,
+      rotationY: THREE.MathUtils.lerp(0.2, 0.4, exitProgress),
       rotationZ: 0,
       positionX: 0,
       positionY: 0,
       positionZ: 0,
-      opacity: 1,
-      scale: 1,
+      opacity: THREE.MathUtils.lerp(1, 0.5, exitProgress),
+      scale: THREE.MathUtils.lerp(1, 0.7, exitProgress),
     };
   };
 
@@ -313,9 +328,14 @@ export default function MonitorModel({ scale = 1 }: MonitorModelProps) {
 
     const isActive = activeProject === "arms" || transitionFrom === "arms" || transitionTo === "arms";
 
+    // Completely fade out when not active
     if (!isActive) {
-      if (current.current.opacity > 0.01) {
-        current.current.opacity *= 0.9;
+      if (current.current.opacity > 0.01 || current.current.scale > 0.01) {
+        current.current.opacity *= 0.85;
+        current.current.scale *= 0.9;
+      } else {
+        current.current.opacity = 0;
+        current.current.scale = 0;
       }
       return;
     }

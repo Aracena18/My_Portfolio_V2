@@ -20,11 +20,12 @@ export type LightingPreset = "ambient" | "studio" | "dramatic" | "warm" | "cool"
 
 // Scroll ranges for each project (percentage of total scroll)
 // Hero buffer zone is 0-0.15 where no models are visible
+// Each project has distinct ranges with minimal overlap to prevent stacking
 export const PROJECT_RANGES: Record<ProjectId, { start: number; end: number }> = {
-  agrisense: { start: 0.15, end: 0.32 },
-  esp32: { start: 0.32, end: 0.54 },
-  arms: { start: 0.54, end: 0.76 },
-  realitech: { start: 0.76, end: 0.98 },
+  agrisense: { start: 0.15, end: 0.35 },    // Extended range for proper showcase
+  esp32: { start: 0.35, end: 0.55 },        // Clear separation
+  arms: { start: 0.55, end: 0.75 },         // Clear separation
+  realitech: { start: 0.75, end: 0.95 },    // Clear separation
 };
 
 // Lighting preset per project
@@ -35,11 +36,12 @@ export const PROJECT_LIGHTING: Record<ProjectId, LightingPreset> = {
   realitech: "warm",
 };
 
-// Transition zones between projects (overlap for smooth crossfade)
+// Transition zones between projects (tight overlap for clean crossfade)
+// Transitions happen at the END of one project and START of the next
 export const TRANSITION_ZONES = {
-  agrisenseToEsp32: { start: 0.27, end: 0.37 },
-  esp32ToArms: { start: 0.49, end: 0.59 },
-  armsToRealitech: { start: 0.71, end: 0.81 },
+  agrisenseToEsp32: { start: 0.32, end: 0.38 },   // Tighter, cleaner transition
+  esp32ToArms: { start: 0.52, end: 0.58 },        // Tighter, cleaner transition
+  armsToRealitech: { start: 0.72, end: 0.78 },    // Tighter, cleaner transition
 };
 
 // Camera state
