@@ -1,267 +1,278 @@
-"use client";
-
-import { projects } from "@/lib/projects";
-import { motion } from "framer-motion";
-import { ArrowLeft, ExternalLink, FileText, Github } from "lucide-react";
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft, ExternalLink, FileText, Github } from "lucide-react";
+import { projects } from "@/lib/projects";
 
-export default function ProjectPage({ params }: { params: { slug: string } }) {
-  const project = projects.find((p) => p.slug === params.slug);
+type ProjectPageProps = {
+  params: Promise<{
+    slug: string;
+  }>;
+};
+
+export function generateStaticParams() {
+  return projects.map((project) => ({
+    slug: project.slug,
+  }));
+}
+
+export async function generateMetadata({
+  params,
+}: ProjectPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = projects.find((item) => item.slug === slug);
+
+  if (!project) {
+    return {
+      title: "Project Not Found | Ask Robert",
+    };
+  }
+
+  return {
+    title: `${project.title} | Ask Robert`,
+    description: project.summary,
+  };
+}
+
+export default async function ProjectPage({ params }: ProjectPageProps) {
+  const { slug } = await params;
+  const project = projects.find((item) => item.slug === slug);
 
   if (!project) {
     notFound();
   }
 
   return (
-    <div className="min-h-screen bg-surface">
-      {/* Back Button */}
-      <div className="bg-white border-b border-line/50">
-        <div className="max-w-container mx-auto px-6 md:px-8 py-4">
-          <Link
-            href="/#projects"
-            className="inline-flex items-center gap-2 text-muted hover:text-green transition-colors text-sm font-medium"
-          >
-            <ArrowLeft size={16} />
-            <span>Back to Projects</span>
-          </Link>
-        </div>
-      </div>
+    <main className="dark min-h-screen bg-[var(--bg)] px-4 py-5 text-[var(--text)] sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <Link
+          href="/projects"
+          className="inline-flex items-center gap-2 rounded-full bg-[var(--surface)] px-3 py-2 text-sm font-semibold text-[var(--text-secondary)] shadow-[var(--shadow-soft)] transition hover:text-[var(--accent)]"
+        >
+          <ArrowLeft size={16} aria-hidden="true" />
+          Back to projects
+        </Link>
 
-      {/* Hero Section */}
-      <section className="bg-white py-16 md:py-20 border-b border-line/50">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-5 max-w-3xl"
-          >
-            <div className="flex gap-2">
-              {project.tags.map((tag) => (
+        <header className="mt-5 overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--surface)] shadow-[var(--shadow-soft)]">
+          <div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="p-5 sm:p-8 lg:p-10">
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-[var(--accent-soft)] px-3 py-1 text-sm font-semibold text-[var(--accent)]"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+              <h1 className="mt-6 text-4xl font-semibold tracking-normal text-[var(--text)] sm:text-5xl">
+                {project.title}
+              </h1>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-[var(--text-secondary)]">
+                {project.problem}
+              </p>
+            </div>
+            <div className="relative min-h-72 bg-[var(--surface-muted)]">
+              <Image
+                src={project.hero}
+                alt={`${project.title} visual context`}
+                fill
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
+        </header>
+
+        <section className="mt-6 grid gap-4 rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)] sm:grid-cols-3 sm:p-7">
+          {[
+            { label: "Role", value: project.context.role },
+            { label: "Team", value: project.context.teamSize },
+            { label: "Timeline", value: project.context.duration },
+          ].map((item) => (
+            <div key={item.label}>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                {item.label}
+              </p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-[var(--text)]">
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </section>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+          <section className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)] sm:p-7">
+            <p className="text-sm font-semibold text-[var(--accent)]">Problem</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-normal">
+              What this project needed to solve
+            </h2>
+            <ul className="mt-5 space-y-3 text-sm leading-6 text-[var(--text-secondary)]">
+              {project.problemDetails.map((detail) => (
+                <li key={detail} className="rounded-2xl bg-[var(--surface-muted)] p-4">
+                  {detail}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)] sm:p-7">
+            <p className="text-sm font-semibold text-[var(--accent)]">Solution</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-normal">
+              Robert&apos;s product and technical direction
+            </h2>
+            <p className="mt-5 text-base leading-8 text-[var(--text-secondary)]">
+              {project.solution}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {project.techStack.map((tech) => (
                 <span
-                  key={tag}
-                  className="px-3 py-1 bg-green-light text-green text-sm font-medium rounded-md"
+                  key={tech.name}
+                  className="rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2 text-sm font-semibold text-[var(--text-secondary)]"
                 >
-                  {tag}
+                  {tech.name}
                 </span>
               ))}
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-display font-heading font-bold text-ink">
-              {project.title}
-            </h1>
-            <p className="text-lg md:text-body-lg text-muted">{project.problem}</p>
-          </motion.div>
+          </section>
         </div>
-      </section>
 
-      {/* Hero Image Placeholder */}
-      <div className="bg-gradient-to-br from-green-light to-accent-light py-16 md:py-20">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <div className="aspect-video bg-white/60 rounded-2xl border border-line/60 flex items-center justify-center shadow-card">
-            <span className="text-muted text-sm">Project Hero Image</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Context & Role */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { label: "Role", value: project.context.role },
-              { label: "Team Size", value: project.context.teamSize },
-              { label: "Duration", value: project.context.duration },
-            ].map((item) => (
-              <div key={item.label}>
-                <h3 className="text-xs font-semibold text-muted uppercase tracking-wider mb-1.5">
-                  {item.label}
-                </h3>
-                <p className="text-ink font-medium">{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Problem */}
-      <section className="py-12 md:py-16 bg-surface">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <h2 className="text-2xl md:text-h3 font-heading font-bold text-ink mb-6">
-            The Problem
-          </h2>
-          <ul className="space-y-3">
-            {project.problemDetails.map((detail, idx) => (
-              <li key={idx} className="flex items-start gap-3">
-                <div className="flex-shrink-0 w-5 h-5 bg-green-light rounded-full flex items-center justify-center mt-0.5">
-                  <div className="w-1.5 h-1.5 bg-green rounded-full" />
-                </div>
-                <p className="text-ink-secondary leading-relaxed">{detail}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* Solution */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <h2 className="text-2xl md:text-h3 font-heading font-bold text-ink mb-6">
-            The Solution
-          </h2>
-          <p className="text-ink-secondary leading-relaxed text-body-lg max-w-3xl">
-            {project.solution}
-          </p>
-        </div>
-      </section>
-
-      {/* Tech Stack */}
-      <section className="py-12 md:py-16 bg-surface">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <h2 className="text-2xl md:text-h3 font-heading font-bold text-ink mb-8">
-            Technical Stack
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {project.techStack.map((tech) => (
-              <div
-                key={tech.name}
-                className="flex flex-col items-center p-4 bg-white rounded-xl border border-line/50 hover:border-green/30 transition-colors"
-              >
-                <div className="w-10 h-10 bg-green-light rounded-lg mb-2 flex items-center justify-center">
-                  <span className="text-green text-lg font-heading font-bold">
-                    {tech.name.charAt(0)}
-                  </span>
-                </div>
-                <span className="text-sm font-medium text-ink text-center">{tech.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Architecture */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <h2 className="text-2xl md:text-h3 font-heading font-bold text-ink mb-6">
-            Architecture
-          </h2>
-          <div className="aspect-video bg-gradient-to-br from-green-light/50 to-accent-light/50 rounded-2xl border border-line/60 flex items-center justify-center mb-4 shadow-inner">
-            <span className="text-muted text-sm">Architecture Diagram</span>
-          </div>
-          <p className="text-muted text-sm">{project.architecture.description}</p>
-        </div>
-      </section>
-
-      {/* Outcomes */}
-      <section className="py-12 md:py-16 bg-surface">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <h2 className="text-2xl md:text-h3 font-heading font-bold text-ink mb-8">
-            Quantified Outcomes
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {project.outcomes.map((outcome, idx) => (
-              <div
-                key={idx}
-                className="bg-white p-5 rounded-xl border border-line/50"
-              >
-                <div className="text-3xl font-heading font-bold text-green mb-1">
-                  {outcome.value}
-                </div>
-                <div className="text-sm font-semibold text-ink mb-1">{outcome.metric}</div>
-                <div className="text-xs text-muted">{outcome.description}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Process */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <h2 className="text-2xl md:text-h3 font-heading font-bold text-ink mb-8">
-            Development Process
-          </h2>
-          <div className="space-y-1">
-            {project.process.map((phase, idx) => (
-              <div key={idx} className="flex gap-5">
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 bg-green text-white rounded-full flex items-center justify-center font-heading font-bold text-sm shrink-0">
-                    {phase.step}
-                  </div>
-                  {idx < project.process.length - 1 && (
-                    <div className="w-px flex-1 bg-line my-1" />
-                  )}
-                </div>
-                <div className="pb-8">
-                  <h3 className="text-base font-heading font-semibold text-ink mb-1">
-                    {phase.title}
-                  </h3>
-                  <p className="text-muted text-sm">{phase.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Links & CTA */}
-      <section className="py-12 md:py-16 bg-surface">
-        <div className="max-w-container mx-auto px-6 md:px-8">
-          <div className="bg-white p-8 md:p-10 rounded-2xl border border-line/50 shadow-card">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <h3 className="text-xl font-heading font-semibold text-ink mb-2">
-                  Interested in this project?
-                </h3>
-                <p className="text-muted">
-                  Let&apos;s discuss how I can bring similar solutions to your team.
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                {project.links.github && (
-                  <a
-                    href={project.links.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2.5 bg-ink text-white rounded-xl hover:bg-ink/90 transition-colors text-sm font-medium"
-                  >
-                    <Github size={16} />
-                    <span>View Code</span>
-                  </a>
-                )}
-                {project.links.demo && (
-                  <a
-                    href={project.links.demo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2.5 bg-accent text-white rounded-xl hover:bg-accent/90 transition-colors text-sm font-medium"
-                  >
-                    <ExternalLink size={16} />
-                    <span>Live Demo</span>
-                  </a>
-                )}
-                {project.links.paper && (
-                  <a
-                    href={project.links.paper}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2.5 bg-muted text-white rounded-xl hover:bg-muted/90 transition-colors text-sm font-medium"
-                  >
-                    <FileText size={16} />
-                    <span>Paper</span>
-                  </a>
-                )}
-                <Link
-                  href="/#contact"
-                  className="flex items-center gap-2 px-4 py-2.5 bg-green text-white rounded-xl hover:bg-green-dark transition-colors text-sm font-medium"
-                >
-                  <span>Get in Touch</span>
-                </Link>
-              </div>
+        <section className="mt-6 rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)] sm:p-7">
+          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+            <div>
+              <p className="text-sm font-semibold text-[var(--accent)]">
+                Architecture
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-normal">
+                How the idea is structured
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
+                {project.architecture.description}
+              </p>
+            </div>
+            <div className="relative aspect-video overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)]">
+              <Image
+                src={project.architecture.image}
+                alt={`${project.title} architecture context`}
+                fill
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="object-cover"
+              />
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        <section className="mt-6 rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)] sm:p-7">
+          <p className="text-sm font-semibold text-[var(--accent)]">Proof Points</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-normal">
+            What this project shows
+          </h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {project.outcomes.map((outcome) => (
+              <div
+                key={outcome.metric}
+                className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4"
+              >
+                <p className="text-sm font-semibold text-[var(--accent)]">
+                  {outcome.value}
+                </p>
+                <h3 className="mt-2 text-base font-semibold tracking-normal text-[var(--text)]">
+                  {outcome.metric}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                  {outcome.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-6 rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)] sm:p-7">
+          <p className="text-sm font-semibold text-[var(--accent)]">Process</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-normal">
+            How Robert approached it
+          </h2>
+          <div className="mt-6 space-y-4">
+            {project.process.map((phase) => (
+              <div
+                key={phase.step}
+                className="grid gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4 sm:grid-cols-[56px_1fr]"
+              >
+                <div className="grid size-12 place-items-center rounded-2xl bg-[var(--accent)] text-sm font-bold text-white">
+                  {phase.step}
+                </div>
+                <div>
+                  <h3 className="text-base font-semibold tracking-normal text-[var(--text)]">
+                    {phase.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                    {phase.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-6 rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[var(--shadow-soft)] sm:p-7">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-[var(--accent)]">Next Step</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-normal">
+                Discuss this project with Robert
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                Use this case study as proof for Robert&apos;s portfolio direction, then
+                return to the assistant or contact page for a role-fit conversation.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {project.links.github && (
+                <a
+                  href={project.links.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[var(--text)] px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+                >
+                  <Github size={16} aria-hidden="true" />
+                  View Code
+                </a>
+              )}
+              {project.links.demo && (
+                <a
+                  href={project.links.demo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  <ExternalLink size={16} aria-hidden="true" />
+                  Live Demo
+                </a>
+              )}
+              {project.links.paper && (
+                <a
+                  href={project.links.paper}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[var(--surface-muted)] px-4 py-3 text-sm font-semibold text-[var(--text)] transition hover:text-[var(--accent)]"
+                >
+                  <FileText size={16} aria-hidden="true" />
+                  Paper
+                </a>
+              )}
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+              >
+                Contact Robert
+              </Link>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
   );
 }

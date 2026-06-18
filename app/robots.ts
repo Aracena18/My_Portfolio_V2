@@ -1,11 +1,11 @@
-import { MetadataRoute } from 'next'
- 
+import { MetadataRoute } from "next";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
+      userAgent: "*",
+      allow: "/",
     },
-    sitemap: 'https://yourportfolio.com/sitemap.xml', // Update with your actual domain
-  }
+    sitemap: "https://robertaracena.com/sitemap.xml",
+  };
 }

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Orbitron, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import SmoothScrollProvider from "@/components/providers/SmoothScrollProvider";
-import ClientLayout from "@/components/providers/ClientLayout";
 
 const inter = Inter({
   variable: "--font-jakarta",
@@ -24,24 +22,26 @@ const orbitron = Orbitron({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://robertaracena.com"),
-  title: "Robert Jhon Aracena — AI Engineer",
+  title: "Ask Robert — AI Portfolio Assistant",
   description:
-    "Building intelligence for the field. Bridging agriculture and artificial intelligence through research-grade systems deployed where they matter.",
+    "Ask Robert is an AI-inspired portfolio assistant for Robert Jhon Aracena, covering projects, skills, resume, UI/UX, AI, and agriculture technology work.",
   keywords: [
-    "AI Engineer",
-    "Agricultural AI",
-    "Edge AI",
+    "Robert Jhon Aracena",
+    "Ask Robert",
+    "AI Portfolio Assistant",
+    "Portfolio",
+    "UI/UX Designer",
+    "Computer Science Student",
+    "Agriculture Technology",
     "Computer Vision",
     "Machine Learning",
     "IoT",
-    "ESP32",
-    "Robert Jhon Aracena",
   ],
   authors: [{ name: "Robert Jhon Aracena" }],
   openGraph: {
-    title: "Robert Jhon Aracena — AI Engineer",
+    title: "Ask Robert — AI Portfolio Assistant",
     description:
-      "Bridging agriculture and artificial intelligence through research-grade systems deployed where they matter.",
+      "Explore Robert Jhon Aracena's projects, skills, resume, AI + agriculture work, UI/UX experience, and recruiter fit through an AI-inspired portfolio.",
     type: "website",
     url: "https://robertaracena.com",
     images: [
@@ -49,15 +49,15 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Robert Jhon Aracena — AI Engineer Portfolio",
+        alt: "Ask Robert — AI Portfolio Assistant",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Robert Jhon Aracena — AI Engineer",
+    title: "Ask Robert — AI Portfolio Assistant",
     description:
-      "Bridging agriculture and artificial intelligence through research-grade systems deployed where they matter.",
+      "Ask about Robert's projects, skills, resume, AI + agriculture work, and recruiter fit.",
     images: ["/og-image.png"],
   },
 };
@@ -73,12 +73,8 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased" suppressHydrationWarning>
-        <ClientLayout>
-          <SmoothScrollProvider>
-            {children}
-          </SmoothScrollProvider>
-        </ClientLayout>
+      <body className="antialiased font-sans" suppressHydrationWarning>
+        {children}
       </body>
     </html>
   );

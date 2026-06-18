@@ -44,355 +44,430 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    slug: "agrisense",
-    title: "AgriSense",
-    summary: "A retrieval-augmented assistant for tomato disease diagnosis (LLM + RAG + edge inference).",
-    tags: ["LLM + RAG", "Edge AI"],
+    slug: "tanimpro",
+    title: "TanimPro",
+    summary:
+      "An agriculture-focused platform concept for helping farmers through AI guidance, IoT concepts, and accessible digital workflows.",
+    tags: ["AI + Agriculture", "Product Design", "Farmer Support"],
     metric: {
-      label: "Accuracy",
-      value: "92%",
+      label: "Focus",
+      value: "AgriTech",
     },
-    thumbnail: "/images/projects/agrisense-thumb.jpg",
-    hero: "/images/projects/agrisense-hero.jpg",
-    problem: "Farmers need immediate, accurate crop disease diagnosis but lack access to agricultural experts.",
+    thumbnail: "/images/Wide_Agriculture_image.webp",
+    hero: "/images/Wide_Agriculture_image.webp",
+    problem:
+      "Farmers need practical and understandable support tools, but many digital products are too technical, fragmented, or disconnected from real farm workflows.",
     context: {
-      role: "Lead AI Engineer",
-      teamSize: "3 members",
-      duration: "4 months",
+      role: "Developer, Designer, and Concept Lead",
+      teamSize: "Portfolio project",
+      duration: "Concept and prototype phase",
     },
     problemDetails: [
-      "Limited access to agricultural experts in rural areas",
-      "Delayed diagnosis leads to significant crop loss",
-      "Existing solutions require internet connectivity",
-      "Need for multilingual support for diverse farming communities",
+      "Agriculture support tools can be difficult to use for non-technical users.",
+      "Farm decisions often require combining observations, guidance, and records.",
+      "AI features need to be framed carefully so they help rather than confuse users.",
+      "The interface has to respect field conditions, time pressure, and accessibility.",
     ],
-    solution: "Built an offline-capable RAG system combining large language models with a curated knowledge base of tomato diseases. The system runs inference on edge devices (Raspberry Pi 4) and provides real-time diagnosis with treatment recommendations in multiple languages.",
+    solution:
+      "TanimPro frames AI and IoT ideas as approachable farm workflows: ask for guidance, review crop context, track relevant observations, and surface recommended next steps in plain language.",
     techStack: [
-      { name: "Python", icon: "python" },
-      { name: "LangChain", icon: "langchain" },
-      { name: "ChromaDB", icon: "database" },
-      { name: "LLaMA 2", icon: "llm" },
-      { name: "FastAPI", icon: "api" },
-      { name: "Raspberry Pi", icon: "device" },
+      { name: "React", icon: "react" },
+      { name: "Tailwind CSS", icon: "tailwind" },
+      { name: "AI Concepts", icon: "ai" },
+      { name: "IoT Concepts", icon: "iot" },
+      { name: "Product Design", icon: "design" },
     ],
     architecture: {
-      image: "/images/projects/agrisense-architecture.svg",
-      description: "RAG pipeline with vector database for retrieval and LLM for response generation",
+      image: "/images/Wide_Agriculture_image.webp",
+      description:
+        "Concept architecture connecting farmer questions, crop context, AI guidance, and optional sensor or observation inputs.",
     },
     outcomes: [
       {
-        metric: "Diagnostic Accuracy",
-        value: "92%",
-        description: "Matches expert diagnosis in field tests",
+        metric: "Portfolio Proof",
+        value: "AI + Farm UX",
+        description:
+          "Shows Robert's ability to translate an agriculture problem into a product experience.",
       },
       {
-        metric: "Response Time",
-        value: "< 3s",
-        description: "Average query to diagnosis time",
+        metric: "Design Direction",
+        value: "Accessible",
+        description:
+          "Prioritizes clarity, farmer usability, and practical decision support.",
       },
       {
-        metric: "Offline Capability",
-        value: "100%",
-        description: "Fully functional without internet",
-      },
-      {
-        metric: "User Satisfaction",
-        value: "4.6/5",
-        description: "Based on 50+ farmer interviews",
+        metric: "Technical Direction",
+        value: "Expandable",
+        description:
+          "Prepared for future AI, RAG, IoT, and data-driven feature integration.",
       },
     ],
     process: [
       {
         step: 1,
-        title: "Research",
-        description: "Literature review and farmer interviews to identify pain points",
+        title: "Problem Framing",
+        description:
+          "Defined the farming decisions and support moments the platform should help with.",
       },
       {
         step: 2,
-        title: "Data Collection",
-        description: "Curated knowledge base from agricultural research papers and expert input",
+        title: "Workflow Design",
+        description:
+          "Mapped AI guidance into user-friendly actions instead of a generic chatbot.",
       },
       {
         step: 3,
-        title: "Prototype",
-        description: "Built RAG pipeline with vector embeddings and LLM integration",
+        title: "Interface Planning",
+        description:
+          "Planned a clean farmer-facing interface with concise explanations and visible proof.",
       },
       {
         step: 4,
-        title: "Field Test",
-        description: "Deployed to 5 farms for real-world validation and feedback",
-      },
-      {
-        step: 5,
-        title: "Deploy",
-        description: "Optimized for edge devices and released to 20+ pilot farms",
+        title: "Future Integration",
+        description:
+          "Kept room for AI/RAG, IoT inputs, and case-study expansion.",
       },
     ],
-    links: {
-      github: "https://github.com/yourusername/agrisense",
-      paper: "/papers/agrisense-paper.pdf",
-    },
+    links: {},
   },
   {
-    slug: "esp32-leaf-scanner",
-    title: "ESP32 Leaf Disease Scanner",
-    summary: "Edge-deployed computer vision system for real-time leaf disease detection using ESP32-CAM.",
-    tags: ["Edge AI", "Computer Vision"],
+    slug: "arcriculture",
+    title: "ARCriculture",
+    summary:
+      "An AI-powered agriculture assistant concept focused on helping farmers ask better questions and make better-informed decisions.",
+    tags: ["AI Assistant", "Agriculture", "UX"],
     metric: {
-      label: "Inference Time",
-      value: "180ms",
+      label: "Mode",
+      value: "Assistant",
     },
-    thumbnail: "/images/projects/esp32-thumb.jpg",
-    hero: "/images/projects/esp32-hero.jpg",
-    problem: "Affordable, portable disease detection system needed for smallholder farmers without smartphone access.",
+    thumbnail: "/images/tomatoe_leaf.webp",
+    hero: "/images/tomatoe_leaf.webp",
+    problem:
+      "AI can feel abstract for agriculture users unless it is shaped around concrete questions, visible limits, and practical guidance.",
     context: {
-      role: "IoT & ML Engineer",
-      teamSize: "Solo project",
-      duration: "2 months",
+      role: "Concept Developer and UI Designer",
+      teamSize: "Portfolio project",
+      duration: "Concept and interface phase",
     },
     problemDetails: [
-      "Cost barrier: existing solutions require expensive hardware",
-      "Power constraints: needs to run on battery in field conditions",
-      "Real-time requirement: instant feedback for farmers",
-      "Low connectivity: rural areas lack reliable internet",
+      "Farmers may not know how to phrase technical crop or farm-management questions.",
+      "A useful assistant needs to stay grounded in agriculture-specific knowledge.",
+      "The experience must be honest when information is missing or uncertain.",
+      "The interface should guide users toward next steps, not just text answers.",
     ],
-    solution: "Developed a lightweight CNN model optimized for ESP32 microcontroller, achieving real-time inference on a $15 device. The system captures leaf images, processes them locally, and displays disease classification results on an OLED screen with 89% accuracy.",
+    solution:
+      "ARCriculture explores a constrained assistant experience where users can ask farm-related questions, receive concise guidance, and move into supporting sections or evidence.",
     techStack: [
-      { name: "C++", icon: "cpp" },
-      { name: "TensorFlow Lite", icon: "tensorflow" },
-      { name: "ESP32-CAM", icon: "device" },
-      { name: "Python", icon: "python" },
-      { name: "OpenCV", icon: "opencv" },
+      { name: "AI Assistant Design", icon: "ai" },
+      { name: "Prompt Engineering", icon: "prompt" },
+      { name: "UI/UX", icon: "ux" },
+      { name: "Agriculture Research", icon: "research" },
     ],
     architecture: {
-      image: "/images/projects/esp32-architecture.svg",
-      description: "Edge inference pipeline from camera capture to classification on-device",
+      image: "/images/tomatoe_leaf.webp",
+      description:
+        "Assistant flow from user question to grounded response, related evidence, and suggested follow-up actions.",
     },
     outcomes: [
       {
-        metric: "Inference Speed",
-        value: "180ms",
-        description: "Real-time classification on ESP32",
+        metric: "Portfolio Proof",
+        value: "AI UX",
+        description:
+          "Shows Robert's thinking around safe, focused AI assistants for real users.",
       },
       {
-        metric: "Model Size",
-        value: "250KB",
-        description: "Fits in microcontroller flash memory",
+        metric: "Domain Direction",
+        value: "Agriculture",
+        description:
+          "Keeps the assistant centered on farming needs and decision support.",
       },
       {
-        metric: "Accuracy",
-        value: "89%",
-        description: "On 5-class leaf disease dataset",
-      },
-      {
-        metric: "Cost per Unit",
-        value: "$15",
-        description: "Hardware cost for complete system",
+        metric: "Future Scope",
+        value: "RAG-ready",
+        description:
+          "Can later connect to curated agriculture and project knowledge sources.",
       },
     ],
     process: [
       {
         step: 1,
-        title: "Research",
-        description: "Evaluated microcontroller options and model architectures",
+        title: "Assistant Scope",
+        description:
+          "Defined what the assistant should and should not answer.",
       },
       {
         step: 2,
-        title: "Model Training",
-        description: "Trained MobileNetV2 variant and quantized for edge deployment",
+        title: "Prompt Paths",
+        description:
+          "Planned suggested questions that reduce friction for first-time users.",
       },
       {
         step: 3,
-        title: "Prototype",
-        description: "Built hardware prototype with ESP32-CAM and OLED display",
-      },
-      {
-        step: 4,
-        title: "Field Test",
-        description: "Tested with 30+ farmers in real field conditions",
+        title: "Evidence Linking",
+        description:
+          "Connected answers to visible project or knowledge sections.",
       },
     ],
-    links: {
-      github: "https://github.com/yourusername/esp32-leaf-scanner",
-    },
-  },
-  {
-    slug: "arms",
-    title: "ARMS - Agricultural Resource Management System",
-    summary: "Full-stack web platform for farm resource tracking, crop planning, and yield prediction.",
-    tags: ["Full Stack", "Data Analytics"],
-    metric: {
-      label: "Active Farms",
-      value: "150+",
-    },
-    thumbnail: "/images/projects/arms-thumb.jpg",
-    hero: "/images/projects/arms-hero.jpg",
-    problem: "Small and medium farms lack affordable tools for resource management and predictive analytics.",
-    context: {
-      role: "Full Stack Developer",
-      teamSize: "4 members",
-      duration: "6 months",
-    },
-    problemDetails: [
-      "Manual record-keeping leads to inefficiency and errors",
-      "No predictive insights for crop planning",
-      "Difficulty tracking resource usage and costs",
-      "Limited visibility across multiple plots",
-    ],
-    solution: "Built a responsive web application with dashboards for resource tracking, crop planning calendars, and ML-based yield prediction. Integrated weather API data and provides actionable recommendations for irrigation and fertilizer application.",
-    techStack: [
-      { name: "Next.js", icon: "nextjs" },
-      { name: "TypeScript", icon: "typescript" },
-      { name: "PostgreSQL", icon: "database" },
-      { name: "Python", icon: "python" },
-      { name: "scikit-learn", icon: "sklearn" },
-      { name: "Prisma", icon: "prisma" },
-    ],
-    architecture: {
-      image: "/images/projects/arms-architecture.svg",
-      description: "Full-stack architecture with RESTful API and ML microservice",
-    },
-    outcomes: [
-      {
-        metric: "Active Users",
-        value: "150+",
-        description: "Farms across 3 regions",
-      },
-      {
-        metric: "Time Saved",
-        value: "40%",
-        description: "Reduction in planning time",
-      },
-      {
-        metric: "Prediction Accuracy",
-        value: "84%",
-        description: "Yield estimation accuracy",
-      },
-      {
-        metric: "User Retention",
-        value: "78%",
-        description: "Monthly active users",
-      },
-    ],
-    process: [
-      {
-        step: 1,
-        title: "Requirements",
-        description: "Conducted user research with 20+ farmers",
-      },
-      {
-        step: 2,
-        title: "Design",
-        description: "Created wireframes and user flows",
-      },
-      {
-        step: 3,
-        title: "Development",
-        description: "Built MVP with core features",
-      },
-      {
-        step: 4,
-        title: "ML Integration",
-        description: "Trained and deployed yield prediction models",
-      },
-      {
-        step: 5,
-        title: "Launch",
-        description: "Piloted with 30 farms, iterated based on feedback",
-      },
-    ],
-    links: {
-      github: "https://github.com/yourusername/arms",
-      demo: "https://arms-demo.vercel.app",
-    },
+    links: {},
   },
   {
     slug: "realitech",
-    title: "Realitech - Smart Irrigation Controller",
-    summary: "IoT-based precision irrigation system for commercial greenhouses (Client: Realitech).",
-    tags: ["IoT", "Edge AI"],
+    title: "RealiTech",
+    summary:
+      "A hackathon project recognized for strong user experience, interface clarity, and product presentation under time constraints.",
+    tags: ["UI/UX", "Hackathon", "Team Leadership"],
     metric: {
-      label: "Water Saved",
-      value: "35%",
+      label: "Proof",
+      value: "UX",
     },
-    thumbnail: "/images/projects/realitech-thumb.jpg",
-    hero: "/images/projects/realitech-hero.jpg",
-    problem: "Greenhouse operators waste water and energy with manual or timer-based irrigation systems.",
+    thumbnail: "/images/Professional_Setup.webp",
+    hero: "/images/Professional_Setup.webp",
+    problem:
+      "Hackathon teams need to turn a rough idea into a convincing product quickly, with a clear interface and a story judges can understand.",
     context: {
-      role: "IoT Engineer (Contract)",
-      teamSize: "2 engineers",
-      duration: "3 months",
+      role: "Project Manager and UI/UX Contributor",
+      teamSize: "Hackathon team",
+      duration: "Hackathon build",
     },
     problemDetails: [
-      "Over-irrigation leads to water waste and root disease",
-      "Manual monitoring is labor-intensive",
-      "Timer systems don't adapt to weather or plant needs",
-      "No data visibility for optimization",
+      "The team needed quick alignment around user needs and product scope.",
+      "The interface had to communicate value with limited time for iteration.",
+      "Design decisions needed to support the demo and judging narrative.",
+      "The project required coordination across product, visuals, and implementation.",
     ],
-    solution: "Designed and deployed an automated irrigation system using soil moisture sensors, weather data integration, and ML-based scheduling algorithms. The system provides real-time monitoring dashboard and mobile alerts for greenhouse operators.",
+    solution:
+      "Robert contributed to shaping the UX direction, organizing product decisions, and presenting a clearer interface under hackathon constraints.",
     techStack: [
-      { name: "Arduino", icon: "device" },
-      { name: "MQTT", icon: "mqtt" },
-      { name: "Node.js", icon: "nodejs" },
-      { name: "React", icon: "react" },
-      { name: "MongoDB", icon: "database" },
-      { name: "AWS IoT", icon: "aws" },
+      { name: "Figma", icon: "figma" },
+      { name: "UI/UX", icon: "ux" },
+      { name: "Web Development", icon: "web" },
+      { name: "Presentation", icon: "presentation" },
+      { name: "Project Management", icon: "management" },
     ],
     architecture: {
-      image: "/images/projects/realitech-architecture.svg",
-      description: "IoT architecture with sensor network, cloud backend, and web dashboard",
+      image: "/images/Professional_Setup.webp",
+      description:
+        "Hackathon product flow connecting user problem, interface screens, and demo narrative.",
     },
     outcomes: [
       {
-        metric: "Water Savings",
-        value: "35%",
-        description: "Reduction in water consumption",
+        metric: "Portfolio Proof",
+        value: "UX + Team",
+        description:
+          "Shows design thinking, collaboration, and product communication under pressure.",
       },
       {
-        metric: "Labor Reduction",
-        value: "60%",
-        description: "Less manual monitoring needed",
+        metric: "Recognition",
+        value: "UX Focus",
+        description:
+          "The portfolio plan notes recognition for strong UX interface direction.",
       },
       {
-        metric: "System Uptime",
-        value: "99.2%",
-        description: "Reliability over 6-month period",
-      },
-      {
-        metric: "ROI Period",
-        value: "8 months",
-        description: "Payback period for clients",
+        metric: "Recruiter Signal",
+        value: "Execution",
+        description:
+          "Useful evidence for UI/UX, product, and team-based internship roles.",
       },
     ],
     process: [
       {
         step: 1,
-        title: "Site Analysis",
-        description: "Assessed greenhouse infrastructure and requirements",
+        title: "Scope",
+        description:
+          "Aligned the project around a focused user problem and demoable feature set.",
       },
       {
         step: 2,
-        title: "Hardware Design",
-        description: "Selected sensors and designed controller boards",
+        title: "UX Direction",
+        description:
+          "Helped shape interface hierarchy, user flow, and product clarity.",
       },
       {
         step: 3,
-        title: "Software Dev",
-        description: "Built cloud backend and web dashboard",
+        title: "Team Coordination",
+        description:
+          "Supported project decisions and presentation flow during the hackathon.",
       },
       {
         step: 4,
-        title: "Deployment",
-        description: "Installed systems in 4 pilot greenhouses",
-      },
-      {
-        step: 5,
-        title: "Optimization",
-        description: "Tuned algorithms based on real-world data",
+        title: "Demo",
+        description:
+          "Prepared the project for judging with a clear story and visible product proof.",
       },
     ],
-    links: {
-      demo: "https://realitech-demo.vercel.app",
+    links: {},
+  },
+  {
+    slug: "arms",
+    title: "ARMS",
+    summary:
+      "An Auto Repair Management System for organizing repair-shop services, records, and operational workflows.",
+    tags: ["Management System", "Database", "Workflow Design"],
+    metric: {
+      label: "Focus",
+      value: "Systems",
     },
+    thumbnail: "/images/Professional_Setup.webp",
+    hero: "/images/Professional_Setup.webp",
+    problem:
+      "Repair shops need organized service records, customer tracking, and workflow visibility instead of relying on scattered manual processes.",
+    context: {
+      role: "Developer and System Designer",
+      teamSize: "Academic or portfolio system",
+      duration: "System design and build phase",
+    },
+    problemDetails: [
+      "Manual tracking can make service histories difficult to retrieve.",
+      "Repair-shop workflows include customers, vehicles, services, status, and records.",
+      "The system needs clear database structure before the interface can be useful.",
+      "Staff need a practical tool that supports repeated daily operations.",
+    ],
+    solution:
+      "ARMS translates repair-shop operations into a structured management system with organized records, workflow states, and practical system design.",
+    techStack: [
+      { name: "Web Development", icon: "web" },
+      { name: "Database Design", icon: "database" },
+      { name: "System Analysis", icon: "systems" },
+      { name: "Workflow Modeling", icon: "workflow" },
+    ],
+    architecture: {
+      image: "/images/Professional_Setup.webp",
+      description:
+        "System architecture centered on customers, repair jobs, service records, workflow status, and reporting needs.",
+    },
+    outcomes: [
+      {
+        metric: "Portfolio Proof",
+        value: "Systems",
+        description:
+          "Shows Robert's ability to model a practical business workflow.",
+      },
+      {
+        metric: "Technical Signal",
+        value: "Database",
+        description:
+          "Highlights structured thinking around entities, records, and operations.",
+      },
+      {
+        metric: "Use Case",
+        value: "Business",
+        description:
+          "Grounds development work in a real operational environment.",
+      },
+    ],
+    process: [
+      {
+        step: 1,
+        title: "Workflow Study",
+        description:
+          "Identified the main repair-shop records and actions the system needs to support.",
+      },
+      {
+        step: 2,
+        title: "Data Modeling",
+        description:
+          "Defined core entities such as customers, vehicles, services, and repair status.",
+      },
+      {
+        step: 3,
+        title: "Interface Planning",
+        description:
+          "Organized screens around frequent staff tasks and record lookup.",
+      },
+      {
+        step: 4,
+        title: "System Build",
+        description:
+          "Prepared the implementation around practical management-system workflows.",
+      },
+    ],
+    links: {},
+  },
+  {
+    slug: "agrisense",
+    title: "AgriSense",
+    summary:
+      "An AI and edge-computing direction for crop diagnosis support, including tomato leaf disease scanning concepts.",
+    tags: ["Edge AI", "Computer Vision", "Agriculture"],
+    metric: {
+      label: "Focus",
+      value: "Edge AI",
+    },
+    thumbnail: "/images/tomatoe_leaf.webp",
+    hero: "/images/tomatoe_leaf.webp",
+    problem:
+      "Farmers may need fast crop-disease support in environments where expert access and connectivity are limited.",
+    context: {
+      role: "AI and system concept builder",
+      teamSize: "Portfolio project",
+      duration: "Research and prototype direction",
+    },
+    problemDetails: [
+      "Crop disease support needs to be timely and easy to understand.",
+      "Connectivity constraints make edge or offline-friendly thinking valuable.",
+      "AI outputs need to be paired with careful limitations and practical next steps.",
+      "Agriculture technology must work around field realities, not ideal lab settings.",
+    ],
+    solution:
+      "AgriSense frames crop diagnosis support as a grounded AI workflow: capture evidence, compare against curated knowledge, and provide concise guidance with room for edge deployment.",
+    techStack: [
+      { name: "Python", icon: "python" },
+      { name: "Computer Vision", icon: "vision" },
+      { name: "RAG Concepts", icon: "rag" },
+      { name: "Edge AI", icon: "edge" },
+      { name: "Agriculture Research", icon: "research" },
+    ],
+    architecture: {
+      image: "/images/tomatoe_leaf.webp",
+      description:
+        "AI support flow from visual crop evidence to retrieval, reasoning, and farmer-facing guidance.",
+    },
+    outcomes: [
+      {
+        metric: "Portfolio Proof",
+        value: "AI + Crops",
+        description:
+          "Shows Robert's interest in applying AI to agricultural decision support.",
+      },
+      {
+        metric: "Technical Direction",
+        value: "Edge-aware",
+        description:
+          "Considers deployment environments where internet access may be unreliable.",
+      },
+      {
+        metric: "Safety Direction",
+        value: "Grounded",
+        description:
+          "Prepared for source-backed answers rather than unsupported AI claims.",
+      },
+    ],
+    process: [
+      {
+        step: 1,
+        title: "Domain Research",
+        description:
+          "Explored agriculture support needs and disease-diagnosis workflows.",
+      },
+      {
+        step: 2,
+        title: "AI Framing",
+        description:
+          "Planned how image evidence and knowledge retrieval could support answers.",
+      },
+      {
+        step: 3,
+        title: "Edge Thinking",
+        description:
+          "Considered constraints around hardware, connectivity, and field usability.",
+      },
+      {
+        step: 4,
+        title: "Portfolio Integration",
+        description:
+          "Connected the project to Robert's broader AI + agriculture direction.",
+      },
+    ],
+    links: {},
   },
 ];
