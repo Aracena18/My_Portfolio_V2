@@ -3,7 +3,7 @@ import {
   AssistantMode,
   answerAskRobert,
 } from "@/lib/askRobertEngine";
-import { answerWithGemini } from "@/lib/geminiAskRobert";
+import { answerWithGroq } from "@/lib/groqAskRobert";
 import { checkRateLimit, getClientKey } from "@/lib/rateLimit";
 
 const validModes = new Set<AssistantMode>([
@@ -23,8 +23,8 @@ export function GET() {
     ok: true,
     name: "Ask Robert API",
     aiEnabled:
-      process.env.AI_PORTFOLIO_ENABLED === "true" && Boolean(process.env.GEMINI_API_KEY),
-    provider: "gemini",
+      process.env.AI_PORTFOLIO_ENABLED === "true" && Boolean(process.env.GROQ_API_KEY),
+    provider: "groq",
     fallback: "local-rag-fallback",
   });
 }
@@ -78,9 +78,9 @@ export async function POST(request: NextRequest) {
       mode: requestedMode,
     });
     const shouldUseProvider =
-      process.env.AI_PORTFOLIO_ENABLED === "true" && Boolean(process.env.GEMINI_API_KEY);
+      process.env.AI_PORTFOLIO_ENABLED === "true" && Boolean(process.env.GROQ_API_KEY);
     const providerResponse = shouldUseProvider
-      ? await answerWithGemini({
+      ? await answerWithGroq({
           question,
           mode: requestedMode,
           fallback: localResponse,
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       ...response,
       mode: requestedMode,
       aiEnabled: shouldUseProvider,
-      engine: providerResponse ? "gemini-rag" : "local-rag-fallback",
+      engine: providerResponse ? "groq-rag" : "local-rag-fallback",
       rateLimit: {
         remaining: rateLimit.remaining,
         resetAt: rateLimit.resetAt,
