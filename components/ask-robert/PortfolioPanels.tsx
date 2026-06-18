@@ -98,7 +98,7 @@ export function PortfolioSectionPanel({
   }
   if (activeSection === "skills") return <SkillsPanel isCompact={isCompact} />;
   if (activeSection === "resume") return <ResumePanel isCompact={isCompact} />;
-  if (activeSection === "timeline") return <TimelinePanel isCompact={isCompact} />;
+  if (activeSection === "timeline") return <TimelinePanel />;
   if (activeSection === "recruiter") return <RecruiterPanel isCompact={isCompact} />;
   return <ContactPanel isCompact={isCompact} />;
 }
@@ -332,7 +332,7 @@ export function ResumePanel({ isCompact }: { isCompact?: boolean }) {
   );
 }
 
-export function TimelinePanel({ isCompact }: { isCompact?: boolean }) {
+export function TimelinePanel() {
   return (
     <section className="space-y-3">
       {timeline.map((item) => (

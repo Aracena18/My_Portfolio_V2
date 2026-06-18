@@ -1,9 +1,12 @@
 import { AssistantPortfolioResponse } from "@/content/askRobert";
 import {
   AssistantMode,
-  retrieveKnowledge,
   validateAssistantResponse,
 } from "@/lib/askRobertEngine";
+import {
+  formatSourcesForModel,
+  retrieveKnowledge,
+} from "@/lib/askRobertRetriever";
 
 type OpenAIResponsePayload = {
   output_text?: string;
@@ -69,12 +72,7 @@ export async function answerWithOpenAI({
   }
 
   const sources = retrieveKnowledge(question, 6);
-  const sourceText = sources
-    .map(
-      (source) =>
-        `Source: ${source.title}\nSection: ${source.section}\nContent: ${source.content}`,
-    )
-    .join("\n\n");
+  const sourceText = formatSourcesForModel(sources);
 
   const result = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",

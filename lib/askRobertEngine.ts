@@ -1,15 +1,17 @@
 import {
   AssistantPortfolioResponse,
-  KnowledgeSource,
   contactTemplates,
   contactOptions,
   getAssistantResponse,
-  knowledgeSources,
   projects,
   robertProfile,
   roleFits,
   skillGroups,
 } from "@/content/askRobert";
+import {
+  RetrievedKnowledgeSource,
+  retrieveKnowledge,
+} from "@/lib/askRobertRetriever";
 
 export type AssistantMode =
   | "guide"
@@ -32,32 +34,6 @@ const portfolioSections = new Set([
   "timeline",
   "contact",
   "recruiter",
-]);
-
-const stopWords = new Set([
-  "a",
-  "about",
-  "and",
-  "are",
-  "as",
-  "for",
-  "from",
-  "has",
-  "have",
-  "his",
-  "how",
-  "is",
-  "me",
-  "of",
-  "on",
-  "or",
-  "robert",
-  "show",
-  "tell",
-  "the",
-  "to",
-  "what",
-  "with",
 ]);
 
 export function answerAskRobert({
@@ -93,24 +69,6 @@ export function answerAskRobert({
   }
 
   return withSources(getAssistantResponse(cleanQuestion), retrieved);
-}
-
-export function retrieveKnowledge(question: string, limit = 4): KnowledgeSource[] {
-  const terms = tokenize(question);
-
-  if (terms.length === 0) {
-    return knowledgeSources.slice(0, limit);
-  }
-
-  return knowledgeSources
-    .map((source) => ({
-      source,
-      score: scoreSource(source, terms),
-    }))
-    .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, limit)
-    .map((item) => item.source);
 }
 
 export function validateAssistantResponse(
@@ -151,28 +109,9 @@ export function validateAssistantResponse(
   };
 }
 
-function tokenize(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9+/\s-]/g, " ")
-    .split(/\s+/)
-    .map((term) => term.trim())
-    .filter((term) => term.length > 1 && !stopWords.has(term));
-}
-
-function scoreSource(source: KnowledgeSource, terms: string[]) {
-  const haystack = `${source.title} ${source.content} ${source.tags.join(" ")}`.toLowerCase();
-  return terms.reduce((score, term) => {
-    if (source.tags.some((tag) => tag.includes(term))) return score + 4;
-    if (source.title.toLowerCase().includes(term)) return score + 3;
-    if (haystack.includes(term)) return score + 1;
-    return score;
-  }, 0);
-}
-
 function withSources(
   response: AssistantPortfolioResponse,
-  sources: KnowledgeSource[],
+  sources: RetrievedKnowledgeSource[],
 ): AssistantPortfolioResponse {
   const sourceTitles = sources.map((source) => source.title);
 

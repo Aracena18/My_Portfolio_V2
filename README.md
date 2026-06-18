@@ -113,6 +113,18 @@ Replace `yourportfolio.com` in:
 2. Import at [vercel.com/new](https://vercel.com/new)
 3. Deploy automatically
 
+### Ask Robert Gemini RAG
+
+The portfolio works without an AI key by using the local curated knowledge fallback. To enable Gemini-powered RAG in Vercel, add these project environment variables:
+
+```bash
+AI_PORTFOLIO_ENABLED=true
+GEMINI_API_KEY=your_server_side_gemini_key
+GEMINI_MODEL=gemini-flash-latest
+```
+
+Keep `GEMINI_API_KEY` server-side only. Do not prefix it with `NEXT_PUBLIC_`. If Gemini is unavailable, over quota, or returns invalid JSON, `/api/ask-robert` automatically falls back to the local portfolio engine.
+
 ### Static Export
 
 For hosting on any static host:

@@ -28,7 +28,6 @@ import {
   PortfolioSection,
   getAssistantResponse,
   projects,
-  robertProfile,
   suggestedPrompts,
 } from "@/content/askRobert";
 import type { AssistantMode } from "@/lib/askRobertEngine";
@@ -299,7 +298,7 @@ export default function AskRobertPortfolio() {
               </div>
             )}
             <div className={`text-center mt-3 text-xs ${textMuted}`}>
-              Ask Robert is an AI interface for Robert Jhon Aracena's portfolio.
+              Ask Robert is an AI interface for Robert Jhon Aracena&apos;s portfolio.
             </div>
           </div>
         </div>
