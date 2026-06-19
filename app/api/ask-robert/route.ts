@@ -6,6 +6,7 @@ import {
 } from "@/lib/askRobertEngine";
 import { answerWithGroq } from "@/lib/groqAskRobert";
 import { checkRateLimit, getClientKey } from "@/lib/rateLimit";
+import { checkQuestionSpam } from "@/lib/spamProtection";
 
 const validModes = new Set<AssistantMode>([
   "guide",
@@ -17,7 +18,7 @@ const validModes = new Set<AssistantMode>([
 ]);
 
 const rateLimitWindowMs = 60_000;
-const rateLimitMaxRequests = 20;
+const rateLimitMaxRequests = 12;
 
 export function GET() {
   return NextResponse.json({
@@ -32,8 +33,9 @@ export function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const clientKey = getClientKey(request);
     const rateLimit = checkRateLimit({
-      key: getClientKey(request),
+      key: clientKey,
       limit: rateLimitMaxRequests,
       windowMs: rateLimitWindowMs,
     });
@@ -57,7 +59,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+
+    if (!body || typeof body !== "object") {
+      return NextResponse.json(
+        {
+          error: "Invalid assistant request.",
+        },
+        { status: 400 },
+      );
+    }
+
     const question =
       typeof body.question === "string" ? body.question.slice(0, 4000) : "";
     const requestedMode =
@@ -71,6 +83,26 @@ export async function POST(request: NextRequest) {
           error: "Question is required.",
         },
         { status: 400 },
+      );
+    }
+
+    const spamCheck = checkQuestionSpam({
+      key: clientKey,
+      question,
+    });
+
+    if (!spamCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: spamCheck.message,
+          reason: spamCheck.reason,
+        },
+        {
+          status: spamCheck.status,
+          headers: {
+            "Retry-After": spamCheck.retryAfterSeconds.toString(),
+          },
+        },
       );
     }
 

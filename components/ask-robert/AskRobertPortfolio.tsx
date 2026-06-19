@@ -139,7 +139,7 @@ export default function AskRobertPortfolio() {
     options?: { forcePreview?: boolean; modeOverride?: AssistantMode },
   ) {
     const cleanQuestion = question.trim();
-    if (!cleanQuestion) return;
+    if (!cleanQuestion || isThinking) return;
 
     setIsThinking(true);
     setInput("");
@@ -151,9 +151,31 @@ export default function AskRobertPortfolio() {
         body: JSON.stringify({ question: cleanQuestion, mode: options?.modeOverride ?? mode }),
       });
 
-      if (!result.ok) throw new Error("Assistant API failed");
+      const payload = await result.json().catch(() => null);
 
-      const response = (await result.json()) as AssistantPortfolioResponse;
+      if (!result.ok) {
+        applyResponse(
+          cleanQuestion,
+          {
+            answer:
+              payload && typeof payload.error === "string"
+                ? payload.error
+                : "The assistant could not process that request. Please wait a moment and try again.",
+            targetSection: activeSection,
+            targetProjectId: activeProjectId,
+            sources: ["Spam protection"],
+            suggestedFollowUps: [
+              "What projects has Robert built?",
+              "What are Robert's strongest skills?",
+              "How can I contact Robert?",
+            ],
+          },
+          options,
+        );
+        return;
+      }
+
+      const response = payload as AssistantPortfolioResponse;
       applyResponse(cleanQuestion, response, options);
     } catch {
       applyResponse(
@@ -190,18 +212,9 @@ export default function AskRobertPortfolio() {
     ask(input);
   }
 
-  // Elegant Zinc Palette
-  const isDark = theme === "dark";
-  const bgMain = "bg-background";
-  const textPrimary = "text-primary";
-  const textMuted = "text-muted";
-  const borderCol = "border-border";
-  const bgInput = "bg-surface";
-  
   return (
     <main className={`flex h-screen w-full bg-background text-primary font-sans overflow-hidden transition-colors duration-300`}>
       <SidebarNav
-        theme={theme}
         activeSection={activeSection}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
@@ -226,7 +239,6 @@ export default function AskRobertPortfolio() {
              {(messages.length > 0 || isThinking) && (
                <div className="pt-8 pb-40">
                  <MessageList
-                   theme={theme}
                    messages={messages}
                    isThinking={isThinking}
                    onAsk={ask}
@@ -251,7 +263,7 @@ export default function AskRobertPortfolio() {
           <div className="max-w-3xl mx-auto w-full">
             {messages.length === 0 && !isThinking && (
               <div className="mb-8 animate-fade-in-up">
-                <EmptyState theme={theme} />
+                <EmptyState />
               </div>
             )}
             <form
@@ -274,6 +286,7 @@ export default function AskRobertPortfolio() {
                     ask(input);
                   }
                 }}
+                maxLength={1200}
                 rows={1}
                 placeholder="Message Ask Robert..."
                 className={`flex-1 max-h-48 min-h-[24px] bg-transparent resize-none border-none focus:ring-0 px-2 py-[10px] text-[15px] leading-6 placeholder:opacity-50 outline-none overflow-y-auto text-primary`}
@@ -309,7 +322,6 @@ export default function AskRobertPortfolio() {
       </section>
 
       <PreviewDrawer
-        theme={theme}
         isOpen={isPreviewOpen}
         activeSection={activeSection}
         activeProjectId={activeProjectId}
@@ -329,21 +341,18 @@ export default function AskRobertPortfolio() {
 }
 
 function SidebarNav({
-  theme,
   activeSection,
   isOpen,
   onClose,
   onSelect,
   onNewChat,
 }: {
-  theme: Theme;
   activeSection: PortfolioSection;
   isOpen: boolean;
   onClose: () => void;
   onSelect: (item: SidebarItem) => void;
   onNewChat: () => void;
 }) {
-  const isDark = theme === "dark";
   const bgSidebar = "bg-surface";
   const borderCol = "border-border";
   const textPrimary = "text-primary";
@@ -496,8 +505,7 @@ function ChatHeader({
   );
 }
 
-function EmptyState({ theme }: { theme: Theme }) {
-  const isDark = theme === "dark";
+function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className={`mb-6 rounded-full bg-primary text-background p-4 shadow-xl`}>
@@ -512,19 +520,16 @@ function EmptyState({ theme }: { theme: Theme }) {
 }
 
 function MessageList({
-  theme,
   messages,
   isThinking,
   onAsk,
   onPreview,
 }: {
-  theme: Theme;
   messages: ChatMessage[];
   isThinking: boolean;
   onAsk: (question: string) => void;
   onPreview: (message: ChatMessage) => void;
 }) {
-  const isDark = theme === "dark";
   const textPrimary = "text-primary";
   const textBody = "text-secondary";
   const textMuted = "text-muted";
@@ -632,7 +637,6 @@ function MessageList({
 }
 
 function PreviewDrawer({
-  theme,
   isOpen,
   activeSection,
   activeProjectId,
@@ -643,7 +647,6 @@ function PreviewDrawer({
   onClose,
   onProjectSelect,
 }: {
-  theme: Theme;
   isOpen: boolean;
   activeSection: PortfolioSection;
   activeProjectId?: string;
@@ -654,7 +657,6 @@ function PreviewDrawer({
   onClose: () => void;
   onProjectSelect: (projectId: string) => void;
 }) {
-  const isDark = theme === "dark";
   const bgMain = "bg-surface";
   const borderCol = "border-border";
   const textPrimary = "text-primary";
