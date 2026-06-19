@@ -214,8 +214,8 @@ export const projects: Project[] = [
     slug: "realitech",
     title: "RealiTech",
     summary:
-      "A hackathon project recognized for strong user experience, interface clarity, and product presentation under time constraints.",
-    tags: ["UI/UX", "Hackathon", "Team Leadership"],
+      "A Hack Estate Hackathon 2025 real-estate solution recognized for Best in UX Interface.",
+    tags: ["UI/UX", "Hackathon", "React Native", "Firebase"],
     metric: {
       label: "Proof",
       value: "UX",
@@ -227,7 +227,7 @@ export const projects: Project[] = [
     context: {
       role: "Project Manager and UI/UX Contributor",
       teamSize: "Hackathon team",
-      duration: "Hackathon build",
+      duration: "Hack Estate Hackathon 2025",
     },
     problemDetails: [
       "The team needed quick alignment around user needs and product scope.",
@@ -236,11 +236,12 @@ export const projects: Project[] = [
       "The project required coordination across product, visuals, and implementation.",
     ],
     solution:
-      "Robert contributed to shaping the UX direction, organizing product decisions, and presenting a clearer interface under hackathon constraints.",
+      "Robert led project planning and contributed to UI/UX design, helping shape a clearer real-estate product experience under hackathon constraints.",
     techStack: [
       { name: "Figma", icon: "figma" },
       { name: "UI/UX", icon: "ux" },
-      { name: "Web Development", icon: "web" },
+      { name: "React Native", icon: "react" },
+      { name: "Firebase", icon: "firebase" },
       { name: "Presentation", icon: "presentation" },
       { name: "Project Management", icon: "management" },
     ],
@@ -258,9 +259,9 @@ export const projects: Project[] = [
       },
       {
         metric: "Recognition",
-        value: "UX Focus",
+        value: "Best UX",
         description:
-          "The portfolio plan notes recognition for strong UX interface direction.",
+          "Won Best in UX Interface at Hack Estate Hackathon 2025.",
       },
       {
         metric: "Recruiter Signal",
@@ -302,7 +303,7 @@ export const projects: Project[] = [
     title: "ARMS",
     summary:
       "An Auto Repair Management System for organizing repair-shop services, records, and operational workflows.",
-    tags: ["Management System", "Database", "Workflow Design"],
+    tags: ["React", "Laravel", "SQL", "Workflow Design"],
     metric: {
       label: "Focus",
       value: "Systems",
@@ -312,7 +313,7 @@ export const projects: Project[] = [
     problem:
       "Repair shops need organized service records, customer tracking, and workflow visibility instead of relying on scattered manual processes.",
     context: {
-      role: "Developer and System Designer",
+      role: "Full-Stack Developer",
       teamSize: "Academic or portfolio system",
       duration: "System design and build phase",
     },
@@ -323,9 +324,11 @@ export const projects: Project[] = [
       "Staff need a practical tool that supports repeated daily operations.",
     ],
     solution:
-      "ARMS translates repair-shop operations into a structured management system with organized records, workflow states, and practical system design.",
+      "ARMS translates repair-shop operations into a structured full-stack management system with organized records, workflow states, and practical database-backed system design.",
     techStack: [
-      { name: "Web Development", icon: "web" },
+      { name: "React", icon: "react" },
+      { name: "Laravel", icon: "laravel" },
+      { name: "SQL", icon: "database" },
       { name: "Database Design", icon: "database" },
       { name: "System Analysis", icon: "systems" },
       { name: "Workflow Modeling", icon: "workflow" },
@@ -344,9 +347,9 @@ export const projects: Project[] = [
       },
       {
         metric: "Technical Signal",
-        value: "Database",
+        value: "Full-stack",
         description:
-          "Highlights structured thinking around entities, records, and operations.",
+          "Highlights React, Laravel, SQL, and structured thinking around entities, records, and operations.",
       },
       {
         metric: "Use Case",
@@ -387,8 +390,8 @@ export const projects: Project[] = [
     slug: "agrisense",
     title: "AgriSense",
     summary:
-      "An AI and edge-computing direction for crop diagnosis support, including tomato leaf disease scanning concepts.",
-    tags: ["Edge AI", "Computer Vision", "Agriculture"],
+      "An AI-powered agricultural robotics and tomato disease diagnosis system with mobile workflows, computer vision, and RAG-based recommendations.",
+    tags: ["AI Robotics", "Computer Vision", "RAG", "Flutter"],
     metric: {
       label: "Focus",
       value: "Edge AI",
@@ -396,25 +399,27 @@ export const projects: Project[] = [
     thumbnail: "/images/tomatoe_leaf.webp",
     hero: "/images/tomatoe_leaf.webp",
     problem:
-      "Farmers may need fast crop-disease support in environments where expert access and connectivity are limited.",
+      "Farmers need fast crop monitoring and tomato leaf disease support, but expert access, connectivity, and practical treatment guidance can be limited.",
     context: {
       role: "AI and system concept builder",
       teamSize: "Portfolio project",
       duration: "Research and prototype direction",
     },
     problemDetails: [
-      "Crop disease support needs to be timely and easy to understand.",
-      "Connectivity constraints make edge or offline-friendly thinking valuable.",
-      "AI outputs need to be paired with careful limitations and practical next steps.",
+      "Crop disease support needs to be timely, specific, and easy to understand.",
+      "The system combines robotics, mobile workflows, and AI diagnosis thinking.",
+      "Computer vision outputs need practical treatment and fertilizer recommendations.",
       "Agriculture technology must work around field realities, not ideal lab settings.",
     ],
     solution:
-      "AgriSense frames crop diagnosis support as a grounded AI workflow: capture evidence, compare against curated knowledge, and provide concise guidance with room for edge deployment.",
+      "AgriSense frames crop support as a connected workflow: automated crop monitoring, tomato leaf image diagnosis with YOLO and ResNet50/MobileNetV2 directions, and AgriGuide, a RAG-based assistant that turns diagnosis results into treatment and fertilizer recommendations.",
     techStack: [
-      { name: "Python", icon: "python" },
+      { name: "Flutter", icon: "flutter" },
       { name: "Computer Vision", icon: "vision" },
-      { name: "RAG Concepts", icon: "rag" },
-      { name: "Edge AI", icon: "edge" },
+      { name: "YOLO", icon: "vision" },
+      { name: "ResNet50", icon: "ai" },
+      { name: "MobileNetV2", icon: "ai" },
+      { name: "RAG Systems", icon: "rag" },
       { name: "Agriculture Research", icon: "research" },
     ],
     architecture: {
@@ -427,13 +432,13 @@ export const projects: Project[] = [
         metric: "Portfolio Proof",
         value: "AI + Crops",
         description:
-          "Shows Robert's interest in applying AI to agricultural decision support.",
+          "Shows Robert's strongest resume-backed AI + agriculture project.",
       },
       {
         metric: "Technical Direction",
-        value: "Edge-aware",
+        value: "CV + RAG",
         description:
-          "Considers deployment environments where internet access may be unreliable.",
+          "Connects computer vision diagnosis with source-grounded treatment recommendations.",
       },
       {
         metric: "Safety Direction",
@@ -466,6 +471,166 @@ export const projects: Project[] = [
         title: "Portfolio Integration",
         description:
           "Connected the project to Robert's broader AI + agriculture direction.",
+      },
+    ],
+    links: {},
+  },
+  {
+    slug: "iqueue",
+    title: "IQueue",
+    summary:
+      "An AI-powered smart boarding platform from the ASEAN AI Hackathon 2026 Smart City Category.",
+    tags: ["AI", "Smart City", "Hackathon", "Forecasting"],
+    metric: {
+      label: "Proof",
+      value: "Top 10",
+    },
+    thumbnail: "/images/Professional_Setup.webp",
+    hero: "/images/Professional_Setup.webp",
+    problem:
+      "Transport terminals can face congestion and service delays when boarding demand, seat availability, and passenger flow are not intelligently coordinated.",
+    context: {
+      role: "UM SIKLAB team contributor",
+      teamSize: "Hackathon team",
+      duration: "ASEAN AI Hackathon 2026",
+    },
+    problemDetails: [
+      "Terminal congestion creates delays and poor passenger experience.",
+      "Boarding demand can shift quickly and needs smarter forecasting.",
+      "Seat allocation needs to balance availability, demand, and service flow.",
+      "The solution needed to communicate smart-city value clearly in a competitive hackathon setting.",
+    ],
+    solution:
+      "IQueue applies AI-powered demand forecasting and intelligent seat allocation to reduce terminal congestion and service delays, positioning public boarding as a smart-city optimization problem.",
+    techStack: [
+      { name: "AI Forecasting", icon: "ai" },
+      { name: "Smart City Systems", icon: "systems" },
+      { name: "Product Strategy", icon: "design" },
+      { name: "Hackathon Execution", icon: "management" },
+    ],
+    architecture: {
+      image: "/images/Professional_Setup.webp",
+      description:
+        "Smart boarding flow connecting passenger demand, forecasting, seat allocation, and terminal service decisions.",
+    },
+    outcomes: [
+      {
+        metric: "Recognition",
+        value: "Top 10",
+        description:
+          "UM SIKLAB was selected as a Top 10 team in the ASEAN AI Hackathon 2026 Smart City Category.",
+      },
+      {
+        metric: "AI Signal",
+        value: "Forecasting",
+        description:
+          "Shows Robert's exposure to AI-powered demand forecasting and optimization concepts.",
+      },
+      {
+        metric: "Recruiter Signal",
+        value: "Team AI",
+        description:
+          "Adds competitive hackathon evidence beyond agriculture and UI/UX.",
+      },
+    ],
+    process: [
+      {
+        step: 1,
+        title: "Problem Framing",
+        description:
+          "Connected terminal congestion and service delays to demand and allocation decisions.",
+      },
+      {
+        step: 2,
+        title: "AI Product Direction",
+        description:
+          "Shaped the concept around forecasting and intelligent seat allocation.",
+      },
+      {
+        step: 3,
+        title: "Hackathon Execution",
+        description:
+          "Contributed within UM SIKLAB under ASEAN AI Hackathon constraints.",
+      },
+    ],
+    links: {},
+  },
+  {
+    slug: "arc-travel",
+    title: "Arc Travel App",
+    summary:
+      "A travel-focused web app covering frontend implementation, database design, and core user workflows.",
+    tags: ["Web App", "SQL", "JavaScript", "Travel"],
+    metric: {
+      label: "Focus",
+      value: "Web App",
+    },
+    thumbnail: "/images/Professional_Setup.webp",
+    hero: "/images/Professional_Setup.webp",
+    problem:
+      "Travel experiences need clear browsing and planning workflows backed by organized data, simple navigation, and practical interface structure.",
+    context: {
+      role: "Full-Stack Developer",
+      teamSize: "Academic or portfolio system",
+      duration: "System design and build phase",
+    },
+    problemDetails: [
+      "Travel content needs to be structured so users can scan and choose quickly.",
+      "The interface needs simple frontend flows rather than scattered static pages.",
+      "The app requires database thinking for storing and retrieving travel-related information.",
+    ],
+    solution:
+      "Arc Travel App uses HTML, CSS, JavaScript, and SQL to model a travel-focused web experience with frontend screens, database-backed information, and core user workflows.",
+    techStack: [
+      { name: "HTML", icon: "web" },
+      { name: "CSS", icon: "web" },
+      { name: "JavaScript", icon: "javascript" },
+      { name: "SQL", icon: "database" },
+      { name: "Workflow Design", icon: "workflow" },
+    ],
+    architecture: {
+      image: "/images/Professional_Setup.webp",
+      description:
+        "Travel app structure connecting frontend pages, travel data, user browsing flows, and SQL-backed records.",
+    },
+    outcomes: [
+      {
+        metric: "Portfolio Range",
+        value: "Web + SQL",
+        description:
+          "Adds non-agriculture proof of Robert's web and database fundamentals.",
+      },
+      {
+        metric: "Technical Signal",
+        value: "Core Stack",
+        description:
+          "Shows HTML, CSS, JavaScript, SQL, and workflow implementation.",
+      },
+      {
+        metric: "Recruiter Signal",
+        value: "Practical",
+        description:
+          "Demonstrates applied frontend and data thinking in a familiar user domain.",
+      },
+    ],
+    process: [
+      {
+        step: 1,
+        title: "Workflow Planning",
+        description:
+          "Mapped the travel-focused user flow and core content needs.",
+      },
+      {
+        step: 2,
+        title: "Frontend Build",
+        description:
+          "Implemented web screens using HTML, CSS, and JavaScript.",
+      },
+      {
+        step: 3,
+        title: "Data Structure",
+        description:
+          "Used SQL thinking to organize app data and support core workflows.",
       },
     ],
     links: {},

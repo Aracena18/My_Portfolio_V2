@@ -245,11 +245,11 @@ function analyzeOpportunityFit(question: string): AssistantPortfolioResponse {
   const skillText =
     matchedSkills.length > 0
       ? matchedSkills.slice(0, 8).join(", ")
-      : "frontend development, UI/UX, AI assistant thinking, system analysis, research, and documentation";
+      : "full-stack development, mobile development, UI/UX, computer vision, RAG systems, database design, system analysis, and project coordination";
   const projectText =
     matchedProjects.length > 0
       ? matchedProjects.map((project) => project.title).join(", ")
-      : "TanimPro, ARCriculture, RealiTech, ARMS, and AgriSense";
+      : "AgriSense, IQueue, RealiTech, ARMS, TanimPro, ARCriculture, and Arc Travel App";
   const roleFit = roleFits.find((fit) =>
     normalized.includes(fit.role.toLowerCase().split(" ")[0]),
   );
@@ -359,11 +359,19 @@ function createRecruiterSummary(): AssistantPortfolioResponse {
   return {
     targetSection: "recruiter",
     answer:
-      `${robertProfile.name} is strongest for roles that need a student builder who can connect frontend implementation, UI/UX thinking, AI assistant concepts, agriculture technology, and practical system design. ` +
-      "The clearest proof path is: review the skills panel, inspect TanimPro or ARCriculture for AI + agriculture direction, inspect RealiTech for UX and hackathon experience, then inspect ARMS for workflow and system-design thinking.",
+      `${robertProfile.name} is strongest for roles that need a student builder who can connect full-stack implementation, mobile development, UI/UX thinking, AI systems, computer vision, RAG, agriculture technology, and practical workflow design. ` +
+      "The clearest proof path is: review AgriSense for AI + computer vision + RAG, IQueue for Top 10 ASEAN AI Hackathon smart-city proof, RealiTech for Best in UX Interface, ARMS for React/Laravel/SQL workflow design, and the resume panel for awards, certifications, and leadership.",
+    sources: [
+      "Recruiter Fit",
+      "Resume Summary",
+      "AgriSense Project",
+      "IQueue Project",
+      "RealiTech Project",
+      "ARMS Project",
+    ],
     suggestedFollowUps: [
-      "Analyze this job description",
-      "Show project proof",
+      "Show AgriSense proof",
+      "Show awards and certifications",
       "Draft an internship message",
     ],
   };

@@ -280,9 +280,10 @@ export function ResumePanel({ isCompact }: { isCompact?: boolean }) {
           <h3 className="text-xl font-semibold tracking-normal text-primary">Recruiter Summary</h3>
         </div>
         <p className="mt-4 text-sm leading-6 text-secondary">
-          Robert is a BS Computer Science student with portfolio proof across
-          frontend development, UI/UX, AI-assisted systems, agriculture technology,
-          practical workflow systems, leadership, and research documentation.
+          Robert is a BS Computer Science student specializing in Artificial
+          Intelligence with portfolio proof across full-stack development, mobile
+          development, UI/UX, computer vision, RAG systems, agriculture technology,
+          smart-city AI, leadership, and hackathon execution.
         </p>
       </div>
       <div className={`grid gap-4 ${isCompact ? 'grid-cols-1' : 'sm:grid-cols-2'}`}>
@@ -303,15 +304,24 @@ export function ResumePanel({ isCompact }: { isCompact?: boolean }) {
           </div>
         ))}
       </div>
-      <div className="rounded-2xl border border-dashed border-border bg-surface p-5">
+      <div className="rounded-2xl border border-border bg-surface p-5">
         <p className="text-sm font-semibold text-primary">
-          Resume PDF status
+          Resume PDF
         </p>
         <p className="mt-2 text-sm leading-6 text-secondary">
-          The portfolio is ready for a public resume file. Add a PDF at
-          <span className="font-semibold text-primary"> public/resume.pdf </span>
-          and this panel can link directly to it.
+          Open Robert&apos;s one-page resume for the full recruiter scan, including
+          education, skills, projects, leadership, awards, scholarships, and
+          certifications.
         </p>
+        <a
+          href="/Robert_Jhon_Aracena_Resume_1Page.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex items-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+        >
+          Open resume PDF
+          <ArrowRight size={16} aria-hidden="true" />
+        </a>
       </div>
       <div className="flex flex-wrap gap-3">
         <Link
@@ -365,10 +375,11 @@ export function RecruiterPanel({ isCompact }: { isCompact?: boolean }) {
           </h3>
         </div>
         <p className="mt-4 text-sm leading-6 text-secondary">
-          Robert combines implementation, design judgment, AI curiosity, agriculture
-          problem framing, and project coordination. His strongest fit is for teams
-          that value builders who can explain the problem, shape the interface, and
-          contribute to the technical system.
+          Robert combines full-stack implementation, mobile development, design
+          judgment, AI curiosity, agriculture problem framing, and project
+          coordination. His strongest fit is for teams that value builders who can
+          explain the problem, shape the interface, and contribute to the technical
+          system.
         </p>
       </div>
       <div className={`grid gap-4 ${isCompact ? 'grid-cols-1' : 'md:grid-cols-3'}`}>
@@ -471,8 +482,13 @@ export function ContactPanel({ isCompact }: { isCompact?: boolean }) {
               Based in {robertProfile.location}
             </p>
             <p className="mt-2 text-sm leading-6 text-secondary">
-              Add Robert&apos;s preferred public email, LinkedIn, GitHub, or contact
-              form endpoint here when those final details are ready.
+              Professional email:{" "}
+              <a
+                href={`mailto:${robertProfile.email}`}
+                className="font-semibold text-primary transition hover:text-accent"
+              >
+                {robertProfile.email}
+              </a>
             </p>
           </div>
         </div>
