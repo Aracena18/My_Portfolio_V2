@@ -68,7 +68,7 @@ export async function answerWithGroq({
     return null;
   }
 
-  const model = process.env.GROQ_MODEL ?? "llama-3.3-70b-versatile";
+  const model = process.env.GROQ_MODEL ?? "openai/gpt-oss-20b";
   const sources = retrieveKnowledge(question, 6);
   const sourceText = formatSourcesForModel(sources);
 
@@ -91,7 +91,9 @@ export async function answerWithGroq({
             "Do not invent awards, links, employers, metrics, contact details, private details, production outcomes, or qualifications. " +
             "If the sources do not prove something, say the portfolio does not currently prove it. " +
             "Never claim to send messages or perform external actions. " +
-            "Choose the targetSection and targetProjectId that should open in the portfolio UI.",
+            "Choose the targetSection and targetProjectId that should open in the portfolio UI. " +
+            "Always provide 3 to 4 concise suggestedFollowUps a recruiter can click next. " +
+            "Make each follow-up a complete question or command about Robert's proof, projects, skills, role fit, resume, or contact options.",
         },
         {
           role: "user",
@@ -108,6 +110,7 @@ export async function answerWithGroq({
         type: "json_schema",
         json_schema: {
           name: "ask_robert_response",
+          strict: true,
           schema: responseSchema,
         },
       },
@@ -126,11 +129,15 @@ export async function answerWithGroq({
   }
 
   const parsed = JSON.parse(stripJsonFence(text)) as unknown;
-
-  return validateAssistantResponse(parsed, {
+  const validated = validateAssistantResponse(parsed, {
     ...fallback,
     sources: fallback.sources ?? sources.map((source) => source.title),
   });
+
+  return {
+    ...validated,
+    sources: normalizeProviderSources(validated.sources, sources, fallback.sources),
+  };
 }
 
 function stripJsonFence(value: string) {
@@ -138,4 +145,33 @@ function stripJsonFence(value: string) {
     .replace(/^```(?:json)?\s*/i, "")
     .replace(/\s*```$/i, "")
     .trim();
+}
+
+function normalizeProviderSources(
+  candidateSources: string[] | undefined,
+  retrievedSources: ReturnType<typeof retrieveKnowledge>,
+  fallbackSources: string[] | undefined,
+) {
+  const sourceTitles = retrievedSources.map((source) => source.title);
+  const normalized = (candidateSources ?? [])
+    .map((source) => {
+      const value = source.trim();
+      const numericReference = value.match(/^\[?(\d+)\]?$/);
+
+      if (numericReference) {
+        const index = Number(numericReference[1]) - 1;
+        return sourceTitles[index];
+      }
+
+      return sourceTitles.find(
+        (title) => title.toLowerCase() === value.toLowerCase(),
+      );
+    })
+    .filter((source): source is string => Boolean(source));
+
+  if (normalized.length > 0) {
+    return Array.from(new Set(normalized));
+  }
+
+  return fallbackSources?.length ? fallbackSources : sourceTitles;
 }

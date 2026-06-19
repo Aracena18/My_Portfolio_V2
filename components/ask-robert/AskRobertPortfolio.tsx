@@ -32,12 +32,14 @@ import {
 } from "@/content/askRobert";
 import type { AssistantMode } from "@/lib/askRobertEngine";
 import BrandLogo from "@/components/BrandLogo";
+import { useTheme } from "@/components/ThemeProvider";
 
 type ChatMessage = {
   id: string;
   role: "assistant" | "user";
   content: string;
   sources?: string[];
+  suggestedFollowUps?: string[];
   targetSection?: PortfolioSection;
   targetProjectId?: string;
 };
@@ -75,7 +77,7 @@ const highValuePrompts = suggestedPrompts.slice(0, 4);
 type Theme = "light" | "dark";
 
 export default function AskRobertPortfolio() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const { theme, toggleTheme } = useTheme();
   const [activeSection, setActiveSection] = useState<PortfolioSection>("about");
   const [activeProjectId, setActiveProjectId] = useState<string | undefined>();
   const [mode, setMode] = useState<AssistantMode>("guide");
@@ -121,6 +123,7 @@ export default function AskRobertPortfolio() {
         role: "assistant",
         content: response.answer,
         sources: response.sources,
+        suggestedFollowUps: response.suggestedFollowUps,
         targetSection: response.targetSection,
         targetProjectId: response.targetProjectId,
       },
@@ -187,16 +190,16 @@ export default function AskRobertPortfolio() {
     ask(input);
   }
 
-  // Elegant Slate Palette
+  // Elegant Zinc Palette
   const isDark = theme === "dark";
-  const bgMain = isDark ? "bg-[#020617]" : "bg-white"; // slate-950 / white
-  const textPrimary = isDark ? "text-[#f8fafc]" : "text-[#0f172a]"; // slate-50 / slate-900
-  const textMuted = isDark ? "text-[#94a3b8]" : "text-[#64748b]"; // slate-400 / slate-500
-  const borderCol = isDark ? "border-[#1e293b]" : "border-[#e2e8f0]"; // slate-800 / slate-200
-  const bgInput = isDark ? "bg-[#0f172a]" : "bg-[#f8fafc]"; // slate-900 / slate-50
+  const bgMain = "bg-background";
+  const textPrimary = "text-primary";
+  const textMuted = "text-muted";
+  const borderCol = "border-border";
+  const bgInput = "bg-surface";
   
   return (
-    <main className={`flex h-screen w-full ${bgMain} ${textPrimary} font-sans overflow-hidden transition-colors duration-300`}>
+    <main className={`flex h-screen w-full bg-background text-primary font-sans overflow-hidden transition-colors duration-300`}>
       <SidebarNav
         theme={theme}
         activeSection={activeSection}
@@ -209,7 +212,7 @@ export default function AskRobertPortfolio() {
       <section className={`flex flex-1 flex-col h-full min-w-0 relative transition-all duration-300 ${isPreviewOpen ? "md:mr-[480px]" : ""}`}>
         <ChatHeader
           theme={theme}
-          onThemeToggle={() => setTheme(isDark ? "light" : "dark")}
+          onThemeToggle={toggleTheme}
           mode={mode}
           previewAvailable={previewAvailable}
           isPreviewOpen={isPreviewOpen}
@@ -226,6 +229,7 @@ export default function AskRobertPortfolio() {
                    theme={theme}
                    messages={messages}
                    isThinking={isThinking}
+                   onAsk={ask}
                    onPreview={(message) => {
                      if (message.targetSection) setActiveSection(message.targetSection);
                      setActiveProjectId(message.targetProjectId);
@@ -242,7 +246,7 @@ export default function AskRobertPortfolio() {
         <div className={`absolute left-0 right-0 px-4 transition-all duration-500 ease-in-out z-10 ${
           messages.length === 0 && !isThinking
             ? 'top-1/2 -translate-y-1/2'
-            : `bottom-0 bg-gradient-to-t ${isDark ? 'from-[#020617] via-[#020617]' : 'from-white via-white'} to-transparent pt-6 pb-6`
+            : `bottom-0 bg-gradient-to-t from-background via-background to-transparent pt-6 pb-6`
         }`}>
           <div className="max-w-3xl mx-auto w-full">
             {messages.length === 0 && !isThinking && (
@@ -252,11 +256,11 @@ export default function AskRobertPortfolio() {
             )}
             <form
               onSubmit={handleSubmit}
-              className={`relative flex items-end ${bgInput} rounded-[24px] py-1.5 px-3 border ${borderCol} focus-within:border-[#6366f1]/50 shadow-sm transition-all min-h-[52px]`}
+              className={`relative flex items-end bg-surface rounded-[24px] py-1.5 px-3 border border-border focus-within:border-accent/50 shadow-sm transition-all min-h-[52px]`}
             >
               <button
                 type="button"
-                className={`p-2 mb-0.5 ${textMuted} hover:opacity-70 rounded-full transition`}
+                className={`p-2 mb-0.5 text-muted hover:opacity-70 rounded-full transition`}
                 title="Attach (disabled)"
               >
                 <Plus size={20} strokeWidth={2.5} />
@@ -272,13 +276,13 @@ export default function AskRobertPortfolio() {
                 }}
                 rows={1}
                 placeholder="Message Ask Robert..."
-                className={`flex-1 max-h-48 min-h-[24px] bg-transparent resize-none border-none focus:ring-0 px-2 py-[10px] text-[15px] leading-6 placeholder:opacity-50 outline-none overflow-y-auto ${textPrimary}`}
+                className={`flex-1 max-h-48 min-h-[24px] bg-transparent resize-none border-none focus:ring-0 px-2 py-[10px] text-[15px] leading-6 placeholder:opacity-50 outline-none overflow-y-auto text-primary`}
               />
               <button
                 type="submit"
                 disabled={isThinking || !input.trim()}
                 aria-label="Send question"
-                className={`mb-1 p-2 shrink-0 rounded-full bg-[#6366f1] text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:${isDark ? 'bg-[#1e293b] text-[#64748b]' : 'bg-[#e2e8f0] text-[#94a3b8]'} ml-1`}
+                className={`mb-1 p-2 shrink-0 rounded-full bg-accent text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-muted ml-1`}
               >
                 <Send size={18} className="translate-x-[1px] translate-y-[1px]" />
               </button>
@@ -290,14 +294,14 @@ export default function AskRobertPortfolio() {
                   <button
                     key={item.label}
                     onClick={() => ask(item.prompt)}
-                    className={`text-sm ${textMuted} hover:${textPrimary} px-4 py-2 rounded-full border ${borderCol} ${isDark ? 'bg-transparent hover:bg-[#1e293b]' : 'bg-transparent hover:bg-[#f1f5f9]'} transition-colors`}
+                    className={`text-sm text-muted hover:text-primary px-4 py-2 rounded-full border border-border bg-transparent hover:bg-surface-muted transition-colors`}
                   >
                     <span className="whitespace-nowrap">{item.label}</span>
                   </button>
                 ))}
               </div>
             )}
-            <div className={`text-center mt-3 text-xs ${textMuted}`}>
+            <div className={`text-center mt-3 text-xs text-muted`}>
               Ask Robert is an AI interface for Robert Jhon Aracena&apos;s portfolio.
             </div>
           </div>
@@ -340,12 +344,12 @@ function SidebarNav({
   onNewChat: () => void;
 }) {
   const isDark = theme === "dark";
-  const bgSidebar = isDark ? "bg-[#0f172a]" : "bg-[#f8fafc]"; // slate-900 / slate-50
-  const borderCol = isDark ? "border-[#1e293b]" : "border-[#e2e8f0]"; // slate-800 / slate-200
-  const textPrimary = isDark ? "text-[#f8fafc]" : "text-[#0f172a]";
-  const textMuted = isDark ? "text-[#94a3b8]" : "text-[#64748b]";
-  const bgHover = isDark ? "hover:bg-[#1e293b]" : "hover:bg-[#e2e8f0]";
-  const bgActive = isDark ? "bg-[#1e293b] text-white" : "bg-white shadow-sm border border-[#e2e8f0] text-[#0f172a]";
+  const bgSidebar = "bg-surface";
+  const borderCol = "border-border";
+  const textPrimary = "text-primary";
+  const textMuted = "text-muted";
+  const bgHover = "hover:bg-surface-muted";
+  const bgActive = "bg-surface-muted shadow-sm border border-border text-primary";
 
   return (
     <>
@@ -365,7 +369,7 @@ function SidebarNav({
             onClick={onNewChat}
             className={`flex flex-1 items-center gap-2 ${bgHover} transition-colors rounded-lg px-3 py-2 text-sm font-medium`}
           >
-            <BrandLogo className={`size-6 ${isDark ? 'text-[#f8fafc]' : 'text-[#0f172a]'}`} />
+            <BrandLogo className={`size-6 text-primary`} />
             <span className={textPrimary}>New session</span>
           </button>
           <button onClick={onClose} className={`md:hidden p-2 ${textMuted} hover:opacity-70`}>
@@ -389,7 +393,7 @@ function SidebarNav({
                     isActive ? bgActive : `${textMuted} ${bgHover}`
                   }`}
                 >
-                  <Icon size={16} className={isActive ? (isDark ? "text-[#f8fafc]" : "text-[#0f172a]") : ""} />
+                  <Icon size={16} className={isActive ? "text-primary" : ""} />
                   <span className="truncate">{item.label}</span>
                 </button>
                 <Link
@@ -432,11 +436,11 @@ function ChatHeader({
   onPreviewClick: () => void;
 }) {
   const isDark = theme === "dark";
-  const bgHover = isDark ? "hover:bg-[#0f172a]" : "hover:bg-[#f1f5f9]";
-  const textPrimary = isDark ? "text-[#f8fafc]" : "text-[#0f172a]";
-  const textMuted = isDark ? "text-[#94a3b8]" : "text-[#64748b]";
-  const dropdownBg = isDark ? "bg-[#0f172a]" : "bg-white";
-  const borderCol = isDark ? "border-[#1e293b]" : "border-[#e2e8f0]";
+  const bgHover = "hover:bg-surface-muted";
+  const textPrimary = "text-primary";
+  const textMuted = "text-muted";
+  const dropdownBg = "bg-surface";
+  const borderCol = "border-border";
 
   return (
     <header className="sticky top-0 z-20 flex h-14 items-center justify-between px-4 sm:px-6 w-full">
@@ -459,7 +463,7 @@ function ChatHeader({
                <div 
                  key={m.id} 
                  onClick={() => onModeChange(m.id)}
-                 className={`px-4 py-2.5 text-sm cursor-pointer ${bgHover} ${mode === m.id ? (isDark ? 'bg-[#1e293b] text-white font-medium' : 'bg-[#f1f5f9] text-[#0f172a] font-medium') : textPrimary}`}
+                 className={`px-4 py-2.5 text-sm cursor-pointer ${bgHover} ${mode === m.id ? 'bg-surface-muted text-primary font-medium' : textPrimary}`}
                >
                  {m.label} Mode
                </div>
@@ -481,7 +485,7 @@ function ChatHeader({
           onClick={onPreviewClick}
           disabled={!previewAvailable}
           className={`flex items-center gap-2 p-2 rounded-lg transition ${
-            isPreviewOpen ? (isDark ? "bg-[#1e293b] text-white" : "bg-[#e2e8f0] text-[#0f172a]") : `${textMuted} hover:opacity-100 ${bgHover}`
+            isPreviewOpen ? "bg-surface-muted text-primary" : `text-muted hover:opacity-100 ${bgHover}`
           } disabled:opacity-30 disabled:cursor-not-allowed`}
           title="Toggle Artifacts"
         >
@@ -496,11 +500,11 @@ function EmptyState({ theme }: { theme: Theme }) {
   const isDark = theme === "dark";
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className={`mb-6 rounded-full ${isDark ? 'bg-white' : 'bg-[#0f172a]'} p-4 shadow-xl`}>
-        <BrandLogo className={`size-10 ${isDark ? 'text-[#020617]' : 'text-white'}`} />
+      <div className={`mb-6 rounded-full bg-primary text-background p-4 shadow-xl`}>
+        <BrandLogo className={`size-10 text-background`} />
       </div>
-      <h1 className={`text-3xl font-semibold ${isDark ? 'text-[#f8fafc]' : 'text-[#0f172a]'} mb-2 tracking-tight`}>How can I help you today?</h1>
-      <p className={`text-sm ${isDark ? 'text-[#94a3b8]' : 'text-[#64748b]'} max-w-md text-center mt-1 leading-relaxed`}>
+      <h1 className={`text-3xl font-semibold text-primary mb-2 tracking-tight`}>How can I help you today?</h1>
+      <p className={`text-sm text-muted max-w-md text-center mt-1 leading-relaxed`}>
         Ask me about Robert&apos;s projects, skills, resume, or use the sidebar to explore each section directly.
       </p>
     </div>
@@ -511,23 +515,25 @@ function MessageList({
   theme,
   messages,
   isThinking,
+  onAsk,
   onPreview,
 }: {
   theme: Theme;
   messages: ChatMessage[];
   isThinking: boolean;
+  onAsk: (question: string) => void;
   onPreview: (message: ChatMessage) => void;
 }) {
   const isDark = theme === "dark";
-  const textPrimary = isDark ? "text-[#f8fafc]" : "text-[#0f172a]";
-  const textBody = isDark ? "text-[#cbd5e1]" : "text-[#334155]"; // slate-300 / slate-700
-  const textMuted = isDark ? "text-[#94a3b8]" : "text-[#64748b]";
-  const btnBg = isDark ? "bg-[#0f172a]" : "bg-white"; // slate-900
-  const btnBorder = isDark ? "border-[#1e293b]" : "border-[#e2e8f0]";
+  const textPrimary = "text-primary";
+  const textBody = "text-secondary";
+  const textMuted = "text-muted";
+  const btnBg = "bg-surface";
+  const btnBorder = "border-border";
   
   // ChatGPT User Message bubble style
-  const userBubbleBg = isDark ? "bg-[#27272a]" : "bg-[#f4f4f5]"; // zinc-800 / zinc-100
-  const userBubbleText = isDark ? "text-[#ececec]" : "text-[#09090b]";
+  const userBubbleBg = "bg-user-bubble";
+  const userBubbleText = "text-user-text";
 
   return (
     <div className="space-y-8 max-w-3xl mx-auto w-full">
@@ -550,13 +556,13 @@ function MessageList({
         return (
           <article key={message.id} className="flex gap-4 w-full">
             <div className="shrink-0 mt-1">
-               <div className={`size-8 rounded-full ${isDark ? 'bg-white' : 'bg-[#0f172a]'} grid place-items-center shadow-md`}>
-                  <BrandLogo className={`size-5 ${isDark ? 'text-[#020617]' : 'text-white'}`} />
+               <div className={`size-8 rounded-full bg-primary grid place-items-center shadow-md`}>
+                  <BrandLogo className={`size-5 text-background`} />
                </div>
             </div>
             <div className="flex-1 min-w-0 pt-1">
               <div className={`font-semibold ${textPrimary} mb-1.5`}>Ask Robert</div>
-              <div className={`text-[15px] leading-loose ${textBody} whitespace-pre-line prose max-w-none ${isDark ? 'prose-invert' : ''}`}>
+              <div className={`text-[15px] leading-loose ${textBody} whitespace-pre-line prose max-w-none dark:prose-invert`}>
                 {message.content}
               </div>
               
@@ -579,6 +585,26 @@ function MessageList({
                   View Related Content
                 </button>
               )}
+
+              {message.suggestedFollowUps?.length ? (
+                <div className="mt-5">
+                  <p className={`mb-2 text-xs font-semibold uppercase tracking-[0.08em] ${textMuted}`}>
+                    Next questions
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {message.suggestedFollowUps.slice(0, 4).map((followUp) => (
+                      <button
+                        key={followUp}
+                        type="button"
+                        onClick={() => onAsk(followUp)}
+                        className={`rounded-full border ${btnBorder} ${btnBg} px-3 py-2 text-left text-sm leading-5 ${textPrimary} transition hover:border-accent hover:text-accent`}
+                      >
+                        {followUp}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
           </article>
         );
@@ -587,16 +613,16 @@ function MessageList({
       {isThinking && (
         <article className="flex gap-4 w-full">
           <div className="shrink-0 mt-1">
-            <div className={`size-8 rounded-full ${isDark ? 'bg-white' : 'bg-[#0f172a]'} grid place-items-center shadow-md animate-pulse`}>
-               <BrandLogo className={`size-5 ${isDark ? 'text-[#020617]' : 'text-white'}`} />
+            <div className={`size-8 rounded-full bg-primary grid place-items-center shadow-md animate-pulse`}>
+               <BrandLogo className={`size-5 text-background`} />
             </div>
           </div>
           <div className="flex-1 min-w-0 pt-1">
             <div className={`font-semibold ${textPrimary} mb-1.5`}>Ask Robert</div>
             <div className="flex items-center gap-1.5 mt-3">
-              <span className={`size-2.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#0f172a]'} animate-bounce`} style={{ animationDelay: '0ms' }} />
-              <span className={`size-2.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#0f172a]'} animate-bounce`} style={{ animationDelay: '150ms' }} />
-              <span className={`size-2.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#0f172a]'} animate-bounce`} style={{ animationDelay: '300ms' }} />
+              <span className={`size-2.5 rounded-full bg-primary animate-bounce`} style={{ animationDelay: '0ms' }} />
+              <span className={`size-2.5 rounded-full bg-primary animate-bounce`} style={{ animationDelay: '150ms' }} />
+              <span className={`size-2.5 rounded-full bg-primary animate-bounce`} style={{ animationDelay: '300ms' }} />
             </div>
           </div>
         </article>
@@ -629,33 +655,14 @@ function PreviewDrawer({
   onProjectSelect: (projectId: string) => void;
 }) {
   const isDark = theme === "dark";
-  const bgMain = isDark ? "bg-[#0f172a]" : "bg-white"; // slate-900 / white
-  const borderCol = isDark ? "border-[#1e293b]" : "border-[#e2e8f0]";
-  const textPrimary = isDark ? "text-[#f8fafc]" : "text-[#0f172a]";
-  const textMuted = isDark ? "text-[#94a3b8]" : "text-[#64748b]";
-  const bgHover = isDark ? "hover:bg-[#1e293b]" : "hover:bg-[#f1f5f9]";
-  const shadow = isDark ? "shadow-[-24px_0_48px_rgba(2,6,23,0.8)]" : "shadow-[-24px_0_48px_rgba(0,0,0,0.1)]";
+  const bgMain = "bg-surface";
+  const borderCol = "border-border";
+  const textPrimary = "text-primary";
+  const textMuted = "text-muted";
+  const bgHover = "hover:bg-surface-muted";
+  const shadow = "shadow-[-24px_0_48px_rgba(0,0,0,0.3)]";
 
-  // Dynamic injection of CSS variables so internal PortfolioCanvas components render natively in dark/light mode
-  const cssVars = isDark ? {
-    "--surface": "#1e293b", // slate-800 for cards
-    "--surface-muted": "#0f172a", // slate-900 for inner background
-    "--border": "#334155", // slate-700
-    "--text": "#f8fafc",
-    "--text-secondary": "#cbd5e1", // slate-300
-    "--text-muted": "#94a3b8", // slate-400
-    "--accent": "#6366f1", // indigo-500
-    "--accent-soft": "rgba(99, 102, 241, 0.1)",
-  } : {
-    "--surface": "#ffffff",
-    "--surface-muted": "#f8fafc",
-    "--border": "#e2e8f0",
-    "--text": "#0f172a",
-    "--text-secondary": "#475569",
-    "--text-muted": "#64748b",
-    "--accent": "#4f46e5",
-    "--accent-soft": "rgba(79, 70, 229, 0.08)",
-  };
+  const cssVars = {};
 
   return (
     <aside
@@ -687,8 +694,8 @@ function PreviewDrawer({
       </div>
       
       {/* Scrollable Canvas container perfectly mimicking Claude Artifacts */}
-      <div className={`flex-1 overflow-y-auto px-5 py-6 bg-[var(--surface-muted)]`}>
-        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 min-h-full shadow-sm relative overflow-hidden transition-colors">
+      <div className={`flex-1 overflow-y-auto px-5 py-6 bg-surface-muted`}>
+        <div className="bg-surface border border-border rounded-2xl p-6 min-h-full shadow-sm relative overflow-hidden transition-colors">
           <div className="relative z-10">
             <PortfolioCanvas
               activeSection={activeSection}

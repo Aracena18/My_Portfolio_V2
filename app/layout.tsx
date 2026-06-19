@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Orbitron, Space_Grotesk } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -73,8 +74,10 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} ${orbitron.variable}`}
       suppressHydrationWarning
     >
-      <body className="antialiased font-sans" suppressHydrationWarning>
-        {children}
+      <body className="antialiased font-sans bg-background text-primary" suppressHydrationWarning>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

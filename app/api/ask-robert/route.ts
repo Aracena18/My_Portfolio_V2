@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   AssistantMode,
   answerAskRobert,
+  isProjectListQuestion,
 } from "@/lib/askRobertEngine";
 import { answerWithGroq } from "@/lib/groqAskRobert";
 import { checkRateLimit, getClientKey } from "@/lib/rateLimit";
@@ -78,7 +79,9 @@ export async function POST(request: NextRequest) {
       mode: requestedMode,
     });
     const shouldUseProvider =
-      process.env.AI_PORTFOLIO_ENABLED === "true" && Boolean(process.env.GROQ_API_KEY);
+      process.env.AI_PORTFOLIO_ENABLED === "true" &&
+      Boolean(process.env.GROQ_API_KEY) &&
+      !isProjectListQuestion(question.toLowerCase());
     const providerResponse = shouldUseProvider
       ? await answerWithGroq({
           question,

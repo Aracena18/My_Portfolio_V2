@@ -56,6 +56,10 @@ export function answerAskRobert({
     return withSources(createContactDraft(cleanQuestion), retrieved);
   }
 
+  if (isProjectListQuestion(normalized)) {
+    return withSources(listProjects(), retrieved);
+  }
+
   if (mode === "project-explainer" || normalized.includes("explain")) {
     return withSources(explainProject(cleanQuestion), retrieved);
   }
@@ -117,7 +121,10 @@ function withSources(
 
   return {
     ...response,
-    sources: sourceTitles.length > 0 ? sourceTitles : response.sources,
+    sources:
+      response.sources && response.sources.length > 0
+        ? response.sources
+        : sourceTitles,
   };
 }
 
@@ -138,6 +145,28 @@ function isContactDraftQuestion(normalized: string) {
     normalized.includes("reach out") ||
     normalized.includes("email")
   );
+}
+
+export function isProjectListQuestion(normalized: string) {
+  const asksForProjects =
+    normalized.includes("project") ||
+    normalized.includes("built") ||
+    normalized.includes("build") ||
+    normalized.includes("portfolio work") ||
+    normalized.includes("case stud");
+  const asksForList =
+    normalized.includes("show") ||
+    normalized.includes("list") ||
+    normalized.includes("what") ||
+    normalized.includes("which") ||
+    normalized.includes("all");
+  const asksForSpecificProject = projects.some(
+    (project) =>
+      normalized.includes(project.id) ||
+      normalized.includes(project.title.toLowerCase()),
+  );
+
+  return asksForProjects && asksForList && !asksForSpecificProject;
 }
 
 function isClearlyUnsupported(normalized: string) {
@@ -171,6 +200,26 @@ function isClearlyUnsupported(normalized: string) {
     unsupportedSignals.some((signal) => normalized.includes(signal)) &&
     !portfolioSignals.some((signal) => normalized.includes(signal))
   );
+}
+
+function listProjects(): AssistantPortfolioResponse {
+  return {
+    targetSection: "projects",
+    answer:
+      `Robert's portfolio currently includes ${projects.length} projects:\n\n` +
+      projects
+        .map(
+          (project, index) =>
+            `${index + 1}. ${project.title} - ${project.summary} Robert's role: ${project.role}.`,
+        )
+        .join("\n\n"),
+    sources: projects.map((project) => `${project.title} Project`),
+    suggestedFollowUps: [
+      "Explain TanimPro",
+      "Explain AgriSense",
+      "Show UI/UX and hackathon experience",
+    ],
+  };
 }
 
 function analyzeOpportunityFit(question: string): AssistantPortfolioResponse {

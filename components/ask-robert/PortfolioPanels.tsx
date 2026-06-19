@@ -38,8 +38,8 @@ export function PortfolioCanvas({
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-semibold text-[var(--accent)]">Portfolio Canvas</p>
-        <h2 className="mt-2 text-3xl font-semibold tracking-normal text-[var(--text)]">
+        <p className="text-sm font-semibold text-accent">Portfolio Canvas</p>
+        <h2 className="mt-2 text-3xl font-semibold tracking-normal text-primary">
           {getSectionTitle(activeSection, selectedProjectTitle)}
         </h2>
       </div>
@@ -52,8 +52,8 @@ export function PortfolioCanvas({
       />
 
       {followUps && followUps.length > 0 && onAsk ? (
-        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4">
-          <p className="mb-3 text-sm font-semibold text-[var(--text)]">
+        <section className="rounded-2xl border border-border bg-surface-muted p-4">
+          <p className="mb-3 text-sm font-semibold text-primary">
             Suggested follow-ups
           </p>
           <div className="flex flex-wrap gap-2">
@@ -62,7 +62,7 @@ export function PortfolioCanvas({
                 key={prompt}
                 type="button"
                 onClick={() => onAsk(prompt)}
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--surface)] px-3 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--accent)]"
+                className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-2 text-sm font-medium text-secondary transition hover:text-accent"
               >
                 {prompt}
                 <ArrowRight size={14} aria-hidden="true" />
@@ -106,8 +106,8 @@ export function PortfolioSectionPanel({
 export function AboutPanel({ isCompact }: { isCompact?: boolean }) {
   return (
     <section className="space-y-5">
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-5">
-        <p className="text-lg leading-8 text-[var(--text-secondary)]">
+      <div className="rounded-2xl border border-border bg-surface-muted p-5">
+        <p className="text-lg leading-8 text-secondary">
           {robertProfile.summary}
         </p>
       </div>
@@ -120,12 +120,12 @@ export function AboutPanel({ isCompact }: { isCompact?: boolean }) {
         ].map(([label, value]) => (
           <div
             key={label}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="rounded-2xl border border-border bg-surface p-4"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
               {label}
             </p>
-            <p className="mt-2 text-sm font-semibold text-[var(--text)]">{value}</p>
+            <p className="mt-2 text-sm font-semibold text-primary">{value}</p>
           </div>
         ))}
       </div>
@@ -133,7 +133,7 @@ export function AboutPanel({ isCompact }: { isCompact?: boolean }) {
         {robertProfile.strengths.map((strength) => (
           <span
             key={strength}
-            className="rounded-full border border-[var(--border)] px-3 py-2 text-sm text-[var(--text-secondary)]"
+            className="rounded-full border border-border px-3 py-2 text-sm text-secondary"
           >
             {strength}
           </span>
@@ -157,20 +157,20 @@ export function ProjectsPanel({
   return (
     <section className="space-y-5">
       {activeProject ? (
-        <div className="rounded-2xl border border-[var(--accent)] bg-[var(--accent-soft)] p-5">
-          <p className="text-sm font-semibold text-[var(--accent)]">
+        <div className="rounded-2xl border border-accent bg-accent-soft p-5">
+          <p className="text-sm font-semibold text-accent">
             {activeProject.category}
           </p>
-          <h3 className="mt-2 text-2xl font-semibold tracking-normal">
+          <h3 className="mt-2 text-2xl font-semibold tracking-normal text-primary">
             {activeProject.title}
           </h3>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+          <p className="mt-3 text-sm leading-6 text-secondary">
             {activeProject.summary}
           </p>
-          <p className="mt-4 text-sm font-semibold text-[var(--text)]">
+          <p className="mt-4 text-sm font-semibold text-primary">
             Robert&apos;s role: {activeProject.role}
           </p>
-          <ul className="mt-4 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
+          <ul className="mt-4 space-y-2 text-sm leading-6 text-secondary">
             {activeProject.highlights.map((highlight) => (
               <li key={highlight}>{highlight}</li>
             ))}
@@ -178,7 +178,7 @@ export function ProjectsPanel({
           {activeProject.route ? (
             <Link
               href={activeProject.route}
-              className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+              className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
             >
               Open case study
               <ArrowRight size={16} aria-hidden="true" />
@@ -190,30 +190,30 @@ export function ProjectsPanel({
       <div className={`grid gap-4 ${isCompact ? 'grid-cols-1' : 'xl:grid-cols-2'}`}>
         {projects.map((project) => {
           const isSelected = selectedProjectId === project.id;
-          const cardClass = `group block rounded-2xl border p-5 text-left transition hover:-translate-y-0.5 hover:border-[var(--accent)] ${
+          const cardClass = `group block rounded-2xl border p-5 text-left transition hover:-translate-y-0.5 hover:border-accent ${
             isSelected
-              ? "border-[var(--accent)] bg-[var(--accent-soft)]"
-              : "border-[var(--border)] bg-[var(--surface)]"
+              ? "border-accent bg-accent-soft"
+              : "border-border bg-surface"
           }`;
           const cardContent = (
             <>
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--accent)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-accent">
                 {project.category}
               </p>
-              <h3 className="mt-3 text-xl font-semibold tracking-normal text-[var(--text)]">
+              <h3 className="mt-3 text-xl font-semibold tracking-normal text-primary">
                 {project.title}
               </h3>
-              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+              <p className="mt-3 text-sm leading-6 text-secondary">
                 {project.summary}
               </p>
-              <p className="mt-3 text-sm font-medium text-[var(--text)]">
+              <p className="mt-3 text-sm font-medium text-primary">
                 {project.proof}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {project.techStack.slice(0, 4).map((tech) => (
                   <span
                     key={tech}
-                    className="rounded-full bg-[var(--surface-muted)] px-3 py-1 text-xs font-medium text-[var(--text-secondary)]"
+                    className="rounded-full bg-surface-muted px-3 py-1 text-xs font-medium text-secondary"
                   >
                     {tech}
                   </span>
@@ -252,14 +252,14 @@ export function SkillsPanel({ isCompact }: { isCompact?: boolean }) {
       {skillGroups.map((group) => (
         <div
           key={group.title}
-          className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5"
+          className="rounded-2xl border border-border bg-surface p-5"
         >
-          <h3 className="text-lg font-semibold tracking-normal">{group.title}</h3>
+          <h3 className="text-lg font-semibold tracking-normal text-primary">{group.title}</h3>
           <div className="mt-4 flex flex-wrap gap-2">
             {group.skills.map((skill) => (
               <span
                 key={skill}
-                className="rounded-full bg-[var(--surface-muted)] px-3 py-2 text-sm text-[var(--text-secondary)]"
+                className="rounded-full bg-surface-muted px-3 py-2 text-sm text-secondary"
               >
                 {skill}
               </span>
@@ -274,12 +274,12 @@ export function SkillsPanel({ isCompact }: { isCompact?: boolean }) {
 export function ResumePanel({ isCompact }: { isCompact?: boolean }) {
   return (
     <section className="space-y-4">
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-5">
+      <div className="rounded-2xl border border-border bg-surface-muted p-5">
         <div className="flex items-center gap-3">
-          <FileText className="text-[var(--accent)]" size={24} aria-hidden="true" />
-          <h3 className="text-xl font-semibold tracking-normal">Recruiter Summary</h3>
+          <FileText className="text-accent" size={24} aria-hidden="true" />
+          <h3 className="text-xl font-semibold tracking-normal text-primary">Recruiter Summary</h3>
         </div>
-        <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
+        <p className="mt-4 text-sm leading-6 text-secondary">
           Robert is a BS Computer Science student with portfolio proof across
           frontend development, UI/UX, AI-assisted systems, agriculture technology,
           practical workflow systems, leadership, and research documentation.
@@ -289,41 +289,41 @@ export function ResumePanel({ isCompact }: { isCompact?: boolean }) {
         {resumeHighlights.map((item) => (
           <div
             key={item.label}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="rounded-2xl border border-border bg-surface p-4"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted">
               {item.label}
             </p>
-            <p className="mt-2 text-sm font-semibold text-[var(--text)]">
+            <p className="mt-2 text-sm font-semibold text-primary">
               {item.value}
             </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="mt-2 text-sm leading-6 text-secondary">
               {item.detail}
             </p>
           </div>
         ))}
       </div>
-      <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface)] p-5">
-        <p className="text-sm font-semibold text-[var(--text)]">
+      <div className="rounded-2xl border border-dashed border-border bg-surface p-5">
+        <p className="text-sm font-semibold text-primary">
           Resume PDF status
         </p>
-        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+        <p className="mt-2 text-sm leading-6 text-secondary">
           The portfolio is ready for a public resume file. Add a PDF at
-          <span className="font-semibold text-[var(--text)]"> public/resume.pdf </span>
+          <span className="font-semibold text-primary"> public/resume.pdf </span>
           and this panel can link directly to it.
         </p>
       </div>
       <div className="flex flex-wrap gap-3">
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+          className="inline-flex items-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
         >
           Review project proof
           <ArrowRight size={16} aria-hidden="true" />
         </Link>
         <Link
           href="/contact"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[var(--surface-muted)] px-4 py-3 text-sm font-semibold text-[var(--text)] transition hover:text-[var(--accent)]"
+          className="inline-flex items-center gap-2 rounded-2xl bg-surface-muted px-4 py-3 text-sm font-semibold text-primary transition hover:text-accent"
         >
           Contact Robert
         </Link>
@@ -338,10 +338,10 @@ export function TimelinePanel() {
       {timeline.map((item) => (
         <div
           key={item.label}
-          className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5"
+          className="rounded-2xl border border-border bg-surface p-5"
         >
-          <p className="text-sm font-semibold text-[var(--accent)]">{item.label}</p>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+          <p className="text-sm font-semibold text-accent">{item.label}</p>
+          <p className="mt-2 text-sm leading-6 text-secondary">
             {item.value}
           </p>
         </div>
@@ -353,18 +353,18 @@ export function TimelinePanel() {
 export function RecruiterPanel({ isCompact }: { isCompact?: boolean }) {
   return (
     <section className="space-y-4">
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-5">
+      <div className="rounded-2xl border border-border bg-surface-muted p-5">
         <div className="flex items-center gap-3">
           <BriefcaseBusiness
-            className="text-[var(--accent)]"
+            className="text-accent"
             size={24}
             aria-hidden="true"
           />
-          <h3 className="text-xl font-semibold tracking-normal">
+          <h3 className="text-xl font-semibold tracking-normal text-primary">
             Why Robert is worth reviewing
           </h3>
         </div>
-        <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
+        <p className="mt-4 text-sm leading-6 text-secondary">
           Robert combines implementation, design judgment, AI curiosity, agriculture
           problem framing, and project coordination. His strongest fit is for teams
           that value builders who can explain the problem, shape the interface, and
@@ -375,16 +375,16 @@ export function RecruiterPanel({ isCompact }: { isCompact?: boolean }) {
         {roleFits.map((fit) => (
           <div
             key={fit.role}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="rounded-2xl border border-border bg-surface p-4"
           >
-            <p className="text-sm font-semibold text-[var(--text)]">{fit.role}</p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="text-sm font-semibold text-primary">{fit.role}</p>
+            <p className="mt-2 text-sm leading-6 text-secondary">
               {fit.match}
             </p>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+            <p className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-muted">
               Proof
             </p>
-            <ul className="mt-2 space-y-1 text-sm leading-6 text-[var(--text-secondary)]">
+            <ul className="mt-2 space-y-1 text-sm leading-6 text-secondary">
               {fit.proof.map((proof) => (
                 <li key={proof}>{proof}</li>
               ))}
@@ -392,11 +392,11 @@ export function RecruiterPanel({ isCompact }: { isCompact?: boolean }) {
           </div>
         ))}
       </div>
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
-        <p className="text-sm font-semibold text-[var(--text)]">
+      <div className="rounded-2xl border border-border bg-surface p-5">
+        <p className="text-sm font-semibold text-primary">
           Honest gap policy
         </p>
-        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+        <p className="mt-2 text-sm leading-6 text-secondary">
           Ask Robert should not exaggerate. If a role requires proof that is not
           currently in the portfolio, the assistant calls that out and points to the
           closest supported evidence.
@@ -405,13 +405,13 @@ export function RecruiterPanel({ isCompact }: { isCompact?: boolean }) {
       <div className="flex flex-wrap gap-3">
         <Link
           href="/resume"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[var(--surface-muted)] px-4 py-3 text-sm font-semibold text-[var(--text)] transition hover:text-[var(--accent)]"
+          className="inline-flex items-center gap-2 rounded-2xl bg-surface-muted px-4 py-3 text-sm font-semibold text-primary transition hover:text-accent"
         >
           View resume summary
         </Link>
         <Link
           href="/projects"
-          className="inline-flex items-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+          className="inline-flex items-center gap-2 rounded-2xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:brightness-95"
         >
           Inspect proof
           <ArrowRight size={16} aria-hidden="true" />
@@ -424,12 +424,12 @@ export function RecruiterPanel({ isCompact }: { isCompact?: boolean }) {
 export function ContactPanel({ isCompact }: { isCompact?: boolean }) {
   return (
     <section className="space-y-4">
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-5">
+      <div className="rounded-2xl border border-border bg-surface-muted p-5">
         <div className="flex items-center gap-3">
-          <Mail className="text-[var(--accent)]" size={24} aria-hidden="true" />
-          <h3 className="text-xl font-semibold tracking-normal">Contact Assistant</h3>
+          <Mail className="text-accent" size={24} aria-hidden="true" />
+          <h3 className="text-xl font-semibold tracking-normal text-primary">Contact Assistant</h3>
         </div>
-        <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
+        <p className="mt-4 text-sm leading-6 text-secondary">
           Reach out to Robert for internships, collaborations, freelance design,
           hackathon teams, academic work, or general professional opportunities.
           This assistant prepares intent; it does not send messages automatically.
@@ -439,7 +439,7 @@ export function ContactPanel({ isCompact }: { isCompact?: boolean }) {
         {contactOptions.map((option) => (
           <div
             key={option}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-sm font-semibold text-[var(--text)]"
+            className="rounded-2xl border border-border bg-surface p-4 text-sm font-semibold text-primary"
           >
             {option}
           </div>
@@ -449,28 +449,28 @@ export function ContactPanel({ isCompact }: { isCompact?: boolean }) {
         {contactTemplates.map((template) => (
           <div
             key={template.purpose}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="rounded-2xl border border-border bg-surface p-4"
           >
-            <p className="text-sm font-semibold text-[var(--text)]">
+            <p className="text-sm font-semibold text-primary">
               {template.purpose}
             </p>
-            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-muted">
               {template.subject}
             </p>
-            <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="mt-3 text-sm leading-6 text-secondary">
               {template.message}
             </p>
           </div>
         ))}
       </div>
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+      <div className="rounded-2xl border border-border bg-surface p-5">
         <div className="flex items-start gap-3">
-          <MapPin className="mt-1 text-[var(--accent)]" size={20} aria-hidden="true" />
+          <MapPin className="mt-1 text-accent" size={20} aria-hidden="true" />
           <div>
-            <p className="text-sm font-semibold text-[var(--text)]">
+            <p className="text-sm font-semibold text-primary">
               Based in {robertProfile.location}
             </p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+            <p className="mt-2 text-sm leading-6 text-secondary">
               Add Robert&apos;s preferred public email, LinkedIn, GitHub, or contact
               form endpoint here when those final details are ready.
             </p>

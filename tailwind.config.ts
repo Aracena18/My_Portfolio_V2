@@ -9,32 +9,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        background: "var(--background)",
         surface: {
-          DEFAULT: "#E9EEE7",
-          alt: "#DEE5DB",
-          dark: "#0C1A0E",
+          DEFAULT: "var(--surface)",
+          muted: "var(--surface-muted)",
         },
-        card: "#F3F7F0",
-        ink: {
-          DEFAULT: "#111A14",
-          secondary: "#4A5548",
-        },
-        muted: {
-          DEFAULT: "#65715F",
-          light: "#909C8B",
-        },
-        line: "#C8D2C3",
-        green: {
-          DEFAULT: "#165A2D",
-          light: "#D6E2D1",
-          dark: "#0F4D23",
-        },
-        frame: "#F4F1EA",
-        cutout: "#2C3E35",
+        primary: "var(--text-primary)",
+        secondary: "var(--text-secondary)",
+        muted: "var(--text-muted)",
+        border: "var(--border)",
         accent: {
-          DEFAULT: "#4338CA",
-          light: "#E6E2F6",
+          DEFAULT: "var(--accent)",
+          soft: "var(--accent-soft)",
         },
+        user: {
+          bubble: "var(--user-bubble)",
+          text: "var(--user-text)",
+        }
       },
       maxWidth: {
         container: "1200px",
